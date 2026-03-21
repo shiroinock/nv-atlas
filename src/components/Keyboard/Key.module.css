@@ -43,3 +43,35 @@
   height: 6px;
   border-radius: 50%;
 }
+
+.highlight_target {
+  box-shadow: 0 0 12px 4px #4fc3f7;
+  animation: pulse 1.5s ease-in-out infinite;
+  z-index: 5;
+}
+
+.highlight_correct {
+  box-shadow: 0 0 12px 4px #a6e3a1;
+  z-index: 5;
+}
+
+.highlight_incorrect {
+  box-shadow: 0 0 12px 4px #f38ba8;
+  z-index: 5;
+}
+
+.highlight_modifier {
+  box-shadow: 0 0 12px 4px #fab387;
+  animation: pulse_mod 1.5s ease-in-out infinite;
+  z-index: 5;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px #4fc3f7; }
+  50% { box-shadow: 0 0 16px 6px #4fc3f7; }
+}
+
+@keyframes pulse_mod {
+  0%, 100% { box-shadow: 0 0 8px 2px #fab387; }
+  50% { box-shadow: 0 0 16px 6px #fab387; }
+}

@@ -1,12 +1,13 @@
 import { useState, useCallback } from "react";
-import type { VimCommand } from "./types/vim";
+import type { VimCommand, HighlightEntry, VIAKeymapFull } from "./types/vim";
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
 import { defaultCustomKeymap } from "./data/keymap";
 import { categoryColors, categoryLabels } from "./data/vim-commands";
-import { parseVIAKeymap } from "./utils/via-keymap-parser";
+import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
 import { Keyboard } from "./components/Keyboard/Keyboard";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
+import { PracticeMode } from "./components/PracticeMode/PracticeMode";
 import styles from "./App.module.css";
 
 export function App() {
@@ -14,6 +15,9 @@ export function App() {
   const [hoveredCommand, setHoveredCommand] = useState<VimCommand | null>(null);
   const [hoveredCustomKey, setHoveredCustomKey] = useState<string | null>(null);
   const [matrixKeymap, setMatrixKeymap] = useState<Record<string, string> | null>(null);
+  const [viaKeymapFull, setViaKeymapFull] = useState<VIAKeymapFull | null>(null);
+  const [mode, setMode] = useState<"visualize" | "practice">("visualize");
+  const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
   const [matrixCols, setMatrixCols] = useState(7); // Corne v4 default
 
@@ -21,6 +25,10 @@ export function App() {
     setHoveredCommand(cmd);
     setHoveredCustomKey(customKey);
   };
+
+  const handleHighlightKeys = useCallback((keys: HighlightEntry[]) => {
+    setHighlightKeys(keys);
+  }, []);
 
   const handleLoadLayout = useCallback(
     (jsonString: string) => {
@@ -44,6 +52,8 @@ export function App() {
         const parsed = JSON.parse(jsonString);
         const mapping = parseVIAKeymap(parsed, matrixCols);
         setMatrixKeymap(mapping);
+        const full = parseVIAKeymapFull(parsed, matrixCols);
+        setViaKeymapFull(full);
         setKeymapFileName("keymap loaded");
       } catch (e) {
         setKeymapFileName(
@@ -54,13 +64,33 @@ export function App() {
     [matrixCols]
   );
 
+  const noopHover = useCallback(() => {}, []);
+
   return (
     <>
       <header className={styles.header}>
-        <h1 className={styles.title}>KeyViz</h1>
-        <p className={styles.subtitle}>
-          カスタムキーボード配列で Neovim キーバインドを可視化
-        </p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.title}>KeyViz</h1>
+            <p className={styles.subtitle}>
+              カスタムキーボード配列で Neovim キーバインドを可視化
+            </p>
+          </div>
+          <div className={styles.modeTabs}>
+            <button
+              className={`${styles.modeTab} ${mode === "visualize" ? styles.modeTabActive : ""}`}
+              onClick={() => setMode("visualize")}
+            >
+              可視化
+            </button>
+            <button
+              className={`${styles.modeTab} ${mode === "practice" ? styles.modeTabActive : ""}`}
+              onClick={() => setMode("practice")}
+            >
+              練習
+            </button>
+          </div>
+        </div>
       </header>
 
       <div className={styles.loader}>
@@ -73,21 +103,34 @@ export function App() {
         />
       </div>
 
+      {mode === "practice" && (
+        <div className={styles.practice}>
+          <PracticeMode
+            customKeymap={defaultCustomKeymap}
+            viaKeymapFull={viaKeymapFull}
+            onHighlightKeys={handleHighlightKeys}
+          />
+        </div>
+      )}
+
       <div className={styles.keyboardWrapper}>
         <Keyboard
           layout={layout}
           customKeymap={defaultCustomKeymap}
           matrixKeymap={matrixKeymap}
-          onHover={handleHover}
+          onHover={mode === "visualize" ? handleHover : noopHover}
+          highlightKeys={mode === "practice" ? highlightKeys : undefined}
         />
       </div>
 
-      <div className={styles.detail}>
-        <CommandDetail
-          command={hoveredCommand}
-          customKey={hoveredCustomKey}
-        />
-      </div>
+      {mode === "visualize" && (
+        <div className={styles.detail}>
+          <CommandDetail
+            command={hoveredCommand}
+            customKey={hoveredCustomKey}
+          />
+        </div>
+      )}
 
       <div className={styles.legend}>
         {Object.entries(categoryColors).map(([cat, color]) => (

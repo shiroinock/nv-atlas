@@ -1,5 +1,5 @@
 import type { KeyboardLayout } from "../../types/keyboard";
-import type { VimCommand } from "../../types/vim";
+import type { VimCommand, HighlightEntry } from "../../types/vim";
 import { getVimCommandByKey } from "../../data/vim-commands";
 import { invertKeymap } from "../../data/keymap";
 import { Key } from "./Key";
@@ -25,9 +25,10 @@ interface KeyboardProps {
   customKeymap: Record<string, string>;
   matrixKeymap: Record<string, string> | null;
   onHover: (cmd: VimCommand | null, customKey: string | null) => void;
+  highlightKeys?: HighlightEntry[];
 }
 
-export function Keyboard({ layout, customKeymap, matrixKeymap, onHover }: KeyboardProps) {
+export function Keyboard({ layout, customKeymap, matrixKeymap, onHover, highlightKeys }: KeyboardProps) {
   // カスタム配列の逆引き: 出力文字 → QWERTY位置
   const inverseCustom = invertKeymap(customKeymap);
 
@@ -105,6 +106,21 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover }: Keyboa
           y: keyData.y + offsetY,
         };
 
+        // ハイライト判定: QWERTY位置またはマトリクスキーでマッチ
+        let keyQwertyPos: string | null = null;
+        if (matrixKeymap) {
+          const outputChar = matrixKeymap[keyData.label] ?? null;
+          if (outputChar && outputChar.length === 1) {
+            keyQwertyPos = inverseCustom[outputChar] ?? outputChar;
+          }
+        } else {
+          keyQwertyPos = labelToQwerty[keyData.label] ?? null;
+        }
+        const matchedHighlight = highlightKeys?.find((h) =>
+          h.qwertyKey === keyQwertyPos || h.qwertyKey === keyData.label
+        );
+        const keyHighlight = matchedHighlight?.state ?? null;
+
         return (
           <Key
             key={i}
@@ -113,6 +129,7 @@ export function Keyboard({ layout, customKeymap, matrixKeymap, onHover }: Keyboa
             customLabel={displayLabel}
             vimCommand={vimCommand}
             onHover={onHover}
+            highlightState={keyHighlight}
           />
         );
       })}

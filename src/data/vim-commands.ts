@@ -1,4 +1,5 @@
 import type { VimCommand } from "../types/vim";
+import { inverseShiftMap } from "../utils/via-keymap-parser";
 
 /**
  * Vim ノーマルモードの主要コマンド一覧
@@ -101,3 +102,25 @@ export const categoryLabels: Record<string, string> = {
   operator: "オペレータ",
   misc: "その他",
 };
+
+/**
+ * Vim キーを Shift 分解する
+ * "G" → { base: "g", shifted: true }
+ * "$" → { base: "4", shifted: true }
+ * "j" → { base: "j", shifted: false }
+ */
+export function decomposeVimKey(key: string): { base: string; shifted: boolean } {
+  if (key.length !== 1) return { base: key, shifted: false };
+
+  // 大文字アルファベット
+  if (/^[A-Z]$/.test(key)) {
+    return { base: key.toLowerCase(), shifted: true };
+  }
+
+  // Shift 記号 → ベースキーに分解
+  if (inverseShiftMap[key]) {
+    return { base: inverseShiftMap[key], shifted: true };
+  }
+
+  return { base: key, shifted: false };
+}

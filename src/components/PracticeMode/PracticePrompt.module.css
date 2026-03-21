@@ -1,0 +1,102 @@
+.panel {
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 8px;
+  padding: 16px 20px;
+  text-align: center;
+  transition: border-color 0.3s;
+}
+
+.panel.correct {
+  border-color: #a6e3a1;
+}
+
+.panel.incorrect {
+  border-color: #f38ba8;
+}
+
+.prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.hintRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.hint {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fab387;
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.commandName {
+  font-size: 20px;
+  font-weight: 700;
+  color: #cdd6f4;
+}
+
+.description {
+  font-size: 14px;
+  color: #a6adc8;
+}
+
+.instruction {
+  font-size: 14px;
+  color: #6c7086;
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #a6adc8;
+}
+
+.rate {
+  color: #6c7086;
+}
+
+.streak {
+  color: #f9e2af;
+  font-weight: 600;
+}
+
+.message {
+  color: #6c7086;
+  font-size: 14px;
+}
+
+.startButton {
+  background: #4fc3f733;
+  border: 1px solid #4fc3f7;
+  color: #4fc3f7;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.startButton:hover {
+  background: #4fc3f755;
+}

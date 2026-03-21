@@ -1,5 +1,5 @@
 import type { KeyData } from "../../types/keyboard";
-import type { VimCommand } from "../../types/vim";
+import type { VimCommand, HighlightState } from "../../types/vim";
 import { categoryColors } from "../../data/vim-commands";
 import styles from "./Key.module.css";
 
@@ -12,9 +12,10 @@ interface KeyProps {
   customLabel: string | null;
   vimCommand: VimCommand | null;
   onHover: (cmd: VimCommand | null, customKey: string | null) => void;
+  highlightState?: HighlightState | null;
 }
 
-export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover }: KeyProps) {
+export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, highlightState }: KeyProps) {
   const { x, y, w, h, r, rx, ry, color } = keyData;
 
   const style: React.CSSProperties = {
@@ -38,9 +39,11 @@ export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover }: 
   // 表示するラベル: カスタム配列 > QWERTY名 > 元のKLEラベル
   const displayLabel = customLabel ?? qwertyLabel ?? keyData.label;
 
+  const highlightClass = highlightState ? styles[`highlight_${highlightState}`] : "";
+
   return (
     <div
-      className={styles.key}
+      className={`${styles.key} ${highlightClass}`}
       style={style}
       onMouseEnter={() => onHover(vimCommand, customLabel)}
       onMouseLeave={() => onHover(null, null)}
