@@ -8,6 +8,28 @@ export type VimCommandCategory =
   | "textobj"
   | "misc";
 
+// ── Neovim map 連携 ──
+
+export type NvimMapMode = "n" | "x" | "o" | "v" | "s" | "!" | "";
+export type NvimMapSource = "nvim-default" | "plugin" | "user";
+
+export interface NvimMapping {
+  mode: NvimMapMode;
+  lhs: string;
+  rhs: string;
+  noremap: boolean;
+  description: string;
+  source: NvimMapSource;
+  sourceDetail: string;
+}
+
+export type VimCommandSource = "hardcoded" | NvimMapSource;
+
+export interface MergedVimCommand extends VimCommand {
+  source: VimCommandSource;
+  nvimOverride?: boolean;
+}
+
 export interface VimCommand {
   /** Vim のキー (QWERTY基準) */
   key: string;

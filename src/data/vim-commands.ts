@@ -264,6 +264,20 @@ export const categoryLabels: Record<string, string> = {
   misc: "その他",
 };
 
+export const sourceLabels: Record<string, string> = {
+  hardcoded: "Vim 標準",
+  "nvim-default": "Neovim",
+  plugin: "プラグイン",
+  user: "ユーザー設定",
+};
+
+export const sourceColors: Record<string, string> = {
+  hardcoded: "#6c7086",
+  "nvim-default": "#89b4fa",
+  plugin: "#f9e2af",
+  user: "#a6e3a1",
+};
+
 /**
  * Vim キーを Shift 分解する
  * "G" → { base: "g", shifted: true }

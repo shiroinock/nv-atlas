@@ -107,6 +107,10 @@
   /* flex remaining */
 }
 
+.thSource {
+  width: 100px;
+}
+
 .row:hover {
   background: rgba(255, 255, 255, 0.03);
 }
@@ -139,6 +143,40 @@
 
 .cellDesc {
   color: #7f849c;
+}
+
+.sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.srcButton {
+  padding: 4px 10px;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  background: transparent;
+  color: #6c7086;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.srcButton:hover {
+  color: #a6adc8;
+}
+
+.srcSelected {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cellSource {
+  font-size: 11px;
+}
+
+.sourceBadge {
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .count {

@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type { VimCommand, HighlightEntry, VIAKeymapFull } from "./types/vim";
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
+import { useNvimMaps } from "./hooks/useNvimMaps";
 import { defaultCustomKeymap } from "./data/keymap";
-import { categoryColors, categoryLabels } from "./data/vim-commands";
+import { vimCommands, categoryColors, categoryLabels } from "./data/vim-commands";
+import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
 import { Keyboard } from "./components/Keyboard/Keyboard";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
@@ -21,6 +23,12 @@ export function App() {
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
   const [matrixCols, setMatrixCols] = useState(7); // Corne v4 default
+  const { nvimMaps, loading: nvimLoading, error: nvimError, refresh: refreshNvim } = useNvimMaps();
+
+  const mergedCommands = useMemo(
+    () => (nvimMaps ? mergeWithNvimMaps(vimCommands, nvimMaps) : null),
+    [nvimMaps]
+  );
 
   const handleHover = (cmd: VimCommand | null, customKey: string | null) => {
     setHoveredCommand(cmd);
@@ -76,6 +84,20 @@ export function App() {
             <p className={styles.subtitle}>
               カスタムキーボード配列で Neovim キーバインドを可視化
             </p>
+            <div className={styles.nvimStatus}>
+              {nvimLoading && <span className={styles.nvimLoading}>nvim 読込中...</span>}
+              {nvimError && <span className={styles.nvimError}>nvim 未接続</span>}
+              {nvimMaps && (
+                <>
+                  <span className={styles.nvimConnected}>
+                    nvim: {nvimMaps.filter((m) => m.mode === "n").length} maps
+                  </span>
+                  <button className={styles.nvimRefresh} onClick={refreshNvim}>
+                    再取得
+                  </button>
+                </>
+              )}
+            </div>
           </div>
           <div className={styles.modeTabs}>
             <button
@@ -137,6 +159,7 @@ export function App() {
             customKeymap={defaultCustomKeymap}
             viaKeymapFull={viaKeymapFull}
             onHighlightKeys={handleHighlightKeys}
+            mergedCommands={mergedCommands}
           />
         </div>
       )}

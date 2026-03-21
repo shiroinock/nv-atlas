@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
-import type { VimCommand, VimCommandCategory, HighlightEntry, VIAKeymapFull } from "../../types/vim";
-import { vimCommands, categoryColors, categoryLabels } from "../../data/vim-commands";
+import type { VimCommand, VimCommandCategory, VimCommandSource, MergedVimCommand, HighlightEntry, VIAKeymapFull } from "../../types/vim";
+import { vimCommands, categoryColors, categoryLabels, sourceLabels, sourceColors } from "../../data/vim-commands";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
 
@@ -8,6 +8,7 @@ interface Props {
   customKeymap: Record<string, string>;
   viaKeymapFull?: VIAKeymapFull | null;
   onHighlightKeys: (keys: HighlightEntry[]) => void;
+  mergedCommands?: MergedVimCommand[] | null;
 }
 
 /**
@@ -90,11 +91,19 @@ const allCategories: VimCommandCategory[] = [
   "motion", "operator", "edit", "insert", "search", "visual", "textobj", "misc",
 ];
 
-export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys }: Props) {
+const allSources: VimCommandSource[] = ["hardcoded", "nvim-default", "plugin", "user"];
+
+export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys, mergedCommands }: Props) {
   const [selectedCategories, setSelectedCategories] = useState<Set<VimCommandCategory>>(
     new Set(allCategories)
   );
+  const [selectedSources, setSelectedSources] = useState<Set<VimCommandSource>>(
+    new Set(allSources)
+  );
   const [searchText, setSearchText] = useState("");
+
+  const commands = mergedCommands ?? vimCommands;
+  const hasSources = mergedCommands != null;
 
   const handleRowEnter = useCallback(
     (cmd: VimCommand) => {
@@ -109,8 +118,9 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys 
 
   const filteredCommands = useMemo(() => {
     const lowerSearch = searchText.toLowerCase();
-    return vimCommands.filter((cmd) => {
+    return commands.filter((cmd) => {
       if (!selectedCategories.has(cmd.category)) return false;
+      if (hasSources && !selectedSources.has((cmd as MergedVimCommand).source ?? "hardcoded")) return false;
       if (searchText === "") return true;
       return (
         cmd.key.toLowerCase().includes(lowerSearch) ||
@@ -119,7 +129,7 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys 
         translateKey(cmd.key, customKeymap, viaKeymapFull).toLowerCase().includes(lowerSearch)
       );
     });
-  }, [selectedCategories, searchText, customKeymap, viaKeymapFull]);
+  }, [commands, selectedCategories, selectedSources, hasSources, searchText, customKeymap, viaKeymapFull]);
 
   // カテゴリでグループ化
   const grouped = useMemo(() => {
@@ -138,6 +148,18 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys 
         if (next.size > 1) next.delete(cat);
       } else {
         next.add(cat);
+      }
+      return next;
+    });
+  };
+
+  const toggleSource = (src: VimCommandSource) => {
+    setSelectedSources((prev) => {
+      const next = new Set(prev);
+      if (next.has(src)) {
+        if (next.size > 1) next.delete(src);
+      } else {
+        next.add(src);
       }
       return next;
     });
@@ -162,6 +184,24 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys 
             </button>
           ))}
         </div>
+        {hasSources && (
+          <div className={styles.sources}>
+            {allSources.map((src) => (
+              <button
+                key={src}
+                className={`${styles.srcButton} ${selectedSources.has(src) ? styles.srcSelected : ""}`}
+                style={
+                  selectedSources.has(src)
+                    ? { borderColor: sourceColors[src], color: sourceColors[src] }
+                    : undefined
+                }
+                onClick={() => toggleSource(src)}
+              >
+                {sourceLabels[src]}
+              </button>
+            ))}
+          </div>
+        )}
         <input
           className={styles.search}
           type="text"
@@ -189,12 +229,14 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys 
                     <th className={styles.thKey}>あなたの配列</th>
                     <th className={styles.thName}>名前</th>
                     <th className={styles.thDesc}>説明</th>
+                    {hasSources && <th className={styles.thSource}>ソース</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {grouped[cat]!.map((cmd) => {
                     const translated = translateKey(cmd.key, customKeymap, viaKeymapFull);
                     const isDifferent = translated !== cmd.key;
+                    const source = (cmd as MergedVimCommand).source;
                     return (
                       <tr
                         key={cmd.key}
@@ -210,6 +252,16 @@ export function CommandReference({ customKeymap, viaKeymapFull, onHighlightKeys 
                         </td>
                         <td className={styles.cellName}>{cmd.name}</td>
                         <td className={styles.cellDesc}>{cmd.description}</td>
+                        {hasSources && (
+                          <td className={styles.cellSource}>
+                            <span
+                              className={styles.sourceBadge}
+                              style={{ color: sourceColors[source] }}
+                            >
+                              {sourceLabels[source]}
+                            </span>
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

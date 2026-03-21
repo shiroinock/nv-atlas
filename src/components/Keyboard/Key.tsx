@@ -17,7 +17,7 @@ interface KeyProps {
 }
 
 export function Key({ keyData, qwertyLabel, customLabel, vimCommand, onHover, highlightState, plain }: KeyProps) {
-  const { x, y, w, h, r, rx, ry, color } = keyData;
+  const { x, y, w, h, r, rx, ry, color: _color } = keyData;
 
   const showCategory = vimCommand && !plain;
 
