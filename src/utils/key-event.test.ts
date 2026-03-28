@@ -9,7 +9,7 @@ describe("normalizeKeyEvent", () => {
     });
 
     it("大文字キーをそのまま返す", () => {
-      const e = new KeyboardEvent("keydown", { key: "A" });
+      const e = new KeyboardEvent("keydown", { key: "A", shiftKey: true });
       expect(normalizeKeyEvent(e)).toBe("A");
     });
 

@@ -39,7 +39,10 @@ export function normalizeKeyEvent(e: KeyboardEvent): string {
   // 修飾プレフィックスを C, S, A, M の順で構築
   const modifierFlags: [boolean, string][] = [
     [e.ctrlKey, MODIFIER_PREFIX_MAP.Control],
-    [e.shiftKey, MODIFIER_PREFIX_MAP.Shift],
+    [
+      e.shiftKey && (isSpecial || e.ctrlKey || e.altKey || e.metaKey),
+      MODIFIER_PREFIX_MAP.Shift,
+    ],
     [e.altKey, MODIFIER_PREFIX_MAP.Alt],
     [e.metaKey, MODIFIER_PREFIX_MAP.Meta],
   ];
