@@ -15,7 +15,7 @@ user-invocable: true
 
 ```bash
 # status:ready でも status:in-progress でもない open Issue を取得
-gh issue list --state open --limit 10 --exclude-labels "status:ready,status:in-progress" --json number,title,labels,body
+gh issue list --state open --limit 10 --search "-label:status:ready -label:status:in-progress" --json number,title,labels,body
 ```
 
 - `status:ready` および `status:in-progress` ラベルが**ない** Issue を候補として表示
