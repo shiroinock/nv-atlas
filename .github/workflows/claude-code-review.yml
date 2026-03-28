@@ -36,6 +36,49 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Resolve outdated review threads
+        if: github.event.action == 'synchronize'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          THREAD_IDS=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $number: Int!) {
+              repository(owner: $owner, name: $repo) {
+                pullRequest(number: $number) {
+                  reviewThreads(first: 100) {
+                    nodes {
+                      id
+                      isResolved
+                      isOutdated
+                      comments(first: 1) {
+                        nodes {
+                          author { login }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }' -f owner="${{ github.repository_owner }}" \
+               -f repo="${{ github.event.repository.name }}" \
+               -F number=${{ github.event.pull_request.number }} \
+            --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isOutdated == true and .isResolved == false and .comments.nodes[0].author.login == "claude") | .id] | .[]')
+
+          if [ -z "$THREAD_IDS" ]; then
+            echo "No outdated threads to resolve"
+            exit 0
+          fi
+
+          for thread_id in $THREAD_IDS; do
+            gh api graphql -f query='
+              mutation($threadId: ID!) {
+                resolveReviewThread(input: {threadId: $threadId}) {
+                  thread { isResolved }
+                }
+              }' -f threadId="$thread_id" || echo "::warning::Failed to resolve $thread_id"
+            echo "Resolved: $thread_id"
+          done
+
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
