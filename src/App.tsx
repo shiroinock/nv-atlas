@@ -6,7 +6,10 @@ import { Keyboard } from "./components/Keyboard/Keyboard";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
 import { ModeSelector } from "./components/ModeSelector/ModeSelector";
 import { PracticeMode } from "./components/PracticeMode/PracticeMode";
-import { KeybindingProvider } from "./context/KeybindingContext";
+import {
+  KeybindingProvider,
+  useKeybindingContext,
+} from "./context/KeybindingContext";
 import defaultLayoutJSON from "./data/default-layout.json";
 import { defaultCustomKeymap } from "./data/keymap";
 import {
@@ -16,7 +19,7 @@ import {
 } from "./data/vim-commands";
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
 import { useNvimMaps } from "./hooks/useNvimMaps";
-import type { VimMode } from "./types/keybinding";
+import type { KeybindingConfig, VimMode } from "./types/keybinding";
 import type { HighlightEntry, VIAKeymapFull, VimCommand } from "./types/vim";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import {
@@ -30,7 +33,15 @@ import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
 const CORNE_V4_MATRIX_COLS = 7;
 const KEYMAP_LOADED_LABEL = "keymap loaded";
 
-export function App() {
+function AppContent() {
+  const { config } = useKeybindingContext();
+
+  // Context の customKeymap を優先し、未設定の場合はデフォルトにフォールバック
+  const customKeymap = useMemo(
+    () => config.customKeymap ?? defaultCustomKeymap,
+    [config.customKeymap],
+  );
+
   const { layout, loadFromJSON, error } = useKeyboardLayout();
   const [hoveredCommand, setHoveredCommand] = useState<VimCommand | null>(null);
   const [hoveredCustomKey, setHoveredCustomKey] = useState<string | null>(null);
@@ -134,7 +145,7 @@ export function App() {
   const noopHover = useCallback(() => {}, []);
 
   return (
-    <KeybindingProvider>
+    <>
       <header className={styles.header}>
         <div className={styles.headerTop}>
           <div>
@@ -213,7 +224,7 @@ export function App() {
       {mode === "practice" && (
         <div className={styles.practice}>
           <PracticeMode
-            customKeymap={defaultCustomKeymap}
+            customKeymap={customKeymap}
             viaKeymapFull={viaKeymapFull}
             onHighlightKeys={handleHighlightKeys}
           />
@@ -225,7 +236,7 @@ export function App() {
       >
         <Keyboard
           layout={layout}
-          customKeymap={defaultCustomKeymap}
+          customKeymap={customKeymap}
           matrixKeymap={matrixKeymap}
           onHover={mode === "visualize" ? handleHover : noopHover}
           highlightKeys={
@@ -241,7 +252,7 @@ export function App() {
       {mode === "reference" && (
         <div className={styles.reference}>
           <CommandReference
-            customKeymap={defaultCustomKeymap}
+            customKeymap={customKeymap}
             viaKeymapFull={viaKeymapFull}
             onHighlightKeys={handleHighlightKeys}
             mergedCommands={mergedCommands}
@@ -270,6 +281,14 @@ export function App() {
           </div>
         ))}
       </div>
+    </>
+  );
+}
+
+export function App({ initial }: { initial?: KeybindingConfig }) {
+  return (
+    <KeybindingProvider initial={initial}>
+      <AppContent />
     </KeybindingProvider>
   );
 }
