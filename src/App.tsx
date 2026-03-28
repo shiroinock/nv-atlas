@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./App.module.css";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { CommandReference } from "./components/CommandReference/CommandReference";
@@ -7,6 +7,7 @@ import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
 import { ModeSelector } from "./components/ModeSelector/ModeSelector";
 import { PracticeMode } from "./components/PracticeMode/PracticeMode";
 import { KeybindingProvider } from "./context/KeybindingContext";
+import defaultLayoutJSON from "./data/default-layout.json";
 import { defaultCustomKeymap } from "./data/keymap";
 import {
   categoryColors,
@@ -18,7 +19,16 @@ import { useNvimMaps } from "./hooks/useNvimMaps";
 import type { VimMode } from "./types/keybinding";
 import type { HighlightEntry, VIAKeymapFull, VimCommand } from "./types/vim";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
+import {
+  clearAllStorage,
+  loadKeymap,
+  saveKeymap,
+  saveLayout,
+} from "./utils/storage";
 import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
+
+const DEFAULT_MATRIX_COLS = 7;
+const KEYMAP_LOADED_LABEL = "keymap loaded";
 
 export function App() {
   const { layout, loadFromJSON, error } = useKeyboardLayout();
@@ -37,13 +47,30 @@ export function App() {
   const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
-  const [matrixCols, setMatrixCols] = useState(7); // Corne v4 default
+  const [matrixCols, setMatrixCols] = useState(DEFAULT_MATRIX_COLS);
   const {
     nvimMaps,
     loading: nvimLoading,
     error: nvimError,
     refresh: refreshNvim,
   } = useNvimMaps();
+
+  useEffect(() => {
+    const stored = loadKeymap();
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored.json);
+        const mapping = parseVIAKeymap(parsed, stored.matrixCols);
+        setMatrixKeymap(mapping);
+        const full = parseVIAKeymapFull(parsed, stored.matrixCols);
+        setViaKeymapFull(full);
+        setKeymapFileName(stored.name);
+        setMatrixCols(stored.matrixCols);
+      } catch {
+        // 復元失敗時はデフォルト状態のまま
+      }
+    }
+  }, []);
 
   const mergedCommands = useMemo(
     () => (nvimMaps ? mergeWithNvimMaps(vimCommands, nvimMaps) : null),
@@ -62,12 +89,12 @@ export function App() {
   const handleLoadLayout = useCallback(
     (jsonString: string) => {
       loadFromJSON(jsonString);
-      // VIA 定義から matrix cols を取得
       try {
         const parsed = JSON.parse(jsonString);
         if (parsed.matrix?.cols) {
           setMatrixCols(parsed.matrix.cols);
         }
+        saveLayout(jsonString, parsed.name || "Unknown");
       } catch {
         // ignore
       }
@@ -83,7 +110,8 @@ export function App() {
         setMatrixKeymap(mapping);
         const full = parseVIAKeymapFull(parsed, matrixCols);
         setViaKeymapFull(full);
-        setKeymapFileName("keymap loaded");
+        setKeymapFileName(KEYMAP_LOADED_LABEL);
+        saveKeymap(jsonString, matrixCols, KEYMAP_LOADED_LABEL);
       } catch (e) {
         setKeymapFileName(
           `Error: ${e instanceof Error ? e.message : "parse failed"}`,
@@ -92,6 +120,16 @@ export function App() {
     },
     [matrixCols],
   );
+
+  const handleClearStorage = useCallback(() => {
+    clearAllStorage();
+    // デフォルト状態に戻す
+    loadFromJSON(JSON.stringify(defaultLayoutJSON));
+    setMatrixKeymap(null);
+    setViaKeymapFull(null);
+    setKeymapFileName(null);
+    setMatrixCols(DEFAULT_MATRIX_COLS); // Corne v4 default
+  }, [loadFromJSON]);
 
   const noopHover = useCallback(() => {}, []);
 
@@ -167,6 +205,7 @@ export function App() {
           keymapFileName={keymapFileName}
           onLoadLayout={handleLoadLayout}
           onLoadKeymap={handleLoadKeymap}
+          onClearStorage={handleClearStorage}
           error={error}
         />
       </div>

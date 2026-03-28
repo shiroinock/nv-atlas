@@ -86,6 +86,7 @@ interface LayoutLoaderProps {
   keymapFileName: string | null;
   onLoadLayout: (json: string) => void;
   onLoadKeymap: (json: string) => void;
+  onClearStorage: () => void;
   error: string | null;
 }
 
@@ -94,6 +95,7 @@ export function LayoutLoader({
   keymapFileName,
   onLoadLayout,
   onLoadKeymap,
+  onClearStorage,
   error,
 }: LayoutLoaderProps) {
   return (
@@ -111,6 +113,13 @@ export function LayoutLoader({
         onLoad={onLoadKeymap}
       />
       {error && <span className={styles.error}>{error}</span>}
+      <button
+        type="button"
+        className={styles.clearButton}
+        onClick={onClearStorage}
+      >
+        保存データをクリア
+      </button>
     </div>
   );
 }
