@@ -1,25 +1,33 @@
 ---
 name: issue-enrichment
-description: GitHub Issue の中身を詰める。タイトルだけ・概要だけの Issue に対し、コードベースを探索して実装方針・対象ファイル・受け入れ条件を書き込む。「Issue 整理」「Issue 詰めよう」「実装計画を立てよう」といった場面で使用。
+description: Issue を詳細化して実装可能にする。コードベースを探索して実装方針・対象ファイル・受け入れ条件を書き込み、スコープが大きければ分割する。「Issue 整理」「Issue 詰めよう」「実装計画を立てよう」といった場面で使用。
 user-invocable: true
 ---
 
 # Issue Enrichment スキル
 
-タイトルや簡単な概要だけの GitHub Issue に対し、コードベースを探索して実装に必要な情報を書き込みます。
-完了後に `status:ready` ラベルを付与し、`tdd-next` で実装着手可能な状態にします。
+`draft` ラベル付きの Issue をコードベース探索で詳細化し、Project に登録します。
+スコープが大きい場合は 1 PR = 1 モジュールに閉じるよう分割します。
+
+## GitHub Project 情報
+
+- **Project**: `shiroinock` owner, number `6`（KeyViz）
+- **Status フィールド ID**: `PVTSSF_lAHOAq02ps4BTFDkzhAbPBc`
+- **Status オプション**: Todo (`f75ad846`), In Progress (`47fc9ee4`), Done (`98236657`)
 
 ## 実行フロー
 
-### 1. 対象 Issue の選定
+### 1. 対象の選定
 
 ```bash
-# status:ready でも status:in-progress でもない open Issue を取得
-gh issue list --state open --limit 10 --search "-label:status:ready -label:status:in-progress" --json number,title,labels,body
+# draft ラベル付きの Issue を取得（enrichment 未完了）
+gh issue list --state open --label "draft" --limit 10 --json number,title,body
+
+# または、引数で Issue 番号が指定された場合はその Issue を直接対象にする
+gh issue view {番号} --json number,title,labels,body
 ```
 
-- `status:ready` および `status:in-progress` ラベルが**ない** Issue を候補として表示
-- ユーザーに対象 Issue を確認
+- ユーザーに対象を確認
 
 ### 2. コードベース探索
 
@@ -39,9 +47,69 @@ Explore エージェントを使い、Issue のタイトル・概要から関連
 }
 ```
 
-### 3. Issue 本文の作成
+### 3. スコープ判定と分割
 
-探索結果を元に、以下の構造で Issue 本文を作成します:
+探索結果から、Issue の変更が **複数モジュールにまたがるか** を判定します。
+
+**分割の基準**:
+- PR が 1 モジュール（1 コンポーネント / 1 ユーティリティ / 1 データ層）の変更に閉じるか
+- レビュアーが「この PR は何を変えたか」を一言で説明できるか
+
+**分割が必要な場合**:
+
+1. 変更を依存関係の順にグループ化し、各グループが 1 モジュールに閉じるよう分割する
+2. 元 Issue を「親 Issue」として概要・背景を残す
+3. 子 Issue をそれぞれ作成し、親の sub-issue として紐付ける
+4. 子 Issue 間に依存関係がある場合は GitHub Relationships（Blocked by / Is blocking）を設定する
+5. 全ての子 Issue を Project に追加し、Status を Todo にする
+
+```bash
+# 子 Issue を作成（--label は個別指定、カンマ区切り不可）
+gh issue create --title "{子タイトル}" --body "{子本文}" --label "{ラベル1}" --label "{ラベル2}"
+
+# node_id を取得（sub-issue・依存関係の設定に必要）
+gh api graphql -f query='
+  query {
+    repository(owner: "shiroinock", name: "keyviz") {
+      parent: issue(number: {親番号}) { id }
+      child: issue(number: {子番号}) { id }
+    }
+  }
+'
+
+# 親 Issue の sub-issue として紐付け（gh CLI 未サポート、GraphQL を使用）
+gh api graphql -f query='
+  mutation {
+    addSubIssue(input: {issueId: "{親のnode_id}", subIssueId: "{子のnode_id}"}) {
+      issue { number }
+    }
+  }
+'
+
+# 依存関係の設定（Blocked by）
+gh api graphql -f query='
+  mutation {
+    addBlockedBy(input: {issueId: "{ブロックされる側のnode_id}", blockingIssueId: "{ブロックする側のnode_id}"}) {
+      issue { number }
+    }
+  }
+'
+
+# 子 Issue を Project に追加し、Status を Todo に設定
+gh project item-add 6 --owner shiroinock --url {子IssueのURL}
+# → 返却された item id を使って Status を設定
+gh project item-edit --id "{item_id}" \
+  --project-id "PVT_kwHOAq02ps4BTFDk" \
+  --field-id "PVTSSF_lAHOAq02ps4BTFDkzhAbPBc" \
+  --single-select-option-id "f75ad846"
+```
+
+**分割不要な場合**: そのまま次のステップへ進む。
+
+### 4. Issue 本文の作成
+
+探索結果を元に、以下の構造で Issue 本文を作成します。
+分割した場合は子 Issue ごとにこのテンプレートを適用します。
 
 ```markdown
 ## 概要
@@ -68,19 +136,29 @@ Explore エージェントを使い、Issue のタイトル・概要から関連
 {探索で見つかった懸念事項・依存関係など。なければ省略}
 ```
 
-### 4. Issue の更新
+**親 Issue（分割した場合）** は概要・背景のみ残し、子 Issue へは sub-issues で構造化されているためリンクの列挙は不要。
+
+### 5. Issue の更新と Project 登録
 
 ```bash
 # Issue 本文を更新
 gh issue edit {番号} --body "{作成した本文}"
 
-# status:ready ラベルを付与
-gh issue edit {番号} --add-label "status:ready"
+# draft ラベルを剥がす
+gh issue edit {番号} --remove-label "draft"
+
+# Issue を Project に追加
+gh project item-add 6 --owner shiroinock --url {IssueのURL}
 ```
 
-### 5. ユーザーへの報告
+- `draft` ラベルは対象 Issue（親含む）全てから剥がす
+- 親 Issue は Project に追加し、Status を **In Progress** にする（epic として進行中）
+- 子 Issue は Project に追加し、Status を **Todo** にする
+
+### 6. ユーザーへの報告
 
 更新内容のサマリーを表示し、内容に問題がないか確認します。
+分割した場合は、分割の理由と各子 Issue の概要・依存関係を説明します。
 ユーザーが修正を求めた場合は、フィードバックを反映して再度 `gh issue edit` します。
 
 ## 注意事項
@@ -89,3 +167,4 @@ gh issue edit {番号} --add-label "status:ready"
 - 探索結果に自信がない部分は「要確認」と明記する
 - `future` ラベルの Issue も対象にできるが、実装優先度はユーザーに確認する
 - 1回の実行で複数 Issue を処理してもよい（ユーザーの指示に従う）
+- 依存関係は GitHub Relationships（Blocked by / Is blocking）で設定する。Issue 本文には書かない

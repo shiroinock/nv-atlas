@@ -1,23 +1,13 @@
 ---
 name: create-issue
-description: GitHub Issue を作成する。ユーザーの要望からタイトル・概要を構成し、適切なラベルを付与してパイプラインに乗せる。「Issue 作ろう」「機能追加したい」「バグ見つけた」といった場面で使用。
+description: GitHub Issue を作成する。ユーザーの要望からタイトル・概要を構成し、パイプラインに乗せる。「Issue 作ろう」「機能追加したい」「バグ見つけた」といった場面で使用。
 user-invocable: true
 ---
 
 # Issue 作成スキル
 
-ユーザーの要望を聞き取り、適切なラベル付きの GitHub Issue を作成します。
+ユーザーの要望を聞き取り、GitHub Issue を作成します。
 作成した Issue は `issue-enrichment` → `tdd-next` パイプラインの起点になります。
-
-## ラベル体系
-
-| ラベル | 用途 | 付与タイミング |
-|--------|------|--------------|
-| `enhancement` | 機能追加・改善 | Issue 作成時 |
-| `bug` | バグ報告 | Issue 作成時 |
-| `future` | 将来の改善案 | Issue 作成時（該当時） |
-| `keybinding-edit` | キーバインド編集機能関連 | Issue 作成時（該当時） |
-| `status:ready` | 実装着手可能 | `issue-enrichment` が付与（このスキルでは付与しない） |
 
 ## 実行フロー
 
@@ -25,7 +15,7 @@ user-invocable: true
 
 ユーザーが何をしたいかを確認します。以下を把握する:
 - **何をしたいか**（概要）
-- **種別**: 機能追加（enhancement）か バグ修正（bug）か
+- **種別**: 機能追加（`enhancement`）か バグ修正（`bug`）か
 - **追加ラベル**: `future`、`keybinding-edit` に該当するか
 
 ユーザーが十分な情報を既に伝えている場合は、確認なしで次へ進んでよい。
@@ -63,23 +53,25 @@ user-invocable: true
 
 ### 3. Issue 作成
 
+`draft` ラベルを必ず付与します。種別ラベルと併用します。
+
 ```bash
 gh issue create \
   --title "{タイトル}" \
   --body "{本文}" \
-  --label "{ラベル1}" \
-  --label "{ラベル2}"
+  --label "draft" \
+  --label "{種別ラベル}"
 ```
 
 ### 4. 報告と次のアクション提案
 
 作成した Issue の URL を報告し、以下を提案:
-- 「続けて `issue-enrichment` で詳細化しますか？」
+- 「続けて `/issue-enrichment` で詳細化しますか？」
 - 複数 Issue を作成する場合は繰り返し実行
 
 ## 注意事項
 
-- `status:ready` ラベルは付与しない（`issue-enrichment` の役割）
+- `draft` ラベルは必ず付与する（`issue-enrichment` の対象選定に使用）
 - タイトルは簡潔に（30文字程度を目安）
 - 概要は `issue-enrichment` が拡充するので、最小限でよい
 - 既存 Issue と重複しないか `gh issue list` で事前確認する

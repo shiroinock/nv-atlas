@@ -1,21 +1,48 @@
 ---
 name: propose-parallel-issues
-description: status:ready な Issue 間のファイル競合を判定し、worktree で同時実装可能な組み合わせを提案する。「並列でやれるの何？」「同時に進められる Issue は？」といった場面で使用。
+description: Project 上の実装可能な Issue 間のファイル競合を判定し、worktree で同時実装可能な組み合わせを提案する。「並列でやれるの何？」「同時に進められる Issue は？」といった場面で使用。
 user-invocable: true
 ---
 
 # 並列実装可能 Issue 提案スキル
 
-`status:ready` ラベル付きの Issue から対象ファイルを抽出し、ファイル競合のない同時実装可能な組み合わせを提案します。
+GitHub Project（KeyViz #6）から実装可能な Issue を取得し、対象ファイルの競合がない同時実装可能な組み合わせを提案します。
 `issue-enrichment` で書き込まれた「対象ファイル」セクションを前提とします。
+
+## GitHub Project 情報
+
+- **Project**: `shiroinock` owner, number `6`（KeyViz）
 
 ## 実行フロー
 
-### 1. 対象 Issue の取得
+### 1. 実装可能な Issue の取得
+
+Project の Todo アイテム（実 Issue のみ）を取得し、依存関係が全て解決済みのものを抽出します。
 
 ```bash
-gh issue list --state open --label "status:ready" --limit 20 --json number,title,body
+# Project の Todo アイテム（実 Issue、draft 除外）を取得
+gh project item-list 6 --owner shiroinock --format json \
+  | jq '[.items[] | select(.type == "Issue" and .status == "Todo")]'
 ```
+
+各 Issue について Blocked by を確認し、未解決の依存がある Issue は除外:
+
+```bash
+# Issue の blockedBy を確認（GraphQL）
+gh api graphql -f query='
+  query {
+    repository(owner: "shiroinock", name: "keyviz") {
+      issue(number: {番号}) {
+        blockedBy(first: 10) {
+          nodes { number state }
+        }
+      }
+    }
+  }
+'
+```
+
+In Progress の Issue も除外します（他セッションが実装中）。
 
 ### 2. 対象ファイルの抽出
 
@@ -149,5 +176,5 @@ claude --worktree issue-19 "/tdd-next 19"
 ## 注意事項
 
 - `issue-enrichment` の「対象ファイル」セクションフォーマット（`` - `{path}` — {説明} ``）に依存しています。フォーマット変更時は抽出ロジックの調整が必要です
-- `status:in-progress` の Issue は `gh issue list` のフィルタで除外されます（`status:ready` のみ取得）
+- In Progress の Issue は除外されます（他セッションが実装中）
 - **新規作成**と明記されたファイルは、既存ファイルの変更よりコンフリクトリスクが低いですが、同一パスの場合は競合として扱います
