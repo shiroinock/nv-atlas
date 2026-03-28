@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import styles from "./App.module.css";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { CommandReference } from "./components/CommandReference/CommandReference";
@@ -28,9 +27,8 @@ import {
 } from "./utils/storage";
 import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
 
-const DEFAULT_MATRIX_COLS = 7;
+const CORNE_V4_MATRIX_COLS = 7;
 const KEYMAP_LOADED_LABEL = "keymap loaded";
-const UNKNOWN_LAYOUT_NAME = "Unknown";
 
 export function App() {
   const { layout, loadFromJSON, error } = useKeyboardLayout();
@@ -49,7 +47,7 @@ export function App() {
   const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
-  const [matrixCols, setMatrixCols] = useState(DEFAULT_MATRIX_COLS);
+  const [matrixCols, setMatrixCols] = useState(CORNE_V4_MATRIX_COLS);
   const {
     nvimMaps,
     loading: nvimLoading,
@@ -96,7 +94,7 @@ export function App() {
         if (parsed.matrix?.cols) {
           setMatrixCols(parsed.matrix.cols);
         }
-        saveLayout(jsonString, parsed.name || UNKNOWN_LAYOUT_NAME);
+        saveLayout(jsonString, parsed.name || "Unknown");
       } catch {
         // ignore
       }
@@ -130,7 +128,7 @@ export function App() {
     setMatrixKeymap(null);
     setViaKeymapFull(null);
     setKeymapFileName(null);
-    setMatrixCols(DEFAULT_MATRIX_COLS); // Corne v4 default
+    setMatrixCols(CORNE_V4_MATRIX_COLS); // Corne v4 default
   }, [loadFromJSON]);
 
   const noopHover = useCallback(() => {}, []);
