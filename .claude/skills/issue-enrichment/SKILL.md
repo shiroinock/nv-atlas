@@ -14,11 +14,11 @@ user-invocable: true
 ### 1. 対象 Issue の選定
 
 ```bash
-# status:ready でない open Issue を取得
-gh issue list --state open --limit 10 --json number,title,labels,body
+# status:ready でも status:in-progress でもない open Issue を取得
+gh issue list --state open --limit 10 --exclude-labels "status:ready,status:in-progress" --json number,title,labels,body
 ```
 
-- `status:ready` ラベルが**ない** Issue を候補として表示
+- `status:ready` および `status:in-progress` ラベルが**ない** Issue を候補として表示
 - ユーザーに対象 Issue を確認
 
 ### 2. コードベース探索
