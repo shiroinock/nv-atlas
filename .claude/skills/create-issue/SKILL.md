@@ -1,17 +1,13 @@
 ---
 name: create-issue
-description: GitHub Project に draft item を作成する。ユーザーの要望からタイトル・概要を構成し、パイプラインに乗せる。「Issue 作ろう」「機能追加したい」「バグ見つけた」といった場面で使用。
+description: GitHub Issue を作成する。ユーザーの要望からタイトル・概要を構成し、パイプラインに乗せる。「Issue 作ろう」「機能追加したい」「バグ見つけた」といった場面で使用。
 user-invocable: true
 ---
 
 # Issue 作成スキル
 
-ユーザーの要望を聞き取り、GitHub Project（KeyViz #6）に draft item を作成します。
-draft は `issue-enrichment` で実 Issue に変換され、`tdd-next` で実装されます。
-
-## GitHub Project 情報
-
-- **Project**: `shiroinock` owner, number `6`（KeyViz）
+ユーザーの要望を聞き取り、GitHub Issue を作成します。
+作成した Issue は `issue-enrichment` → `tdd-next` パイプラインの起点になります。
 
 ## 実行フロー
 
@@ -19,11 +15,12 @@ draft は `issue-enrichment` で実 Issue に変換され、`tdd-next` で実装
 
 ユーザーが何をしたいかを確認します。以下を把握する:
 - **何をしたいか**（概要）
-- **種別**: 機能追加か バグ修正か
+- **種別**: 機能追加（`enhancement`）か バグ修正（`bug`）か
+- **追加ラベル**: `future`、`keybinding-edit` に該当するか
 
 ユーザーが十分な情報を既に伝えている場合は、確認なしで次へ進んでよい。
 
-### 2. Draft 本文の構成
+### 2. Issue 本文の構成
 
 種別に応じたフォーマットで本文を組み立てます。
 
@@ -54,23 +51,27 @@ draft は `issue-enrichment` で実 Issue に変換され、`tdd-next` で実装
 {本来どうあるべきか}
 ```
 
-### 3. Draft item 作成
+### 3. Issue 作成
+
+`draft` ラベルを必ず付与します。種別ラベルと併用します。
 
 ```bash
-gh project item-create 6 --owner shiroinock \
+gh issue create \
   --title "{タイトル}" \
-  --body "{本文}"
+  --body "{本文}" \
+  --label "draft" \
+  --label "{種別ラベル}"
 ```
 
 ### 4. 報告と次のアクション提案
 
-作成した draft の情報を報告し、以下を提案:
+作成した Issue の URL を報告し、以下を提案:
 - 「続けて `/issue-enrichment` で詳細化しますか？」
-- 複数 draft を作成する場合は繰り返し実行
+- 複数 Issue を作成する場合は繰り返し実行
 
 ## 注意事項
 
-- この段階では GitHub Issue は作成しない（draft item のみ）
-- 実 Issue への変換は `issue-enrichment` が行う
+- `draft` ラベルは必ず付与する（`issue-enrichment` の対象選定に使用）
 - タイトルは簡潔に（30文字程度を目安）
 - 概要は `issue-enrichment` が拡充するので、最小限でよい
+- 既存 Issue と重複しないか `gh issue list` で事前確認する
