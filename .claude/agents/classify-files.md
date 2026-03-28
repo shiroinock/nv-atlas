@@ -1,7 +1,7 @@
 ---
 name: classify-files
 description: 変更されたファイルを分析し、各ファイルに適用すべきレビュー観点とテストパターンを判定するエージェント
-model: haiku
+model: sonnet
 ---
 
 # ファイル分類エージェント

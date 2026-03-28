@@ -258,7 +258,7 @@ test-writer の出力:
 ```javascript
 {
   "subagent_type": "classify-files",
-  "model": "haiku",
+  "model": "sonnet",
   "prompt": "Issue #{番号}「{タイトル}」について、実装対象ファイルのテストパターンを判定してください。..."
 }
 ```
@@ -276,7 +276,7 @@ test-writer の出力:
 ```javascript
 {
   "subagent_type": "test-runner",
-  "model": "haiku",
+  "model": "sonnet",
   "prompt": "{testFilePath} のテストを実行し、{expectation} であることを確認してください。"
 }
 ```
@@ -294,7 +294,7 @@ test-writer の出力:
 ```javascript
 {
   "subagent_type": "review-file",
-  "model": "haiku",
+  "model": "opus",
   "prompt": "review-perspective-selector skill を使用して {implFilePath} に適切なレビュー観点を選択してください。..."
 }
 ```
@@ -303,7 +303,7 @@ test-writer の出力:
 ```javascript
 {
   "subagent_type": "plan-fix",
-  "model": "haiku",
+  "model": "opus",
   "prompt": "review-file の指摘事項に基づき、{implFilePath} の修正計画を作成してください。"
 }
 ```

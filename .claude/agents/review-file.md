@@ -1,7 +1,7 @@
 ---
 name: review-file
 description: 単一ファイルを指定された観点でレビューするエージェント
-model: haiku
+model: opus
 ---
 
 # ファイル単位レビューエージェント

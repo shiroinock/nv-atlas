@@ -1,7 +1,7 @@
 ---
 name: plan-fix
 description: レビュー結果を分析し、修正計画を立案するエージェント。修正可能な問題を特定し、具体的な修正指示を作成する。
-model: haiku
+model: opus
 ---
 
 # 修正計画エージェント
