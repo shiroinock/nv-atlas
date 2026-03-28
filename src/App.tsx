@@ -30,6 +30,7 @@ import { parseVIAKeymap, parseVIAKeymapFull } from "./utils/via-keymap-parser";
 
 const DEFAULT_MATRIX_COLS = 7;
 const KEYMAP_LOADED_LABEL = "keymap loaded";
+const UNKNOWN_LAYOUT_NAME = "Unknown";
 
 export function App() {
   const { layout, loadFromJSON, error } = useKeyboardLayout();
@@ -95,7 +96,7 @@ export function App() {
         if (parsed.matrix?.cols) {
           setMatrixCols(parsed.matrix.cols);
         }
-        saveLayout(jsonString, parsed.name || "Unknown");
+        saveLayout(jsonString, parsed.name || UNKNOWN_LAYOUT_NAME);
       } catch {
         // ignore
       }
