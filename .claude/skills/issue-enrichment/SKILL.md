@@ -24,14 +24,14 @@ user-invocable: true
 gh issue list --state open --label "draft" --limit 10 --json number,title,body
 
 # または、引数で Issue 番号が指定された場合はその Issue を直接対象にする
-gh issue view {番号} --json number,title,labels,body
+gh issue view {番号} --json number,title,labels,body,comments
 ```
 
 - ユーザーに対象を確認
 
 ### 2. コードベース探索
 
-Explore エージェントを使い、Issue のタイトル・概要から関連コードを調査します。
+Explore エージェントを使い、Issue のタイトル・概要・コメントから関連コードを調査します。
 
 **調査観点**:
 - 既存の関連ファイル・関数の特定
@@ -43,7 +43,7 @@ Explore エージェントを使い、Issue のタイトル・概要から関連
 ```javascript
 {
   "subagent_type": "Explore",
-  "prompt": "Issue #{番号}「{タイトル}」に関連するコードを調査してください。\n\n概要: {body}\n\n以下を特定してください:\n1. 直接変更が必要なファイル\n2. 参照・影響を受けるファイル\n3. 新規作成が必要なファイル\n4. 関連する型定義・インターフェース"
+  "prompt": "Issue #{番号}「{タイトル}」に関連するコードを調査してください。\n\n概要: {body}\n\nコメント（追加の要件・補足情報）:\n{comments}\n\n以下を特定してください:\n1. 直接変更が必要なファイル\n2. 参照・影響を受けるファイル\n3. 新規作成が必要なファイル\n4. 関連する型定義・インターフェース"
 }
 ```
 
