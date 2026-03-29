@@ -87,7 +87,7 @@ describe("ExportPanel", () => {
 
       render(<ExportPanel />);
 
-      const luaTab = screen.getByRole("button", { name: "Lua" });
+      const luaTab = screen.getByRole("tab", { name: "Lua" });
       expect(luaTab).toBeInTheDocument();
     });
 
@@ -118,7 +118,7 @@ describe("ExportPanel", () => {
 
       render(<ExportPanel />);
 
-      await user.click(screen.getByRole("button", { name: "JSON" }));
+      await user.click(screen.getByRole("tab", { name: "JSON" }));
 
       expect(screen.getByText('{"json": "output"}')).toBeInTheDocument();
     });
@@ -130,7 +130,7 @@ describe("ExportPanel", () => {
 
       render(<ExportPanel />);
 
-      await user.click(screen.getByRole("button", { name: "JSON" }));
+      await user.click(screen.getByRole("tab", { name: "JSON" }));
 
       expect(mockedKeybindingToJSON).toHaveBeenCalledWith(config);
     });
@@ -142,8 +142,8 @@ describe("ExportPanel", () => {
 
       render(<ExportPanel />);
 
-      await user.click(screen.getByRole("button", { name: "JSON" }));
-      await user.click(screen.getByRole("button", { name: "Lua" }));
+      await user.click(screen.getByRole("tab", { name: "JSON" }));
+      await user.click(screen.getByRole("tab", { name: "Lua" }));
 
       expect(screen.getByText("-- lua output")).toBeInTheDocument();
     });
@@ -234,7 +234,7 @@ describe("ExportPanel", () => {
 
       render(<ExportPanel />);
 
-      await user.click(screen.getByRole("button", { name: "JSON" }));
+      await user.click(screen.getByRole("tab", { name: "JSON" }));
       await user.click(screen.getByRole("button", { name: "コピー" }));
 
       expect(writeText).toHaveBeenCalledWith('{"json": "output"}');
@@ -286,11 +286,109 @@ describe("ExportPanel", () => {
 
       render(<ExportPanel />);
 
-      await user.click(screen.getByRole("button", { name: "JSON" }));
+      await user.click(screen.getByRole("tab", { name: "JSON" }));
       await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
       expect(capturedAnchor).toBeDefined();
       expect(capturedAnchor?.download).toBe("keyviz-config.json");
+    });
+  });
+
+  describe("ARIA ロール", () => {
+    test("タブコンテナに role='tablist' が付与されている", () => {
+      const config = buildConfigWithBindings();
+      setupContext(config);
+
+      render(<ExportPanel />);
+
+      expect(screen.getByRole("tablist")).toBeInTheDocument();
+    });
+
+    test("各タブに role='tab' が付与されている", () => {
+      const config = buildConfigWithBindings();
+      setupContext(config);
+
+      render(<ExportPanel />);
+
+      const tabs = screen.getAllByRole("tab");
+      expect(tabs).toHaveLength(2);
+    });
+
+    test("デフォルト表示で Lua タブの aria-selected が true、JSON タブが false", () => {
+      const config = buildConfigWithBindings();
+      setupContext(config);
+
+      render(<ExportPanel />);
+
+      expect(screen.getByRole("tab", { name: "Lua" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(screen.getByRole("tab", { name: "JSON" })).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+    });
+
+    test("タブパネルに role='tabpanel' が付与されている", () => {
+      const config = buildConfigWithBindings();
+      setupContext(config);
+
+      render(<ExportPanel />);
+
+      expect(screen.getByRole("tabpanel")).toBeInTheDocument();
+    });
+
+    test("各タブの aria-controls がタブパネルの id と一致する", () => {
+      const config = buildConfigWithBindings();
+      setupContext(config);
+
+      render(<ExportPanel />);
+
+      const tabpanel = screen.getByRole("tabpanel");
+      expect(tabpanel).toHaveAttribute("id", "tabpanel-export");
+
+      const luaTab = screen.getByRole("tab", { name: "Lua" });
+      expect(luaTab).toHaveAttribute("aria-controls", "tabpanel-export");
+
+      const jsonTab = screen.getByRole("tab", { name: "JSON" });
+      expect(jsonTab).toHaveAttribute("aria-controls", "tabpanel-export");
+    });
+
+    test("デフォルト表示でタブパネルの aria-labelledby が Lua タブの id と一致する", () => {
+      const config = buildConfigWithBindings();
+      setupContext(config);
+
+      render(<ExportPanel />);
+
+      const tabpanel = screen.getByRole("tabpanel");
+      expect(tabpanel).toHaveAttribute("aria-labelledby", "tab-lua");
+
+      const luaTab = screen.getByRole("tab", { name: "Lua" });
+      expect(luaTab).toHaveAttribute("id", "tab-lua");
+    });
+
+    test("JSON タブに切り替えると aria-selected と aria-labelledby が更新される", async () => {
+      const user = userEvent.setup();
+      const config = buildConfigWithBindings();
+      setupContext(config);
+
+      render(<ExportPanel />);
+
+      await user.click(screen.getByRole("tab", { name: "JSON" }));
+
+      expect(screen.getByRole("tab", { name: "JSON" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      expect(screen.getByRole("tab", { name: "Lua" })).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      expect(screen.getByRole("tabpanel")).toHaveAttribute(
+        "aria-labelledby",
+        "tab-json",
+      );
     });
   });
 });

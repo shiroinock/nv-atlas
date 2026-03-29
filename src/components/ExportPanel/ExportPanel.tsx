@@ -100,11 +100,15 @@ export function ExportPanel() {
   return (
     <div className={styles.container}>
       <div className={styles.toolbar}>
-        <div className={styles.tabs}>
+        <div className={styles.tabs} role="tablist">
           {(["lua", "json"] as ExportFormat[]).map((fmt) => (
             <button
               key={fmt}
               type="button"
+              role="tab"
+              id={`tab-${fmt}`}
+              aria-controls="tabpanel-export"
+              aria-selected={activeFormat === fmt}
               className={`${styles.tab} ${activeFormat === fmt ? styles.tabActive : ""}`}
               onClick={() => handleTabChange(fmt)}
             >
@@ -132,13 +136,19 @@ export function ExportPanel() {
         </div>
       </div>
 
-      {hasBindings ? (
-        <pre className={styles.preview}>{content}</pre>
-      ) : (
-        <p className={styles.empty}>
-          キーバインドが設定されていません。レイアウトとキーマップを読み込んでください。
-        </p>
-      )}
+      <div
+        role="tabpanel"
+        id="tabpanel-export"
+        aria-labelledby={`tab-${activeFormat}`}
+      >
+        {hasBindings ? (
+          <pre className={styles.preview}>{content}</pre>
+        ) : (
+          <p className={styles.empty}>
+            キーバインドが設定されていません。レイアウトとキーマップを読み込んでください。
+          </p>
+        )}
+      </div>
     </div>
   );
 }
