@@ -8,8 +8,8 @@ export interface KeyCaptureProps {
 }
 
 export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
-  const capturedKeyRef = useRef<string | null>(null);
-  const [capturedKey, setCapturedKey] = useState<string | null>(null);
+  const capturedKeyRef = useRef<string | null>(null); // クロージャの stale 回避用
+  const [capturedKey, setCapturedKey] = useState<string | null>(null); // レンダー用
 
   const onConfirmRef = useRef(onConfirm);
   const onCancelRef = useRef(onCancel);
@@ -24,12 +24,13 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
 
       if (vimKey === "") return;
 
-      e.preventDefault();
-
       if (e.key === "Escape") {
+        e.preventDefault();
         onCancelRef.current();
         return;
       }
+
+      e.preventDefault();
 
       if (e.key === "Enter" && capturedKeyRef.current !== null) {
         onConfirmRef.current(capturedKeyRef.current);
@@ -50,7 +51,7 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
   }, []);
 
   return (
-    <div className={styles.container} aria-live="polite">
+    <div className={styles.container} role="status" aria-live="polite">
       {capturedKey === null ? (
         <span className={styles.placeholder}>キーを押してください…</span>
       ) : (
