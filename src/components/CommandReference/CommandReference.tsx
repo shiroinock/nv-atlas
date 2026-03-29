@@ -15,6 +15,7 @@ import type {
   VimCommandCategory,
   VimCommandSource,
 } from "../../types/vim";
+import { matchesVimMode } from "../../types/vim";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
 
@@ -154,7 +155,7 @@ export function CommandReference({
     return commands.filter((cmd) => {
       // モードフィルタ: コマンドの modes に activeVimMode が含まれるか
       const modes = cmd.modes ?? ["n"];
-      if (!modes.includes(activeVimMode)) return false;
+      if (!matchesVimMode(modes, activeVimMode)) return false;
       if (!selectedCategories.has(cmd.category)) return false;
       if (
         hasSources &&
