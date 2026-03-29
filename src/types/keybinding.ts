@@ -26,6 +26,14 @@ export const APP_MODES = [
   "edit",
 ] as const satisfies AppMode[];
 
+/** AppMode の表示ラベル */
+export const APP_MODE_LABELS: Record<AppMode, string> = {
+  visualize: "可視化",
+  practice: "練習",
+  reference: "辞書",
+  edit: "編集",
+};
+
 /** バインディングの出自 */
 export type KeybindingSource =
   | "default"

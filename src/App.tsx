@@ -22,6 +22,7 @@ import {
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
 import { useNvimMaps } from "./hooks/useNvimMaps";
 import type { AppMode, KeybindingConfig, VimMode } from "./types/keybinding";
+import { APP_MODE_LABELS, APP_MODES } from "./types/keybinding";
 import type { HighlightEntry, VIAKeymapFull, VimCommand } from "./types/vim";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import {
@@ -185,34 +186,16 @@ function AppContent() {
           </div>
           <div className={styles.headerRight}>
             <div className={styles.modeTabs}>
-              <button
-                type="button"
-                className={`${styles.modeTab} ${mode === "visualize" ? styles.modeTabActive : ""}`}
-                onClick={() => setMode("visualize")}
-              >
-                可視化
-              </button>
-              <button
-                type="button"
-                className={`${styles.modeTab} ${mode === "practice" ? styles.modeTabActive : ""}`}
-                onClick={() => setMode("practice")}
-              >
-                練習
-              </button>
-              <button
-                type="button"
-                className={`${styles.modeTab} ${mode === "reference" ? styles.modeTabActive : ""}`}
-                onClick={() => setMode("reference")}
-              >
-                辞書
-              </button>
-              <button
-                type="button"
-                className={`${styles.modeTab} ${mode === "edit" ? styles.modeTabActive : ""}`}
-                onClick={() => setMode("edit")}
-              >
-                編集
-              </button>
+              {APP_MODES.map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  className={`${styles.modeTab} ${mode === m ? styles.modeTabActive : ""}`}
+                  onClick={() => setMode(m)}
+                >
+                  {APP_MODE_LABELS[m]}
+                </button>
+              ))}
             </div>
             {(mode === "visualize" || mode === "reference") && (
               <ModeSelector

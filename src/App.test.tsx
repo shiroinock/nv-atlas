@@ -338,6 +338,74 @@ describe("App - nvimMaps の表示", () => {
   });
 });
 
+describe("App - モードタブの宣言的生成", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("APP_MODE_LABELS の全エントリ（可視化・練習・辞書・編集）がボタンとして表示される", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    expect(screen.getByRole("button", { name: "可視化" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "練習" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "辞書" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "編集" })).toBeInTheDocument();
+  });
+
+  test("モードタブがちょうど4つ存在する", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    const modeTabs = screen
+      .getAllByRole("button")
+      .filter((btn) =>
+        ["可視化", "練習", "辞書", "編集"].includes(btn.textContent ?? ""),
+      );
+    expect(modeTabs).toHaveLength(4);
+  });
+
+  test("初期状態は可視化モードであり Keyboard が表示される", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    expect(screen.getByTestId("keyboard")).toBeInTheDocument();
+    expect(screen.queryByTestId("binding-editor")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("practice-mode")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("command-reference")).not.toBeInTheDocument();
+  });
+
+  test("「辞書」モードに切り替えると CommandReference が表示され練習UIは表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "辞書" }));
+
+    expect(screen.getByTestId("command-reference")).toBeInTheDocument();
+    expect(screen.queryByTestId("practice-mode")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("binding-editor")).not.toBeInTheDocument();
+  });
+
+  test("「練習」モードから「可視化」モードに戻すと PracticeMode が非表示になる", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "練習" }));
+    expect(screen.getByTestId("practice-mode")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "可視化" }));
+    expect(screen.queryByTestId("practice-mode")).not.toBeInTheDocument();
+    expect(screen.getByTestId("keyboard")).toBeInTheDocument();
+  });
+});
+
 describe("App - 編集モードの統合", () => {
   beforeEach(() => {
     vi.clearAllMocks();
