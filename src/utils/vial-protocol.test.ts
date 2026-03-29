@@ -376,6 +376,104 @@ describe("getKeyboardDefinition", () => {
 
     await expect(getKeyboardDefinition(vialDevice)).rejects.toThrow();
   });
+
+  it("不正な JSON（文字列値）でバリデーションエラーを投げる", async () => {
+    const mockDevice = createMockHIDDevice();
+
+    // "hello" は KLEJSON でも VIADefinition でもない
+    const invalidJson = JSON.stringify("hello");
+    const invalidBytes = new TextEncoder().encode(invalidJson);
+    const defSize = invalidBytes.length;
+
+    mockDevice.sendReport.mockImplementation(
+      async (_reportId: number, data: Uint8Array) => {
+        const cmd = data[0];
+        const subcmd = data[1];
+        setTimeout(() => {
+          if (cmd === 0xfe && subcmd === 0x02) {
+            const resp = new Uint8Array(32);
+            resp[0] = defSize & 0xff;
+            resp[1] = (defSize >> 8) & 0xff;
+            mockDevice._triggerInputReport(resp);
+          } else if (cmd === 0xfe && subcmd === 0x03) {
+            const offset = (data[2] << 8) | data[3];
+            const chunkSize = data[4];
+            const resp = new Uint8Array(32);
+            const chunk = invalidBytes.slice(offset, offset + chunkSize);
+            resp.set(chunk);
+            mockDevice._triggerInputReport(resp);
+          }
+        }, 0);
+      },
+    );
+
+    class DecompressionStreamMock {
+      readable: ReturnType<typeof createDecompressionStreamMock>["readable"];
+      writable: ReturnType<typeof createDecompressionStreamMock>["writable"];
+      constructor() {
+        const mock = createDecompressionStreamMock(invalidBytes);
+        this.readable = mock.readable;
+        this.writable = mock.writable;
+      }
+    }
+    vi.stubGlobal("DecompressionStream", DecompressionStreamMock);
+
+    const vialDevice: VialDevice = {
+      hid: mockDevice as unknown as HIDDevice,
+      productName: "Test Vial Keyboard",
+    };
+
+    await expect(getKeyboardDefinition(vialDevice)).rejects.toThrow();
+  });
+
+  it("不正な JSON（VIA定義でも KLE配列でもないオブジェクト）でバリデーションエラーを投げる", async () => {
+    const mockDevice = createMockHIDDevice();
+
+    // { foo: "bar" } は KLEJSON でも VIADefinition でもない
+    const invalidJson = JSON.stringify({ foo: "bar" });
+    const invalidBytes = new TextEncoder().encode(invalidJson);
+    const defSize = invalidBytes.length;
+
+    mockDevice.sendReport.mockImplementation(
+      async (_reportId: number, data: Uint8Array) => {
+        const cmd = data[0];
+        const subcmd = data[1];
+        setTimeout(() => {
+          if (cmd === 0xfe && subcmd === 0x02) {
+            const resp = new Uint8Array(32);
+            resp[0] = defSize & 0xff;
+            resp[1] = (defSize >> 8) & 0xff;
+            mockDevice._triggerInputReport(resp);
+          } else if (cmd === 0xfe && subcmd === 0x03) {
+            const offset = (data[2] << 8) | data[3];
+            const chunkSize = data[4];
+            const resp = new Uint8Array(32);
+            const chunk = invalidBytes.slice(offset, offset + chunkSize);
+            resp.set(chunk);
+            mockDevice._triggerInputReport(resp);
+          }
+        }, 0);
+      },
+    );
+
+    class DecompressionStreamMock {
+      readable: ReturnType<typeof createDecompressionStreamMock>["readable"];
+      writable: ReturnType<typeof createDecompressionStreamMock>["writable"];
+      constructor() {
+        const mock = createDecompressionStreamMock(invalidBytes);
+        this.readable = mock.readable;
+        this.writable = mock.writable;
+      }
+    }
+    vi.stubGlobal("DecompressionStream", DecompressionStreamMock);
+
+    const vialDevice: VialDevice = {
+      hid: mockDevice as unknown as HIDDevice,
+      productName: "Test Vial Keyboard",
+    };
+
+    await expect(getKeyboardDefinition(vialDevice)).rejects.toThrow();
+  });
 });
 
 // ============================================================

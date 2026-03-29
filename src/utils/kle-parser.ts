@@ -3,6 +3,7 @@ import type {
   KeyData,
   KLEJSON,
   KLEKeyProperties,
+  VIADefinition,
 } from "../types/keyboard";
 
 /**
@@ -137,16 +138,21 @@ export function parseVIAorKLE(json: unknown): KeyboardLayout {
   );
 }
 
-function isVIADefinition(
-  json: unknown,
-): json is { name: string; layouts: { keymap: KLEJSON } } {
+export function isVIADefinition(json: unknown): json is VIADefinition {
   return (
     typeof json === "object" &&
     json !== null &&
+    "name" in json &&
+    typeof (json as Record<string, unknown>).name === "string" &&
     "layouts" in json &&
     typeof (json as Record<string, unknown>).layouts === "object" &&
     (json as Record<string, unknown>).layouts !== null &&
     "keymap" in
       ((json as Record<string, unknown>).layouts as Record<string, unknown>)
   );
+}
+
+export function isKLEJSON(json: unknown): json is KLEJSON {
+  if (!Array.isArray(json)) return false;
+  return json.every((row) => Array.isArray(row));
 }

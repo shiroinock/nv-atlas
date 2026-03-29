@@ -3,7 +3,9 @@
  * WebHID API を通じて Vial 対応キーボードと通信する
  */
 
+import type { KLEJSON, VIADefinition } from "../types/keyboard";
 import type { VialDevice } from "../types/vial";
+import { isKLEJSON, isVIADefinition } from "./kle-parser";
 
 // Vial コマンド定数
 const VIAL_CMD_PREFIX = 0xfe;
@@ -163,7 +165,7 @@ export async function disconnectVialDevice(device: VialDevice): Promise<void> {
  */
 export async function getKeyboardDefinition(
   device: VialDevice,
-): Promise<unknown> {
+): Promise<KLEJSON | VIADefinition> {
   // vial_get_size コマンドを送信してデータサイズを取得
   const sizeCmd = new Uint8Array(HID_REPORT_SIZE);
   sizeCmd[0] = VIAL_CMD_PREFIX;
@@ -232,7 +234,12 @@ export async function getKeyboardDefinition(
   }
 
   const jsonText = new TextDecoder().decode(decompressed);
-  return JSON.parse(jsonText);
+  const parsed: unknown = JSON.parse(jsonText);
+  if (isVIADefinition(parsed)) return parsed;
+  if (isKLEJSON(parsed)) return parsed;
+  throw new Error(
+    "Invalid keyboard definition: expected VIA definition or KLE JSON array",
+  );
 }
 
 /**

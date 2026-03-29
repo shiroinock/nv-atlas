@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { KLEJSON } from "../types/keyboard";
-import { parseKLE, parseVIAorKLE } from "./kle-parser";
+import {
+  isKLEJSON,
+  isVIADefinition,
+  parseKLE,
+  parseVIAorKLE,
+} from "./kle-parser";
 
 describe("parseKLE", () => {
   it("単純な3キー1行をパースして正しいキー数・座標・ラベルを返す", () => {
@@ -103,5 +108,82 @@ describe("parseVIAorKLE", () => {
     expect(() => parseVIAorKLE(42)).toThrow();
     expect(() => parseVIAorKLE({ foo: "bar" })).toThrow();
     expect(() => parseVIAorKLE(null)).toThrow();
+  });
+});
+
+describe("isVIADefinition", () => {
+  it("layouts.keymap を持つオブジェクトで true を返す", () => {
+    const viaJson = {
+      name: "MyKeyboard",
+      layouts: {
+        keymap: [["0,0", "0,1"]] as KLEJSON,
+      },
+    };
+
+    expect(isVIADefinition(viaJson)).toBe(true);
+  });
+
+  it("layouts プロパティがないオブジェクトで false を返す", () => {
+    const json = { name: "MyKeyboard" };
+
+    expect(isVIADefinition(json)).toBe(false);
+  });
+
+  it("layouts はあるが keymap がないオブジェクトで false を返す", () => {
+    const json = { name: "MyKeyboard", layouts: { labels: [] } };
+
+    expect(isVIADefinition(json)).toBe(false);
+  });
+
+  it("null で false を返す", () => {
+    expect(isVIADefinition(null)).toBe(false);
+  });
+
+  it("配列で false を返す", () => {
+    const json: KLEJSON = [["0,0", "0,1"]];
+
+    expect(isVIADefinition(json)).toBe(false);
+  });
+
+  it("プリミティブ値（文字列）で false を返す", () => {
+    expect(isVIADefinition("invalid")).toBe(false);
+  });
+});
+
+describe("isKLEJSON", () => {
+  it("配列の配列（KLERow[]）で true を返す", () => {
+    const kle: KLEJSON = [["0,0", "0,1"], ["1,0"]];
+
+    expect(isKLEJSON(kle)).toBe(true);
+  });
+
+  it("空配列で true を返す（空の KLE JSON）", () => {
+    expect(isKLEJSON([])).toBe(true);
+  });
+
+  it("プロパティオブジェクトを含む KLERow[] で true を返す", () => {
+    const kle: KLEJSON = [[{ w: 1.5 }, "0,0", "0,1"]];
+
+    expect(isKLEJSON(kle)).toBe(true);
+  });
+
+  it("非配列（オブジェクト）で false を返す", () => {
+    const json = { name: "MyKeyboard", layouts: { keymap: [] } };
+
+    expect(isKLEJSON(json)).toBe(false);
+  });
+
+  it("非配列（文字列）で false を返す", () => {
+    expect(isKLEJSON("invalid")).toBe(false);
+  });
+
+  it("非配列（null）で false を返す", () => {
+    expect(isKLEJSON(null)).toBe(false);
+  });
+
+  it("配列だが要素が配列でない場合 false を返す", () => {
+    const json = ["0,0", "0,1"];
+
+    expect(isKLEJSON(json)).toBe(false);
   });
 });
