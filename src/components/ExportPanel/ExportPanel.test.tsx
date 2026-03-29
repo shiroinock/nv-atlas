@@ -225,6 +225,23 @@ describe("ExportPanel", () => {
       ).toBeInTheDocument();
     });
 
+    test("コピー失敗時「失敗」が表示される", async () => {
+      const user = userEvent.setup();
+      const config = buildConfigWithBindings();
+      setupContext(config);
+      vi.stubGlobal("navigator", {
+        clipboard: {
+          writeText: vi.fn().mockRejectedValue(new Error("Clipboard error")),
+        },
+      });
+
+      render(<ExportPanel />);
+
+      await user.click(screen.getByRole("button", { name: "コピー" }));
+
+      expect(screen.getByRole("button", { name: "失敗" })).toBeInTheDocument();
+    });
+
     test("JSON タブに切り替えてコピーすると JSON 出力が渡される", async () => {
       const user = userEvent.setup();
       const config = buildConfigWithBindings();
