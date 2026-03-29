@@ -1,0 +1,129 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ModeSelector > スナップショット > activeMode='n' のデフォルト状態 1`] = `
+<div
+  class="_container_e815f2"
+>
+  <span
+    class="_label_e815f2"
+  >
+    Vim mode:
+  </span>
+  <div
+    class="_tabs_e815f2"
+  >
+    <button
+      class="_tab_e815f2 _tabActive_e815f2"
+      title="Normal"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        N
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Normal
+      </span>
+    </button>
+    <button
+      class="_tab_e815f2 "
+      title="Visual"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        V
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Visual
+      </span>
+    </button>
+    <button
+      class="_tab_e815f2 "
+      title="Op-pending"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        O
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Op-pending
+      </span>
+    </button>
+    <button
+      class="_tab_e815f2 "
+      title="Insert"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        I
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Insert
+      </span>
+    </button>
+    <button
+      class="_tab_e815f2 "
+      title="Command-line"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        C
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Command-line
+      </span>
+    </button>
+    <button
+      class="_tab_e815f2 "
+      title="Select"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        S
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Select
+      </span>
+    </button>
+    <button
+      class="_tab_e815f2 "
+      title="Terminal"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        T
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Terminal
+      </span>
+    </button>
+  </div>
+</div>
+`;
