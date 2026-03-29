@@ -8,6 +8,7 @@ export interface KeyCaptureProps {
 }
 
 export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const capturedKeyRef = useRef<string | null>(null); // クロージャの stale 回避用
   const [capturedKey, setCapturedKey] = useState<string | null>(null); // レンダー用
 
@@ -17,12 +18,19 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
   onCancelRef.current = onCancel;
 
   useEffect(() => {
+    containerRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const vimKey = normalizeKeyEvent(e);
 
       if (vimKey === "") return;
 
-      if (e.key === "Escape") {
+      if (vimKey === "<Esc>") {
         e.preventDefault();
         onCancelRef.current();
         return;
@@ -44,12 +52,19 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
       setCapturedKey(vimKey);
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    el.addEventListener("keydown", handleKeyDown);
+    return () => el.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
-    <div className={styles.container} role="status">
+    <div
+      ref={containerRef}
+      className={styles.container}
+      role="status"
+      aria-label="キー入力キャプチャ"
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: キーキャプチャにフォーカスが必要
+      tabIndex={0}
+    >
       {capturedKey === null ? (
         <span className={styles.placeholder}>キーを押してください…</span>
       ) : (
