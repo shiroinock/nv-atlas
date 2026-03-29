@@ -249,11 +249,32 @@ gh issue comment {番号} --body "実装完了。ブランチ: {ブランチ名}
 # 3. PR マージ確認後、Project Status を Done に変更
 ITEM_ID=$(gh project item-list 6 --owner shiroinock --format json \
   | jq -r '.items[] | select(.content.number == {番号}) | .id')
-gh project item-edit \
-  --id "$ITEM_ID" \
-  --project-id "PVT_kwHOAq02ps4BTFDk" \
-  --field-id "PVTSSF_lAHOAq02ps4BTFDkzhAbPBc" \
-  --single-select-option-id "98236657"
+
+for i in 1 2 3; do
+  gh project item-edit \
+    --id "$ITEM_ID" \
+    --project-id "PVT_kwHOAq02ps4BTFDk" \
+    --field-id "PVTSSF_lAHOAq02ps4BTFDkzhAbPBc" \
+    --single-select-option-id "98236657"
+
+  # 反映確認
+  STATUS=$(gh project item-list 6 --owner shiroinock --format json \
+    | jq -r '.items[] | select(.content.number == {番号}) | .status')
+  if [ "$STATUS" = "Done" ]; then
+    echo "✓ Project Status が Done に更新されました"
+    break
+  fi
+
+  if [ "$i" -lt 3 ]; then
+    echo "⚠ Status が Done に反映されていません（試行 $i/3）。5秒後にリトライ..."
+    sleep 5
+  fi
+done
+
+if [ "$STATUS" != "Done" ]; then
+  echo "⚠ 警告: 3回リトライしましたが Project Status が Done に反映されませんでした。"
+  echo "GitHub Project ボード（https://github.com/orgs/shiroinock/projects/6）を手動で確認してください。"
+fi
 ```
 
 > **Note**: `gh issue close` は実行しない。PR 本文の `Closes #{番号}` によりマージ時に自動クローズされる。
@@ -278,11 +299,32 @@ gh issue close {番号}
 # 3. Project Status を Done に変更
 ITEM_ID=$(gh project item-list 6 --owner shiroinock --format json \
   | jq -r '.items[] | select(.content.number == {番号}) | .id')
-gh project item-edit \
-  --id "$ITEM_ID" \
-  --project-id "PVT_kwHOAq02ps4BTFDk" \
-  --field-id "PVTSSF_lAHOAq02ps4BTFDkzhAbPBc" \
-  --single-select-option-id "98236657"
+
+for i in 1 2 3; do
+  gh project item-edit \
+    --id "$ITEM_ID" \
+    --project-id "PVT_kwHOAq02ps4BTFDk" \
+    --field-id "PVTSSF_lAHOAq02ps4BTFDkzhAbPBc" \
+    --single-select-option-id "98236657"
+
+  # 反映確認
+  STATUS=$(gh project item-list 6 --owner shiroinock --format json \
+    | jq -r '.items[] | select(.content.number == {番号}) | .status')
+  if [ "$STATUS" = "Done" ]; then
+    echo "✓ Project Status が Done に更新されました"
+    break
+  fi
+
+  if [ "$i" -lt 3 ]; then
+    echo "⚠ Status が Done に反映されていません（試行 $i/3）。5秒後にリトライ..."
+    sleep 5
+  fi
+done
+
+if [ "$STATUS" != "Done" ]; then
+  echo "⚠ 警告: 3回リトライしましたが Project Status が Done に反映されませんでした。"
+  echo "GitHub Project ボード（https://github.com/orgs/shiroinock/projects/6）を手動で確認してください。"
+fi
 ```
 
 **エラー発生時のロールバック**:
