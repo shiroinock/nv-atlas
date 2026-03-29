@@ -10,10 +10,13 @@ user-invocable: true
 
 ## 実行手順
 
-1. 開始メッセージを表示
-2. 3つの sub agent（biome-check、test-check、build-check）を**並列起動**
-3. 各 sub agent の出力を取得
-4. 結果を集計してサマリーを表示
+1. 開始メッセージを表示: `Local CI を実行します...`
+2. 以下の 3 コマンドを **並列に Bash ツールで実行**（1 メッセージで 3 つの Bash tool call を送る）:
+   - `pnpm lint`
+   - `pnpm test`
+   - `pnpm build`
+3. 各コマンドの **exit code** で PASS/FAIL を判定
+4. 結果をサマリーとして表示
 
 ## 使い方
 
@@ -21,23 +24,32 @@ user-invocable: true
 /local-ci
 ```
 
-このコマンドを実行すると、3つのチェック（Biome check、Test、Build）が並列実行されます。
+## PASS/FAIL 判定ルール（厳守）
 
-## サブエージェント結果の検証ルール
+**exit code が唯一の判定基準である。それ以外の方法で PASS/FAIL を判定してはならない。**
 
-サブエージェントの報告を受け取った際、以下のルールに従って結果を検証してください。
+| exit code | status |
+|-----------|--------|
+| 0         | PASSED |
+| 0 以外    | FAILED |
 
-### 原則
-原則として、サブエージェントが報告した `"status": "PASSED"` または `"status": "FAILED"` を**そのまま採用する**。各サブエージェントは exit code に基づいて判定しているため、その判定結果を上書きしない。**ただし、下記「疑わしい報告のパターン」に該当する場合のみ例外として再検証する。**
+### 禁止事項
+- コマンドの **テキスト出力（stdout/stderr）を読んで PASS/FAIL を判断してはならない**
+- 警告メッセージが出力されても、exit code が 0 なら **PASSED** である
+- 「エラーがありそう」「問題がありそう」という推測で FAILED と報告してはならない
 
-### 疑わしい報告のパターン（例外）
-以下のパターンに該当する場合に限り、**サブエージェントの報告が誤っている可能性がある**ため再検証する：
-- `"status": "FAILED"` だが `"errors"` 配列が空、または警告レベルの内容しかない
-- `"status": "PASSED"` だが `"details"` が全て空またはゼロ（コマンド未実行の疑い）
-- `"summary"` に「インストールされていない」「見つからない」等の推測的な文言がある
-- 報告内容がコマンドの実行結果ではなく、エージェントの推測に基づいている
+## サマリーフォーマット
 
-### 疑わしい場合の対処
-1. そのサブエージェントのチェックを **自分で直接再実行する**（`pnpm lint` / `pnpm test` / `pnpm build`）
-2. 再実行の exit code で最終的な PASS/FAIL を判定する
-3. 再実行結果で上書きしたことをサマリーに明記する
+全コマンド完了後、以下の形式で結果を表示:
+
+```
+## Local CI Results
+
+| Check | Status | Duration |
+|-------|--------|----------|
+| Biome | PASSED/FAILED | Xs |
+| Test  | PASSED/FAILED | Xs |
+| Build | PASSED/FAILED | Xs |
+
+{FAILED がある場合はエラー出力を引用}
+```
