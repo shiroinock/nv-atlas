@@ -5,6 +5,10 @@ import { defaultCustomKeymap } from "./data/keymap";
 import type { KeybindingConfig } from "./types/keybinding";
 import { emptyBindings } from "./types/keybinding";
 
+vi.mock("./components/ExportPanel/ExportPanel", () => ({
+  ExportPanel: vi.fn(() => <div data-testid="export-panel" />),
+}));
+
 // 子コンポーネントをモック化して渡された customKeymap props を検証する
 vi.mock("./components/PracticeMode/PracticeMode", () => ({
   PracticeMode: vi.fn(
@@ -212,5 +216,41 @@ describe("AppContent - customKeymap の反映", () => {
       const lastCall = calls[calls.length - 1];
       expect(lastCall[0].customKeymap).toEqual(customKeymap);
     });
+  });
+});
+
+describe("App - ExportPanel の表示", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("可視化モードで ExportPanel が render される", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    expect(screen.getByTestId("export-panel")).toBeInTheDocument();
+  });
+
+  test("練習モードでは ExportPanel が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "練習" }));
+
+    expect(screen.queryByTestId("export-panel")).not.toBeInTheDocument();
+  });
+
+  test("辞書モードでは ExportPanel が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "辞書" }));
+
+    expect(screen.queryByTestId("export-panel")).not.toBeInTheDocument();
   });
 });

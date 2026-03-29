@@ -125,6 +125,10 @@
   margin-bottom: 24px;
 }
 
+.export {
+  margin-bottom: 24px;
+}
+
 .legend {
   display: flex;
   flex-wrap: wrap;

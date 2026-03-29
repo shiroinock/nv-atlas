@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./App.module.css";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { CommandReference } from "./components/CommandReference/CommandReference";
+import { ExportPanel } from "./components/ExportPanel/ExportPanel";
 import { Keyboard } from "./components/Keyboard/Keyboard";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
 import { ModeSelector } from "./components/ModeSelector/ModeSelector";
@@ -267,6 +268,12 @@ function AppContent() {
             command={hoveredCommand}
             customKey={hoveredCustomKey}
           />
+        </div>
+      )}
+
+      {mode === "visualize" && (
+        <div className={styles.export}>
+          <ExportPanel />
         </div>
       )}
 

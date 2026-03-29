@@ -1,0 +1,103 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: #181825;
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.tab {
+  padding: 4px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #6c7086;
+  background: transparent;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.tab:hover {
+  color: #a6adc8;
+}
+
+.tabActive {
+  background: #313244;
+  color: #cdd6f4;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.actionButton {
+  padding: 4px 12px;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  background: transparent;
+  color: #a6adc8;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.actionButton:hover:not(:disabled) {
+  border-color: #89b4fa;
+  color: #89b4fa;
+}
+
+.actionButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.actionButtonSuccess {
+  border-color: #a6e3a1;
+  color: #a6e3a1;
+}
+
+.preview {
+  background: #181825;
+  border: 1px solid #313244;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  color: #cdd6f4;
+  line-height: 1.6;
+  overflow-x: auto;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre;
+  margin: 0;
+}
+
+.empty {
+  font-size: 13px;
+  color: #6c7086;
+  padding: 16px;
+  background: #181825;
+  border: 1px dashed #45475a;
+  border-radius: 8px;
+  text-align: center;
+  margin: 0;
+}
