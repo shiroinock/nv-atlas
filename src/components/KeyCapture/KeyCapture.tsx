@@ -38,13 +38,19 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
 
       e.preventDefault();
 
-      if (e.key === "Enter" && capturedKeyRef.current !== null) {
-        onConfirmRef.current(capturedKeyRef.current);
+      if (vimKey === "<CR>" && capturedKeyRef.current !== null) {
+        const key = capturedKeyRef.current;
+        capturedKeyRef.current = null;
+        setCapturedKey(null);
+        onConfirmRef.current(key);
         return;
       }
 
       if (vimKey === capturedKeyRef.current) {
-        onConfirmRef.current(capturedKeyRef.current);
+        const key = capturedKeyRef.current;
+        capturedKeyRef.current = null;
+        setCapturedKey(null);
+        onConfirmRef.current(key);
         return;
       }
 
@@ -60,7 +66,7 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
     <div
       ref={containerRef}
       className={styles.container}
-      role="status"
+      role="application"
       aria-label="キー入力キャプチャ"
       // biome-ignore lint/a11y/noNoninteractiveTabindex: キーキャプチャにフォーカスが必要
       tabIndex={0}
