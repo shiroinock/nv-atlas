@@ -386,6 +386,134 @@ describe("isStoredKeybindingConfig", () => {
     expect(isStoredKeybindingConfig(42)).toBe(false);
     expect(isStoredKeybindingConfig(undefined)).toBe(false);
   });
+
+  describe("bindings 要素レベル検証", () => {
+    const validBinding = {
+      lhs: "j",
+      name: "下に移動",
+      description: "カーソルを下に移動",
+      category: "motion",
+      source: "default",
+      noremap: true,
+    };
+
+    const allModesWithBinding = {
+      n: [validBinding],
+      v: [validBinding],
+      x: [validBinding],
+      o: [validBinding],
+      i: [validBinding],
+      s: [validBinding],
+      c: [validBinding],
+      t: [validBinding],
+    };
+
+    it("全モードが空配列の場合 true を返す", () => {
+      expect(isStoredKeybindingConfig(validConfig)).toBe(true);
+    });
+
+    it("正常な Keybinding 要素を含む場合 true を返す", () => {
+      const config = { ...validConfig, bindings: allModesWithBinding };
+      expect(isStoredKeybindingConfig(config)).toBe(true);
+    });
+
+    it("lhs が欠落している要素がある場合 false を返す", () => {
+      const { lhs: _lhs, ...withoutLhs } = validBinding;
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withoutLhs] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("name が欠落している要素がある場合 false を返す", () => {
+      const { name: _name, ...withoutName } = validBinding;
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withoutName] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("description が欠落している要素がある場合 false を返す", () => {
+      const { description: _description, ...withoutDescription } = validBinding;
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withoutDescription] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("source が欠落している要素がある場合 false を返す", () => {
+      const { source: _source, ...withoutSource } = validBinding;
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withoutSource] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("noremap が欠落している要素がある場合 false を返す", () => {
+      const { noremap: _noremap, ...withoutNoremap } = validBinding;
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withoutNoremap] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("category が欠落している要素がある場合 false を返す", () => {
+      const { category: _category, ...withoutCategory } = validBinding;
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withoutCategory] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("noremap が boolean でなく string の場合 false を返す", () => {
+      const withStringNoremap = { ...validBinding, noremap: "true" };
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [withStringNoremap] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("要素がオブジェクトでなく文字列の場合 false を返す", () => {
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: ["j"] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("要素がオブジェクトでなく数値の場合 false を返す", () => {
+      const config = {
+        ...validConfig,
+        bindings: { ...allModesWithBinding, n: [42] },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+
+    it("一部のモードに正常な要素があり、別のモードに不正な要素がある場合 false を返す", () => {
+      const { lhs: _lhs, ...withoutLhs } = validBinding;
+      const config = {
+        ...validConfig,
+        bindings: {
+          n: [validBinding],
+          v: [validBinding],
+          x: [validBinding],
+          o: [validBinding],
+          i: [validBinding],
+          s: [validBinding],
+          c: [validBinding],
+          t: [withoutLhs],
+        },
+      };
+      expect(isStoredKeybindingConfig(config)).toBe(false);
+    });
+  });
 });
 
 describe("保存キー", () => {

@@ -94,11 +94,25 @@ export function clearAllStorage(): void {
   clearKeybindingConfig();
 }
 
-// NOTE: bindings 内の個々の Keybinding オブジェクトは検証しない。
-// スキーマ変更時はここに移行ロジックを追加すること。
+function isValidBindingElement(element: unknown): boolean {
+  if (typeof element !== "object" || element === null) return false;
+  const e = element as Record<string, unknown>;
+  return (
+    typeof e.lhs === "string" &&
+    typeof e.name === "string" &&
+    typeof e.description === "string" &&
+    typeof e.category === "string" &&
+    typeof e.source === "string" &&
+    typeof e.noremap === "boolean"
+  );
+}
+
 function hasValidBindings(bindings: Record<string, unknown>): boolean {
   return VIM_MODES.every(
-    (mode) => mode in bindings && Array.isArray(bindings[mode]),
+    (mode) =>
+      mode in bindings &&
+      Array.isArray(bindings[mode]) &&
+      (bindings[mode] as unknown[]).every(isValidBindingElement),
   );
 }
 
