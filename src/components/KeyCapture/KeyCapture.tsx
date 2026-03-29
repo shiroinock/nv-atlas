@@ -13,10 +13,8 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
 
   const onConfirmRef = useRef(onConfirm);
   const onCancelRef = useRef(onCancel);
-  useEffect(() => {
-    onConfirmRef.current = onConfirm;
-    onCancelRef.current = onCancel;
-  });
+  onConfirmRef.current = onConfirm;
+  onCancelRef.current = onCancel;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,7 +49,7 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
   }, []);
 
   return (
-    <div className={styles.container} role="status" aria-live="polite">
+    <div className={styles.container} role="status">
       {capturedKey === null ? (
         <span className={styles.placeholder}>キーを押してください…</span>
       ) : (
