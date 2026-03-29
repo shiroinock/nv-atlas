@@ -63,8 +63,8 @@ gh run watch "$RUN_ID" --exit-status
 
 **CI 失敗時**:
 ```bash
-# 失敗ログを取得・分析
-gh run view "$RUN_ID" --log-failed
+# 失敗ログを取得・分析（サンドボックス環境では GH_CACHE_DIR を $TMPDIR に変更）
+GH_CACHE_DIR=$TMPDIR gh run view "$RUN_ID" --log-failed
 ```
 
 1. エラーログを分析
