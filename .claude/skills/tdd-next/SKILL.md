@@ -197,12 +197,16 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
 6. (失敗時) plan-fix → implement → local-ci → review-file（最大3回）
 ```
 
-### 5. Issue 更新
+### 5. 完了フロー
 
-タスク完了後、GitHub Issue を更新します:
+パイプライン完了後、ユーザーに **PR を作成するか** を確認し、回答に応じて完了フローを分岐します。
+
+#### パス A: PR あり完了（通常フロー）
+
+PR を作成してマージする場合のフローです。
 
 ```bash
-# Issue にコメントを追加
+# 1. Issue にコメントを追加
 gh issue comment {番号} --body "実装完了。ブランチ: {ブランチ名}
 
 ### 作成ファイル
@@ -213,7 +217,11 @@ gh issue comment {番号} --body "実装完了。ブランチ: {ブランチ名}
 - 実行: {total} tests
 - 成功: {passed} passed"
 
-# 正常完了時: Project Status を Done に変更（PR マージ時に Issue クローズされる想定）
+# 2. PR 作成（本文に Closes #{番号} を含める）
+#    → PR マージ時に GitHub が自動で Issue をクローズする
+#    → PR 作成・マージの手順はセクション「3. PR 作成・マージについて」を参照
+
+# 3. PR マージ確認後、Project Status を Done に変更
 ITEM_ID=$(gh project item-list 6 --owner shiroinock --format json \
   | jq -r '.items[] | select(.content.number == {番号}) | .id')
 gh project item-edit \
@@ -221,9 +229,35 @@ gh project item-edit \
   --project-id "PVT_kwHOAq02ps4BTFDk" \
   --field-id "PVTSSF_lAHOAq02ps4BTFDkzhAbPBc" \
   --single-select-option-id "98236657"
+```
 
-# Issue をクローズ（ユーザーに確認後）
-# gh issue close {番号}
+> **Note**: `gh issue close` は実行しない。PR 本文の `Closes #{番号}` によりマージ時に自動クローズされる。
+
+#### パス B: PR なし完了
+
+`.gitignore` 対象ファイルのみの変更など、PR を作成せずに完了する場合のフローです。
+
+```bash
+# 1. Issue にコメントを追加
+gh issue comment {番号} --body "実装完了（PR なし）。
+
+### 変更ファイル
+- {変更ファイルパス}
+
+### 変更内容
+{変更の概要}"
+
+# 2. Issue をクローズ
+gh issue close {番号}
+
+# 3. Project Status を Done に変更
+ITEM_ID=$(gh project item-list 6 --owner shiroinock --format json \
+  | jq -r '.items[] | select(.content.number == {番号}) | .id')
+gh project item-edit \
+  --id "$ITEM_ID" \
+  --project-id "PVT_kwHOAq02ps4BTFDk" \
+  --field-id "PVTSSF_lAHOAq02ps4BTFDkzhAbPBc" \
+  --single-select-option-id "98236657"
 ```
 
 **エラー発生時のロールバック**:
@@ -267,10 +301,15 @@ gh project item-edit \
 - Tests: PASS/FAIL ({total} tests passed)
 - Build: PASS/FAIL
 
-### 次のアクション
+### 次のアクション（パス A: PR あり）
 - [ ] コードレビュー
-- [ ] PR 作成
-- [ ] Issue クローズ
+- [ ] PR 作成（`Closes #{番号}` を本文に含める）
+- [ ] PR マージ（GitHub が自動で Issue クローズ）
+- [ ] Project Status → Done
+
+### 次のアクション（パス B: PR なし）
+- [x] Issue クローズ済み
+- [x] Project Status → Done 済み
 ```
 
 ## エージェント起動の注意点
@@ -381,7 +420,7 @@ classify-files が提案したパスを厳守:
 ### 2. Issue の更新タイミング
 - **全パイプライン完了後**に更新
 - 途中でエラーが起きた場合は更新しない
-- Issue のクローズはユーザーに確認してから
+- 完了フローは「パス A（PR あり）」と「パス B（PR なし）」に分岐する（セクション 5 参照）
 
 ### 3. PR 作成・マージについて
 
