@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`KeyCapture > スナップショット > キーキャプチャ後のプレビュー状態のスナップショット 1`] = `
+<div
+  aria-label="キー入力キャプチャ"
+  class="_container_8f211b"
+  role="application"
+  tabindex="-1"
+>
+  <div
+    class="_preview_8f211b"
+  >
+    <kbd
+      class="_keyBadge_8f211b"
+    >
+      a
+    </kbd>
+    <span
+      class="_hint_8f211b"
+    >
+      Enter または同じキーで確定 / Escape でキャンセル
+    </span>
+  </div>
+</div>
+`;
+
+exports[`KeyCapture > スナップショット > 初期状態（キー入力待ち）のスナップショット 1`] = `
+<div
+  aria-label="キー入力キャプチャ"
+  class="_container_8f211b"
+  role="application"
+  tabindex="-1"
+>
+  <span
+    class="_placeholder_8f211b"
+  >
+    キーを押してください…
+  </span>
+</div>
+`;
