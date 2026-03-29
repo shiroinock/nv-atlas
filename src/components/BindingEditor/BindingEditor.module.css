@@ -1,0 +1,161 @@
+/* Catppuccin Mocha テーマに準拠したバインディングエディタ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #1e1e2e;
+  border-radius: 12px;
+  border: 1px solid #313244;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #cdd6f4;
+  margin: 0;
+}
+
+.empty {
+  color: #6c7086;
+  font-size: 14px;
+  text-align: center;
+  padding: 32px 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.headerRow th {
+  padding: 8px 12px;
+  text-align: left;
+  color: #6c7086;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #313244;
+}
+
+.row {
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.row:hover {
+  background: #24273a;
+}
+
+.rowEditing {
+  background: #181825;
+  cursor: default;
+}
+
+.row td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #181825;
+  vertical-align: middle;
+}
+
+/* 列幅 */
+.thKey,
+.tdKey {
+  width: 120px;
+  white-space: nowrap;
+}
+
+.thName,
+.tdName {
+  min-width: 160px;
+}
+
+.thCategory,
+.tdCategory,
+.thSource,
+.tdSource {
+  width: 110px;
+  white-space: nowrap;
+}
+
+.thActions,
+.tdActions {
+  width: 120px;
+  white-space: nowrap;
+}
+
+.keyBadge {
+  display: inline-block;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: "SF Mono", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #89b4fa;
+  letter-spacing: 0.02em;
+}
+
+.commandName {
+  display: block;
+  color: #cdd6f4;
+  font-weight: 500;
+}
+
+.description {
+  display: block;
+  color: #6c7086;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.badge {
+  display: inline-block;
+  background: color-mix(in srgb, var(--badge-color) 15%, #1e1e2e);
+  border: 1px solid color-mix(in srgb, var(--badge-color) 50%, transparent);
+  color: var(--badge-color);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.actionButton {
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  color: #a6adc8;
+  font-size: 11px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.1s,
+    color 0.1s;
+}
+
+.actionButton:hover {
+  background: #45475a;
+  color: #cdd6f4;
+}
+
+.actionButton + .actionButton {
+  margin-left: 4px;
+}
+
+.actionButtonRemove:hover {
+  background: color-mix(in srgb, #f38ba8 20%, #313244);
+  border-color: #f38ba8;
+  color: #f38ba8;
+}
