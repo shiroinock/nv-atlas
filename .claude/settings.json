@@ -11,5 +11,8 @@
   },
   "worktree": {
     "symlinkDirectories": ["node_modules"]
+  },
+  "sandbox": {
+    "excludedCommands": ["pnpm"]
   }
 }
