@@ -52,5 +52,9 @@ export function keybindingToLangmap(config: KeybindingConfig): string {
     pairs.push(`${escapeLangmapChar(from)}${escapeLangmapChar(to)}`);
   }
 
+  if (pairs.length === 0) {
+    return "";
+  }
+
   return `vim.opt.langmap = "${pairs.join(",")}"`;
 }

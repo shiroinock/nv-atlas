@@ -28,7 +28,7 @@ const MIME_TYPES: Record<ExportFormat, string> = {
   langmap: "text/plain",
 };
 
-const EXPORT_FORMATS = Object.keys(FORMAT_LABELS) as ExportFormat[];
+const EXPORT_FORMATS: ExportFormat[] = ["lua", "json", "langmap"];
 
 const COPY_STATUS_RESET_MS = 2000;
 

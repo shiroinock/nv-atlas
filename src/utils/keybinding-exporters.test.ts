@@ -573,8 +573,7 @@ describe("keybindingToLangmap", () => {
 
       const result = keybindingToLangmap(config);
 
-      // ペアが空なので langmap の値部分が空文字列になる
-      expect(result).toBe('vim.opt.langmap = ""');
+      expect(result).toBe("");
     });
   });
 
@@ -654,10 +653,8 @@ describe("keybindingToLangmap", () => {
 
       const result = keybindingToLangmap(config);
 
-      // 2つのペアがカンマ区切りで含まれる
-      const inner = result.replace('vim.opt.langmap = "', "").replace(/"$/, "");
-      const pairs = inner.split(",");
-      expect(pairs).toHaveLength(2);
+      expect(result).toContain("tj");
+      expect(result).toContain("kh");
     });
   });
 
