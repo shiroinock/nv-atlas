@@ -23,10 +23,9 @@ export function KeybindingProvider({
   children: React.ReactNode;
   initial?: KeybindingConfig;
 }) {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: initial は useReducer の初期値にのみ使用され再計算不要
   const resolvedInitial = useMemo(
     () => initial ?? loadKeybindingConfig() ?? undefined,
-    // initial は初回マウント時にのみ使用されるため空の依存配列で固定
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
   const value = useKeybindingConfig(resolvedInitial);
