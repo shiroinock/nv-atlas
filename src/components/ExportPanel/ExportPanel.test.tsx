@@ -15,11 +15,11 @@ vi.mock("../../utils/keybinding-exporters", () => ({
 }));
 
 import { useKeybindingContext } from "../../context/KeybindingContext";
+import type { Keybinding, VimMode } from "../../types/keybinding";
 import {
   keybindingToJSON,
   keybindingToLua,
 } from "../../utils/keybinding-exporters";
-import type { VimMode, Keybinding } from "../../types/keybinding";
 
 const mockedUseKeybindingContext = vi.mocked(useKeybindingContext);
 const mockedKeybindingToLua = vi.mocked(keybindingToLua);
