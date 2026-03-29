@@ -87,6 +87,54 @@ exports[`BindingEditor > スナップショット > バインディングあり�
             Insert
           </span>
         </button>
+        <button
+          class="_tab_e815f2 "
+          title="Command-line"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            C
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Command-line
+          </span>
+        </button>
+        <button
+          class="_tab_e815f2 "
+          title="Select"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            S
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Select
+          </span>
+        </button>
+        <button
+          class="_tab_e815f2 "
+          title="Terminal"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            T
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Terminal
+          </span>
+        </button>
       </div>
     </div>
   </div>
@@ -341,6 +389,54 @@ exports[`BindingEditor > スナップショット > バインディングなし�
             class="_full_e815f2"
           >
             Insert
+          </span>
+        </button>
+        <button
+          class="_tab_e815f2 "
+          title="Command-line"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            C
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Command-line
+          </span>
+        </button>
+        <button
+          class="_tab_e815f2 "
+          title="Select"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            S
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Select
+          </span>
+        </button>
+        <button
+          class="_tab_e815f2 "
+          title="Terminal"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            T
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Terminal
           </span>
         </button>
       </div>

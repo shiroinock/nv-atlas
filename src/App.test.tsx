@@ -69,6 +69,7 @@ vi.mock("./hooks/useNvimMaps", () => ({
 // storage をモック化して localStorage アクセスを回避する
 vi.mock("./utils/storage", () => ({
   loadKeymap: vi.fn(() => null),
+  loadKeybindingConfig: vi.fn(() => null),
   saveKeymap: vi.fn(),
   saveLayout: vi.fn(),
   clearAllStorage: vi.fn(),
@@ -80,10 +81,12 @@ import { App } from "./App";
 import { CommandReference } from "./components/CommandReference/CommandReference";
 import { Keyboard } from "./components/Keyboard/Keyboard";
 import { PracticeMode } from "./components/PracticeMode/PracticeMode";
+import { useNvimMaps } from "./hooks/useNvimMaps";
 
 const mockedPracticeMode = vi.mocked(PracticeMode);
 const mockedCommandReference = vi.mocked(CommandReference);
 const mockedKeyboard = vi.mocked(Keyboard);
+const mockedUseNvimMaps = vi.mocked(useNvimMaps);
 
 function buildConfig(customKeymap?: Record<string, string>): KeybindingConfig {
   const now = new Date().toISOString();
@@ -256,6 +259,80 @@ describe("App - ExportPanel の表示", () => {
     await user.click(screen.getByRole("button", { name: "辞書" }));
 
     expect(screen.queryByTestId("export-panel")).not.toBeInTheDocument();
+  });
+});
+
+describe("App - nvimMaps の表示", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("複数モードのデータを含む nvimMaps は全モード合計数が表示される", () => {
+    mockedUseNvimMaps.mockReturnValue({
+      nvimMaps: [
+        {
+          mode: "n",
+          lhs: "j",
+          rhs: "j",
+          noremap: true,
+          description: "",
+          source: "user",
+          sourceDetail: "",
+        },
+        {
+          mode: "n",
+          lhs: "k",
+          rhs: "k",
+          noremap: true,
+          description: "",
+          source: "user",
+          sourceDetail: "",
+        },
+        {
+          mode: "n",
+          lhs: "l",
+          rhs: "l",
+          noremap: true,
+          description: "",
+          source: "user",
+          sourceDetail: "",
+        },
+        {
+          mode: "v",
+          lhs: "j",
+          rhs: "j",
+          noremap: true,
+          description: "",
+          source: "user",
+          sourceDetail: "",
+        },
+        {
+          mode: "v",
+          lhs: "k",
+          rhs: "k",
+          noremap: true,
+          description: "",
+          source: "user",
+          sourceDetail: "",
+        },
+        {
+          mode: "!" as const,
+          lhs: "w",
+          rhs: "w",
+          noremap: true,
+          description: "",
+          source: "user",
+          sourceDetail: "",
+        },
+      ],
+      loading: false,
+      error: null,
+      refresh: vi.fn(),
+    });
+
+    render(<App />);
+
+    expect(screen.getByText("nvim: 6 maps")).toBeInTheDocument();
   });
 });
 

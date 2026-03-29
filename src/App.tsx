@@ -165,7 +165,7 @@ function AppContent() {
               {nvimMaps && (
                 <>
                   <span className={styles.nvimConnected}>
-                    nvim: {nvimMaps.filter((m) => m.mode === "n").length} maps
+                    nvim: {nvimMaps.length} maps
                   </span>
                   <button
                     type="button"

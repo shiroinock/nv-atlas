@@ -11,6 +11,9 @@ const vimModes: { mode: VimMode; label: string; short: string }[] = [
   { mode: "v", label: "Visual", short: "V" },
   { mode: "o", label: "Op-pending", short: "O" },
   { mode: "i", label: "Insert", short: "I" },
+  { mode: "c", label: "Command-line", short: "C" },
+  { mode: "s", label: "Select", short: "S" },
+  { mode: "t", label: "Terminal", short: "T" },
 ];
 
 export function ModeSelector({ activeMode, onModeChange }: Props) {
