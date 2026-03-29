@@ -1,3 +1,22 @@
+:root {
+  --ctp-crust: #11111b;
+  --ctp-mantle: #181825;
+  --ctp-base: #1e1e2e;
+  --ctp-surface0: #24273a;
+  --ctp-surface1: #313244;
+  --ctp-surface2: #45475a;
+  --ctp-subtext0: #7f849c;
+  --ctp-subtext1: #6c7086;
+  --ctp-text: #a6adc8;
+  --ctp-foreground: #cdd6f4;
+  --ctp-blue: #89b4fa;
+  --ctp-cyan: #4fc3f7;
+  --ctp-green: #a6e3a1;
+  --ctp-red: #f38ba8;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+}
+
 *,
 *::before,
 *::after {
@@ -9,8 +28,8 @@
 body {
   font-family:
     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #11111b;
-  color: #cdd6f4;
+  background: var(--ctp-crust);
+  color: var(--ctp-foreground);
   min-height: 100vh;
 }
 

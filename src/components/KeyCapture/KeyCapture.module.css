@@ -1,8 +1,8 @@
 /* Catppuccin Mocha テーマに準拠したキーキャプチャ UI */
 
 .container {
-  background: #1e1e2e;
-  border: 1px solid #45475a;
+  background: var(--ctp-base);
+  border: 1px solid var(--ctp-surface2);
   border-radius: 8px;
   padding: 16px 20px;
   min-height: 48px;
@@ -12,12 +12,12 @@
 }
 
 .container:focus-visible {
-  outline: 2px solid #89b4fa;
+  outline: 2px solid var(--ctp-blue);
   outline-offset: 2px;
 }
 
 .placeholder {
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 14px;
 }
 
@@ -28,18 +28,18 @@
 }
 
 .keyBadge {
-  background: #313244;
-  border: 1px solid #89b4fa;
+  background: var(--ctp-surface1);
+  border: 1px solid var(--ctp-blue);
   border-radius: 4px;
   padding: 4px 10px;
   font-family: "SF Mono", monospace;
   font-size: 16px;
   font-weight: 600;
-  color: #89b4fa;
+  color: var(--ctp-blue);
   letter-spacing: 0.02em;
 }
 
 .hint {
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 12px;
 }

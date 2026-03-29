@@ -14,7 +14,7 @@
 .tabs {
   display: flex;
   gap: 2px;
-  background: #181825;
+  background: var(--ctp-mantle);
   border-radius: 6px;
   padding: 3px;
 }
@@ -26,7 +26,7 @@
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   background: transparent;
   transition:
     background-color 0.15s,
@@ -34,12 +34,12 @@
 }
 
 .tab:hover {
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .tabActive {
-  background: #313244;
-  color: #cdd6f4;
+  background: var(--ctp-surface1);
+  color: var(--ctp-foreground);
 }
 
 .actions {
@@ -49,10 +49,10 @@
 
 .actionButton {
   padding: 4px 12px;
-  border: 1px solid #45475a;
+  border: 1px solid var(--ctp-surface2);
   border-radius: 6px;
   background: transparent;
-  color: #a6adc8;
+  color: var(--ctp-text);
   font-size: 12px;
   cursor: pointer;
   transition:
@@ -61,8 +61,8 @@
 }
 
 .actionButton:hover:not(:disabled) {
-  border-color: #89b4fa;
-  color: #89b4fa;
+  border-color: var(--ctp-blue);
+  color: var(--ctp-blue);
 }
 
 .actionButton:disabled {
@@ -71,23 +71,23 @@
 }
 
 .actionButtonSuccess {
-  border-color: #a6e3a1;
-  color: #a6e3a1;
+  border-color: var(--ctp-green);
+  color: var(--ctp-green);
 }
 
 .actionButtonError {
-  border-color: #f38ba8;
-  color: #f38ba8;
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
 }
 
 .preview {
-  background: #181825;
-  border: 1px solid #313244;
+  background: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface1);
   border-radius: 8px;
   padding: 12px 16px;
   font-family: "Courier New", Courier, monospace;
   font-size: 12px;
-  color: #cdd6f4;
+  color: var(--ctp-foreground);
   line-height: 1.6;
   overflow-x: auto;
   max-height: 300px;
@@ -98,10 +98,10 @@
 
 .empty {
   font-size: 13px;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   padding: 16px;
-  background: #181825;
-  border: 1px dashed #45475a;
+  background: var(--ctp-mantle);
+  border: 1px dashed var(--ctp-surface2);
   border-radius: 8px;
   text-align: center;
   margin: 0;

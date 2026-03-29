@@ -16,13 +16,13 @@
 .title {
   font-size: 24px;
   font-weight: 700;
-  color: #cdd6f4;
+  color: var(--ctp-foreground);
   margin-bottom: 4px;
 }
 
 .subtitle {
   font-size: 13px;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
 }
 
 .nvimStatus {
@@ -34,30 +34,30 @@
 }
 
 .nvimLoading {
-  color: #6c7086;
+  color: var(--ctp-subtext1);
 }
 
 .nvimError {
-  color: #f38ba8;
+  color: var(--ctp-red);
 }
 
 .nvimConnected {
-  color: #a6e3a1;
+  color: var(--ctp-green);
 }
 
 .nvimRefresh {
   padding: 1px 6px;
-  border: 1px solid #45475a;
+  border: 1px solid var(--ctp-surface2);
   border-radius: 3px;
   background: transparent;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 10px;
   cursor: pointer;
 }
 
 .nvimRefresh:hover {
-  color: #cdd6f4;
-  border-color: #6c7086;
+  color: var(--ctp-foreground);
+  border-color: var(--ctp-subtext1);
 }
 
 .headerRight {
@@ -70,7 +70,7 @@
 .modeTabs {
   display: flex;
   gap: 4px;
-  background: #181825;
+  background: var(--ctp-mantle);
   border-radius: 6px;
   padding: 3px;
 }
@@ -82,7 +82,7 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   background: transparent;
   transition:
     background-color 0.15s,
@@ -90,12 +90,12 @@
 }
 
 .modeTab:hover {
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .modeTabActive {
-  background: #313244;
-  color: #cdd6f4;
+  background: var(--ctp-surface1);
+  color: var(--ctp-foreground);
 }
 
 .practice {
@@ -118,7 +118,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background: #1e1e2e;
+  background: var(--ctp-base);
 }
 
 .detail {
@@ -149,7 +149,7 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .legendDot {

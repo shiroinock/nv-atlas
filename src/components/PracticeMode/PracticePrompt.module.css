@@ -1,6 +1,6 @@
 .panel {
-  background: #1e1e2e;
-  border: 1px solid #313244;
+  background: var(--ctp-base);
+  border: 1px solid var(--ctp-surface1);
   border-radius: 8px;
   padding: 16px 20px;
   text-align: center;
@@ -8,11 +8,11 @@
 }
 
 .panel.correct {
-  border-color: #a6e3a1;
+  border-color: var(--ctp-green);
 }
 
 .panel.incorrect {
-  border-color: #f38ba8;
+  border-color: var(--ctp-red);
 }
 
 .prompt {
@@ -35,7 +35,7 @@
 .hint {
   font-size: 15px;
   font-weight: 600;
-  color: #fab387;
+  color: var(--ctp-peach);
   font-family: "SF Mono", "Fira Code", monospace;
 }
 
@@ -49,17 +49,17 @@
 .commandName {
   font-size: 20px;
   font-weight: 700;
-  color: #cdd6f4;
+  color: var(--ctp-foreground);
 }
 
 .description {
   font-size: 14px;
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .instruction {
   font-size: 14px;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
 }
 
 .score {
@@ -68,27 +68,27 @@
   justify-content: center;
   gap: 8px;
   font-size: 13px;
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .rate {
-  color: #6c7086;
+  color: var(--ctp-subtext1);
 }
 
 .streak {
-  color: #f9e2af;
+  color: var(--ctp-yellow);
   font-weight: 600;
 }
 
 .message {
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 14px;
 }
 
 .startButton {
-  background: #4fc3f733;
-  border: 1px solid #4fc3f7;
-  color: #4fc3f7;
+  background: color-mix(in srgb, var(--ctp-cyan) 20%, transparent);
+  border: 1px solid var(--ctp-cyan);
+  color: var(--ctp-cyan);
   padding: 8px 24px;
   border-radius: 6px;
   font-size: 14px;
@@ -98,5 +98,5 @@
 }
 
 .startButton:hover {
-  background: #4fc3f755;
+  background: color-mix(in srgb, var(--ctp-cyan) 33%, transparent);
 }

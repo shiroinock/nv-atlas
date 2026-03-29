@@ -5,9 +5,9 @@
   flex-direction: column;
   gap: 16px;
   padding: 20px;
-  background: #1e1e2e;
+  background: var(--ctp-base);
   border-radius: 12px;
-  border: 1px solid #313244;
+  border: 1px solid var(--ctp-surface1);
 }
 
 .header {
@@ -21,12 +21,12 @@
 .title {
   font-size: 16px;
   font-weight: 600;
-  color: #cdd6f4;
+  color: var(--ctp-foreground);
   margin: 0;
 }
 
 .empty {
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 14px;
   text-align: center;
   padding: 32px 0;
@@ -41,12 +41,12 @@
 .headerRow th {
   padding: 8px 12px;
   text-align: left;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  border-bottom: 1px solid #313244;
+  border-bottom: 1px solid var(--ctp-surface1);
 }
 
 .row {
@@ -55,17 +55,17 @@
 }
 
 .row:hover {
-  background: #24273a;
+  background: var(--ctp-surface0);
 }
 
 .rowEditing {
-  background: #181825;
+  background: var(--ctp-mantle);
   cursor: default;
 }
 
 .row td {
   padding: 8px 12px;
-  border-bottom: 1px solid #181825;
+  border-bottom: 1px solid var(--ctp-mantle);
   vertical-align: middle;
 }
 
@@ -97,33 +97,33 @@
 
 .keyBadge {
   display: inline-block;
-  background: #313244;
-  border: 1px solid #45475a;
+  background: var(--ctp-surface1);
+  border: 1px solid var(--ctp-surface2);
   border-radius: 4px;
   padding: 2px 8px;
   font-family: "SF Mono", monospace;
   font-size: 13px;
   font-weight: 600;
-  color: #89b4fa;
+  color: var(--ctp-blue);
   letter-spacing: 0.02em;
 }
 
 .commandName {
   display: block;
-  color: #cdd6f4;
+  color: var(--ctp-foreground);
   font-weight: 500;
 }
 
 .description {
   display: block;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 11px;
   margin-top: 2px;
 }
 
 .badge {
   display: inline-block;
-  background: color-mix(in srgb, var(--badge-color) 15%, #1e1e2e);
+  background: color-mix(in srgb, var(--badge-color) 15%, var(--ctp-base));
   border: 1px solid color-mix(in srgb, var(--badge-color) 50%, transparent);
   color: var(--badge-color);
   border-radius: 4px;
@@ -133,10 +133,10 @@
 }
 
 .actionButton {
-  background: #313244;
-  border: 1px solid #45475a;
+  background: var(--ctp-surface1);
+  border: 1px solid var(--ctp-surface2);
   border-radius: 4px;
-  color: #a6adc8;
+  color: var(--ctp-text);
   font-size: 11px;
   padding: 3px 10px;
   cursor: pointer;
@@ -146,8 +146,8 @@
 }
 
 .actionButton:hover {
-  background: #45475a;
-  color: #cdd6f4;
+  background: var(--ctp-surface2);
+  color: var(--ctp-foreground);
 }
 
 .actionButton + .actionButton {
@@ -155,7 +155,7 @@
 }
 
 .actionButtonRemove:hover {
-  background: color-mix(in srgb, #f38ba8 20%, #313244);
-  border-color: #f38ba8;
-  color: #f38ba8;
+  background: color-mix(in srgb, var(--ctp-red) 20%, var(--ctp-surface1));
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
 }

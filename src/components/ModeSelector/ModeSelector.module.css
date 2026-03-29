@@ -6,14 +6,14 @@
 
 .label {
   font-size: 11px;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   white-space: nowrap;
 }
 
 .tabs {
   display: flex;
   gap: 2px;
-  background: #181825;
+  background: var(--ctp-mantle);
   border-radius: 6px;
   padding: 2px;
 }
@@ -25,7 +25,7 @@
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   background: transparent;
   transition:
     background-color 0.15s,
@@ -33,12 +33,12 @@
 }
 
 .tab:hover {
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .tabActive {
-  background: #313244;
-  color: #cdd6f4;
+  background: var(--ctp-surface1);
+  color: var(--ctp-foreground);
 }
 
 .short {

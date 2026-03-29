@@ -18,10 +18,10 @@
 
 .catButton {
   padding: 4px 10px;
-  border: 1px solid #45475a;
+  border: 1px solid var(--ctp-surface2);
   border-radius: 4px;
   background: transparent;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 12px;
   cursor: pointer;
   transition:
@@ -30,7 +30,7 @@
 }
 
 .catButton:hover {
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .catSelected {
@@ -39,22 +39,22 @@
 
 .search {
   padding: 6px 10px;
-  border: 1px solid #45475a;
+  border: 1px solid var(--ctp-surface2);
   border-radius: 4px;
-  background: #1e1e2e;
-  color: #cdd6f4;
+  background: var(--ctp-base);
+  color: var(--ctp-foreground);
   font-size: 13px;
   width: 180px;
   margin-left: auto;
 }
 
 .search::placeholder {
-  color: #6c7086;
+  color: var(--ctp-subtext1);
 }
 
 .search:focus {
   outline: none;
-  border-color: #89b4fa;
+  border-color: var(--ctp-blue);
 }
 
 .tableWrapper {
@@ -88,13 +88,13 @@
 .table th {
   text-align: left;
   padding: 6px 10px;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-weight: 500;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #313244;
-  background: #181825;
+  border-bottom: 1px solid var(--ctp-surface1);
+  background: var(--ctp-mantle);
 }
 
 .thKey {
@@ -119,32 +119,33 @@
 
 .row td {
   padding: 5px 10px;
-  border-bottom: 1px solid rgba(69, 71, 90, 0.3);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--ctp-surface2) 30%, transparent);
 }
 
 .cellKey {
   font-family: "JetBrains Mono", "Fira Code", monospace;
-  color: #cdd6f4;
+  color: var(--ctp-foreground);
 }
 
 .cellKey code {
-  background: #313244;
+  background: var(--ctp-surface1);
   padding: 1px 6px;
   border-radius: 3px;
   font-size: 12px;
 }
 
 .cellDiff code {
-  background: rgba(137, 180, 250, 0.15);
-  color: #89b4fa;
+  background: color-mix(in srgb, var(--ctp-blue) 15%, transparent);
+  color: var(--ctp-blue);
 }
 
 .cellName {
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .cellDesc {
-  color: #7f849c;
+  color: var(--ctp-subtext0);
 }
 
 .sources {
@@ -155,10 +156,10 @@
 
 .srcButton {
   padding: 4px 10px;
-  border: 1px solid #45475a;
+  border: 1px solid var(--ctp-surface2);
   border-radius: 4px;
   background: transparent;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   font-size: 12px;
   cursor: pointer;
   transition:
@@ -167,7 +168,7 @@
 }
 
 .srcButton:hover {
-  color: #a6adc8;
+  color: var(--ctp-text);
 }
 
 .srcSelected {
@@ -186,6 +187,6 @@
 .count {
   margin-top: 12px;
   font-size: 12px;
-  color: #6c7086;
+  color: var(--ctp-subtext1);
   text-align: right;
 }

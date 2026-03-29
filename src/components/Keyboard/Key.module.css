@@ -47,23 +47,23 @@
 }
 
 .highlight_target {
-  box-shadow: 0 0 12px 4px #4fc3f7;
+  box-shadow: 0 0 12px 4px var(--ctp-cyan);
   animation: pulse 1.5s ease-in-out infinite;
   z-index: 5;
 }
 
 .highlight_correct {
-  box-shadow: 0 0 12px 4px #a6e3a1;
+  box-shadow: 0 0 12px 4px var(--ctp-green);
   z-index: 5;
 }
 
 .highlight_incorrect {
-  box-shadow: 0 0 12px 4px #f38ba8;
+  box-shadow: 0 0 12px 4px var(--ctp-red);
   z-index: 5;
 }
 
 .highlight_modifier {
-  box-shadow: 0 0 12px 4px #fab387;
+  box-shadow: 0 0 12px 4px var(--ctp-peach);
   animation: pulse_mod 1.5s ease-in-out infinite;
   z-index: 5;
 }
@@ -71,19 +71,19 @@
 @keyframes pulse {
   0%,
   100% {
-    box-shadow: 0 0 8px 2px #4fc3f7;
+    box-shadow: 0 0 8px 2px var(--ctp-cyan);
   }
   50% {
-    box-shadow: 0 0 16px 6px #4fc3f7;
+    box-shadow: 0 0 16px 6px var(--ctp-cyan);
   }
 }
 
 @keyframes pulse_mod {
   0%,
   100% {
-    box-shadow: 0 0 8px 2px #fab387;
+    box-shadow: 0 0 8px 2px var(--ctp-peach);
   }
   50% {
-    box-shadow: 0 0 16px 6px #fab387;
+    box-shadow: 0 0 16px 6px var(--ctp-peach);
   }
 }
