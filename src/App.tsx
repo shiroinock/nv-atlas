@@ -186,14 +186,14 @@ function AppContent() {
           </div>
           <div className={styles.headerRight}>
             <div className={styles.modeTabs}>
-              {APP_MODES.map((m) => (
+              {APP_MODES.map((appMode) => (
                 <button
-                  key={m}
+                  key={appMode}
                   type="button"
-                  className={`${styles.modeTab} ${mode === m ? styles.modeTabActive : ""}`}
-                  onClick={() => setMode(m)}
+                  className={`${styles.modeTab} ${mode === appMode ? styles.modeTabActive : ""}`}
+                  onClick={() => setMode(appMode)}
                 >
-                  {APP_MODE_LABELS[m]}
+                  {APP_MODE_LABELS[appMode]}
                 </button>
               ))}
             </div>

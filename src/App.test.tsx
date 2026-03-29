@@ -413,7 +413,7 @@ describe("App - モードタブの動的生成", () => {
     vi.clearAllMocks();
   });
 
-  test("全モードのタブが表示される（「可視化」「練習」「辞書」「編集」の4つ）", () => {
+  test("全 APP_MODES のタブが表示される", () => {
     const config = buildConfig(undefined);
 
     renderAppContent(config);
