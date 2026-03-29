@@ -613,35 +613,35 @@ describe("マイグレーション: v0 → v1", () => {
     const result = migrateKeybindingConfig(v0Config);
 
     expect(result).not.toBeNull();
-    expect(result!.version).toBe(1);
+    expect(result?.version).toBe(1);
   });
 
   it("v0 データの name フィールドが保持される", () => {
     const result = migrateKeybindingConfig(v0Config);
 
     expect(result).not.toBeNull();
-    expect(result!.name).toBe("v0 Config");
+    expect(result?.name).toBe("v0 Config");
   });
 
   it("v0 データの bindings フィールドが保持される", () => {
     const result = migrateKeybindingConfig(v0Config);
 
     expect(result).not.toBeNull();
-    expect(result!.bindings).toEqual(v0Config.bindings);
+    expect(result?.bindings).toEqual(v0Config.bindings);
   });
 
   it("v0 データの createdAt フィールドが保持される", () => {
     const result = migrateKeybindingConfig(v0Config);
 
     expect(result).not.toBeNull();
-    expect(result!.createdAt).toBe("2024-01-01T00:00:00.000Z");
+    expect(result?.createdAt).toBe("2024-01-01T00:00:00.000Z");
   });
 
   it("v0 データの updatedAt フィールドが保持される", () => {
     const result = migrateKeybindingConfig(v0Config);
 
     expect(result).not.toBeNull();
-    expect(result!.updatedAt).toBe("2024-01-02T00:00:00.000Z");
+    expect(result?.updatedAt).toBe("2024-01-02T00:00:00.000Z");
   });
 
   it("v0 データの customKeymap フィールドが保持される", () => {
@@ -650,15 +650,15 @@ describe("マイグレーション: v0 → v1", () => {
     const result = migrateKeybindingConfig(v0WithKeymap);
 
     expect(result).not.toBeNull();
-    expect(result!.customKeymap).toEqual({ a: "a", s: "r" });
+    expect(result?.customKeymap).toEqual({ a: "a", s: "r" });
   });
 
   it("customKeymap がない v0 データも正しく変換される", () => {
     const result = migrateKeybindingConfig(v0Config);
 
     expect(result).not.toBeNull();
-    expect(result!.customKeymap).toBeUndefined();
-    expect(result!.version).toBe(1);
+    expect(result?.customKeymap).toBeUndefined();
+    expect(result?.version).toBe(1);
   });
 
   it("既に version: 1 のデータはそのまま返される", () => {
@@ -667,8 +667,8 @@ describe("マイグレーション: v0 → v1", () => {
     const result = migrateKeybindingConfig(v1Config);
 
     expect(result).not.toBeNull();
-    expect(result!.version).toBe(1);
-    expect(result!.name).toBe("v0 Config");
+    expect(result?.version).toBe(1);
+    expect(result?.name).toBe("v0 Config");
   });
 });
 
