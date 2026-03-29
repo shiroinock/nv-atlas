@@ -1,3 +1,7 @@
+import type { VimMode } from "./keybinding";
+
+export type { VimMode };
+
 export type VimCommandCategory =
   | "motion"
   | "edit"
@@ -11,6 +15,24 @@ export type VimCommandCategory =
 // ── Neovim map 連携 ──
 
 export type NvimMapMode = "n" | "x" | "o" | "v" | "s" | "!" | "";
+
+/**
+ * NvimMapMode を VimMode[] に展開する。
+ * "v" (Visual) は x/s を含み、"!" は i/c、"" は n/v/x/o に展開。
+ */
+export function expandNvimMapMode(mode: NvimMapMode): VimMode[] {
+  switch (mode) {
+    case "v":
+      return ["v", "x", "s"];
+    case "!":
+      return ["i", "c"];
+    case "":
+      return ["n", "v", "x", "o"];
+    default:
+      return [mode];
+  }
+}
+
 export type NvimMapSource = "nvim-default" | "plugin" | "user";
 
 export interface NvimMapping {
@@ -40,7 +62,7 @@ export interface VimCommand {
   /** カテゴリ */
   category: VimCommandCategory;
   /** 適用モード（省略時は ["n"]） */
-  modes?: import("./keybinding").VimMode[];
+  modes?: VimMode[];
 }
 
 /** QWERTY キー → カスタム配列キー のマッピング */

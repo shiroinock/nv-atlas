@@ -1,4 +1,6 @@
+import type { VimMode } from "../types/keybinding";
 import type { MergedVimCommand, NvimMapping, VimCommand } from "../types/vim";
+import { expandNvimMapMode } from "../types/vim";
 
 /**
  * ハードコードの Vim コマンドと nvim の実マッピングをマージする
@@ -7,37 +9,39 @@ export function mergeWithNvimMaps(
   hardcoded: VimCommand[],
   nvimMaps: NvimMapping[],
 ): MergedVimCommand[] {
-  // ハードコード側のキー → コマンド索引
-  const hardcodedByKey = new Map<string, VimCommand>();
-  for (const cmd of hardcoded) {
-    hardcodedByKey.set(cmd.key, cmd);
-  }
-
   // 結果: まずハードコードを全部入れる
-  const merged: MergedVimCommand[] = hardcoded.map((cmd) => ({
-    ...cmd,
-    source: "hardcoded" as const,
-  }));
-
-  const addedKeys = new Set(hardcoded.map((c) => c.key));
-
-  // nvim マップから normal mode のみ取り込む
-  const normalMaps = nvimMaps.filter(
-    (m) => m.mode === "n" && !m.lhs.startsWith("<Plug>"),
+  const merged: MergedVimCommand[] = hardcoded.map(
+    (cmd): MergedVimCommand => ({
+      ...cmd,
+      source: "hardcoded",
+    }),
   );
 
-  for (const nvMap of normalMaps) {
-    const key = normalizeNvimKey(nvMap.lhs);
+  // 新規追加エントリのユニーク性キー: "key:modesJson"
+  // ハードコード側のキーは modes が undefined のものもあるため別管理
+  const addedNewEntryKeys = new Set<string>();
 
-    if (addedKeys.has(key)) {
-      // 既存コマンドにマッチ → source 情報を更新
-      const existing = merged.find((c) => c.key === key);
-      if (existing && existing.source === "hardcoded") {
+  // <Plug> で始まるマップは全モードでスキップ
+  const validMaps = nvimMaps.filter((m) => !m.lhs.startsWith("<Plug>"));
+
+  for (const nvMap of validMaps) {
+    const key = normalizeNvimKey(nvMap.lhs);
+    const expandedModes = expandNvimMapMode(nvMap.mode);
+
+    // 既存エントリ（ハードコード + 追加済み）を探す
+    const existing = findMatchingEntry(merged, key, expandedModes);
+
+    if (existing) {
+      // 既存エントリにマッチ → source が hardcoded の場合のみ更新
+      if (existing.source === "hardcoded") {
         existing.source = nvMap.source;
         existing.nvimOverride = true;
       }
     } else {
-      // 新規エントリ
+      // 新規エントリ: 同キー・同モードの重複チェック
+      const newEntryKey = makeEntryKey(key, expandedModes);
+      if (addedNewEntryKeys.has(newEntryKey)) continue;
+
       const description = cleanDescription(nvMap.description);
       if (!description) continue; // description なしはスキップ
 
@@ -47,12 +51,41 @@ export function mergeWithNvimMaps(
         description,
         category: "misc",
         source: nvMap.source,
+        modes: expandedModes,
       });
-      addedKeys.add(key);
+      addedNewEntryKeys.add(newEntryKey);
     }
   }
 
   return merged;
+}
+
+/**
+ * キーとモードの組み合わせからエントリのユニーク性キーを生成する
+ */
+function makeEntryKey(key: string, modes: VimMode[]): string {
+  return `${key}:${JSON.stringify(modes)}`;
+}
+
+/**
+ * マージ済みエントリから、キーとモードが一致するエントリを探す。
+ * VimCommand.modes がある場合はモードの交差で照合する。
+ * modes が undefined のエントリはキーのみで照合する（後方互換）。
+ */
+function findMatchingEntry(
+  merged: MergedVimCommand[],
+  key: string,
+  expandedModes: VimMode[],
+): MergedVimCommand | undefined {
+  return merged.find((c) => {
+    if (c.key !== key) return false;
+    if (c.modes === undefined) {
+      // modes 未設定のエントリはキーのみで照合（後方互換）
+      return true;
+    }
+    // modes がある場合は expandedModes と交差があるかで照合
+    return c.modes.some((m) => expandedModes.includes(m));
+  });
 }
 
 /**
@@ -71,7 +104,5 @@ function normalizeNvimKey(lhs: string): string {
  */
 function cleanDescription(desc: string): string {
   if (!desc) return "";
-  // ":help xxx-default" 形式は Vim デフォルトの説明参照なのでそのまま
-  if (desc.startsWith(":help ")) return desc;
   return desc;
 }

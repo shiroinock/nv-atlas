@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { VimMode } from "../types/keybinding";
 import type { NvimMapping, VimCommand } from "../types/vim";
 import { mergeWithNvimMaps } from "./merge-vim-commands";
 
@@ -65,12 +66,150 @@ describe("mergeWithNvimMaps", () => {
     expect(result).toHaveLength(3);
   });
 
-  it("normal mode 以外のマップはスキップされる", () => {
+  it("visual mode (x) のマップがマージされる", () => {
     const nvimMaps = [
       makeNvimMap({ lhs: "jk", mode: "x", description: "escape" }),
     ];
     const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    expect(result).toHaveLength(4);
+    const jk = result.find((c) => c.key === "jk");
+    expect(jk).toBeDefined();
+    expect(jk?.description).toBe("escape");
+  });
+
+  it("insert mode (!) のマップがマージされる", () => {
+    const nvimMaps = [
+      makeNvimMap({ lhs: "jk", mode: "!", description: "escape insert" }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    expect(result).toHaveLength(4);
+    const jk = result.find((c) => c.key === "jk");
+    expect(jk).toBeDefined();
+    expect(jk?.description).toBe("escape insert");
+  });
+
+  it("全モード指定 (空文字列) のマップがマージされる", () => {
+    const nvimMaps = [
+      makeNvimMap({ lhs: "gf", mode: "", description: "go to file" }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    expect(result).toHaveLength(4);
+    const gf = result.find((c) => c.key === "gf");
+    expect(gf).toBeDefined();
+  });
+
+  it("MergedVimCommand に modes が正しく設定される（visual mode）", () => {
+    const nvimMaps = [
+      makeNvimMap({ lhs: "gv", mode: "x", description: "reselect visual" }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    const gv = result.find((c) => c.key === "gv");
+    expect(gv?.modes).toEqual(["x"] satisfies VimMode[]);
+  });
+
+  it("MergedVimCommand に modes が正しく設定される（v → visual + select）", () => {
+    const nvimMaps = [
+      makeNvimMap({ lhs: "gv", mode: "v", description: "reselect visual" }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    const gv = result.find((c) => c.key === "gv");
+    expect(gv?.modes).toEqual(["v", "x", "s"] satisfies VimMode[]);
+  });
+
+  it("MergedVimCommand に modes が正しく設定される（! → insert + command-line）", () => {
+    const nvimMaps = [
+      makeNvimMap({ lhs: "jk", mode: "!", description: "escape" }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    const jk = result.find((c) => c.key === "jk");
+    expect(jk?.modes).toEqual(["i", "c"] satisfies VimMode[]);
+  });
+
+  it("MergedVimCommand に modes が正しく設定される（空文字列 → n/v/x/o）", () => {
+    const nvimMaps = [
+      makeNvimMap({ lhs: "gf", mode: "", description: "go to file" }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    const gf = result.find((c) => c.key === "gf");
+    expect(gf?.modes).toEqual(["n", "v", "x", "o"] satisfies VimMode[]);
+  });
+
+  it("<Plug> で始まるマップは全モードでスキップされる", () => {
+    const nvimMaps = [
+      makeNvimMap({
+        lhs: "<Plug>(visual-op)",
+        mode: "x",
+        description: "plugin",
+      }),
+      makeNvimMap({
+        lhs: "<Plug>(insert-op)",
+        mode: "!",
+        description: "plugin",
+      }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
     expect(result).toHaveLength(3);
+  });
+
+  it("同じキーでモードが異なるマップは別エントリとして扱われる", () => {
+    const nvimMaps = [
+      makeNvimMap({
+        lhs: "gd",
+        mode: "n",
+        description: "go to definition normal",
+      }),
+      makeNvimMap({
+        lhs: "gd",
+        mode: "x",
+        description: "go to definition visual",
+      }),
+    ];
+    const result = mergeWithNvimMaps(baseCommands, nvimMaps);
+    const gds = result.filter((c) => c.key === "gd");
+    expect(gds).toHaveLength(2);
+    const normalEntry = gds.find(
+      (c) => c.modes?.includes("n") || c.modes === undefined,
+    );
+    const visualEntry = gds.find(
+      (c) => c.modes?.includes("x") && !c.modes?.includes("n"),
+    );
+    expect(normalEntry).toBeDefined();
+    expect(visualEntry).toBeDefined();
+  });
+
+  it("VimCommand.modes と NvimMapping の mode が照合される", () => {
+    const commandsWithModes: VimCommand[] = [
+      {
+        key: "p",
+        name: "貼り付け",
+        description: "貼り付け",
+        category: "edit",
+        modes: ["n"],
+      },
+      {
+        key: "p",
+        name: "貼り付け(visual)",
+        description: "選択範囲を置換して貼り付け",
+        category: "edit",
+        modes: ["x"],
+      },
+    ];
+    const nvimMaps = [
+      makeNvimMap({
+        lhs: "p",
+        mode: "x",
+        source: "user",
+        description: "custom paste",
+      }),
+    ];
+    const result = mergeWithNvimMaps(commandsWithModes, nvimMaps);
+    const visualP = result.find(
+      (c) => c.key === "p" && c.modes?.includes("x") && !c.modes?.includes("n"),
+    );
+    expect(visualP?.source).toBe("user");
+    expect(visualP?.nvimOverride).toBe(true);
+    const normalP = result.find((c) => c.key === "p" && c.modes?.includes("n"));
+    expect(normalP?.source).toBe("hardcoded");
   });
 
   it("<C-X> を <C-x> に正規化してマッチする", () => {
