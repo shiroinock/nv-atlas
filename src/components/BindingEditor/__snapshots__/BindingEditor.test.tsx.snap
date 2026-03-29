@@ -22,9 +22,13 @@ exports[`BindingEditor > スナップショット > バインディングあり�
       </span>
       <div
         class="_tabs_e815f2"
+        role="tablist"
       >
         <button
+          aria-selected="true"
           class="_tab_e815f2 _tabActive_e815f2"
+          id="tab-vim-n"
+          role="tab"
           title="Normal"
           type="button"
         >
@@ -40,7 +44,10 @@ exports[`BindingEditor > スナップショット > バインディングあり�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-v"
+          role="tab"
           title="Visual"
           type="button"
         >
@@ -56,7 +63,10 @@ exports[`BindingEditor > スナップショット > バインディングあり�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-o"
+          role="tab"
           title="Op-pending"
           type="button"
         >
@@ -72,7 +82,10 @@ exports[`BindingEditor > スナップショット > バインディングあり�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-i"
+          role="tab"
           title="Insert"
           type="button"
         >
@@ -88,7 +101,10 @@ exports[`BindingEditor > スナップショット > バインディングあり�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-c"
+          role="tab"
           title="Command-line"
           type="button"
         >
@@ -104,7 +120,10 @@ exports[`BindingEditor > スナップショット > バインディングあり�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-s"
+          role="tab"
           title="Select"
           type="button"
         >
@@ -120,7 +139,10 @@ exports[`BindingEditor > スナップショット > バインディングあり�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-t"
+          role="tab"
           title="Terminal"
           type="button"
         >
@@ -326,9 +348,13 @@ exports[`BindingEditor > スナップショット > バインディングなし�
       </span>
       <div
         class="_tabs_e815f2"
+        role="tablist"
       >
         <button
+          aria-selected="true"
           class="_tab_e815f2 _tabActive_e815f2"
+          id="tab-vim-n"
+          role="tab"
           title="Normal"
           type="button"
         >
@@ -344,7 +370,10 @@ exports[`BindingEditor > スナップショット > バインディングなし�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-v"
+          role="tab"
           title="Visual"
           type="button"
         >
@@ -360,7 +389,10 @@ exports[`BindingEditor > スナップショット > バインディングなし�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-o"
+          role="tab"
           title="Op-pending"
           type="button"
         >
@@ -376,7 +408,10 @@ exports[`BindingEditor > スナップショット > バインディングなし�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-i"
+          role="tab"
           title="Insert"
           type="button"
         >
@@ -392,7 +427,10 @@ exports[`BindingEditor > スナップショット > バインディングなし�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-c"
+          role="tab"
           title="Command-line"
           type="button"
         >
@@ -408,7 +446,10 @@ exports[`BindingEditor > スナップショット > バインディングなし�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-s"
+          role="tab"
           title="Select"
           type="button"
         >
@@ -424,7 +465,10 @@ exports[`BindingEditor > スナップショット > バインディングなし�
           </span>
         </button>
         <button
+          aria-selected="false"
           class="_tab_e815f2 "
+          id="tab-vim-t"
+          role="tab"
           title="Terminal"
           type="button"
         >

@@ -20,11 +20,14 @@ export function ModeSelector({ activeMode, onModeChange }: Props) {
   return (
     <div className={styles.container}>
       <span className={styles.label}>Vim mode:</span>
-      <div className={styles.tabs}>
+      <div className={styles.tabs} role="tablist">
         {vimModes.map(({ mode, label, short }) => (
           <button
             type="button"
             key={mode}
+            role="tab"
+            id={`tab-vim-${mode}`}
+            aria-selected={activeMode === mode}
             className={`${styles.tab} ${activeMode === mode ? styles.tabActive : ""}`}
             onClick={() => onModeChange(mode)}
             title={label}
