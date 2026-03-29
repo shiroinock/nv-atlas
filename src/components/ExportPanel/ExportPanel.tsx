@@ -90,12 +90,17 @@ export function ExportPanel() {
     setTimeout(() => URL.revokeObjectURL(url), 0);
   }, [content, activeFormat]);
 
-  const copyLabel =
-    copyStatus === "copied"
-      ? "コピー済み"
-      : copyStatus === "error"
-        ? "失敗"
-        : "コピー";
+  const COPY_STATUS_LABELS: Record<typeof copyStatus, string> = {
+    idle: "コピー",
+    copied: "コピー済み",
+    error: "失敗",
+  };
+
+  const COPY_STATUS_CLASS: Record<typeof copyStatus, string> = {
+    idle: "",
+    copied: styles.actionButtonSuccess,
+    error: styles.actionButtonError,
+  };
 
   return (
     <div className={styles.container}>
@@ -119,11 +124,11 @@ export function ExportPanel() {
         <div className={styles.actions}>
           <button
             type="button"
-            className={`${styles.actionButton} ${copyStatus === "copied" ? styles.actionButtonSuccess : ""}`}
+            className={`${styles.actionButton} ${COPY_STATUS_CLASS[copyStatus]}`}
             onClick={handleCopy}
             disabled={!hasBindings}
           >
-            {copyLabel}
+            {COPY_STATUS_LABELS[copyStatus]}
           </button>
           <button
             type="button"

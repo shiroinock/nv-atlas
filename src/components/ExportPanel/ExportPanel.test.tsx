@@ -226,7 +226,7 @@ describe("ExportPanel", () => {
       ).toBeInTheDocument();
     });
 
-    test("コピー失敗時「失敗」が表示される", async () => {
+    test("コピー失敗時「失敗」が表示され、actionButtonError クラスが付与される", async () => {
       const user = userEvent.setup();
       const config = buildConfigWithBindings();
       setupContext(config);
@@ -240,7 +240,25 @@ describe("ExportPanel", () => {
 
       await user.click(screen.getByRole("button", { name: "コピー" }));
 
-      expect(screen.getByRole("button", { name: "失敗" })).toBeInTheDocument();
+      const button = screen.getByRole("button", { name: "失敗" });
+      expect(button).toBeInTheDocument();
+      expect(button.className).toMatch(/actionButtonError/);
+    });
+
+    test("コピー成功時、actionButtonError クラスが付与されない", async () => {
+      const user = userEvent.setup();
+      const config = buildConfigWithBindings();
+      setupContext(config);
+      vi.stubGlobal("navigator", {
+        clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+      });
+
+      render(<ExportPanel />);
+
+      await user.click(screen.getByRole("button", { name: "コピー" }));
+
+      const button = screen.getByRole("button", { name: "コピー済み" });
+      expect(button.className).not.toMatch(/actionButtonError/);
     });
 
     test("JSON タブに切り替えてコピーすると JSON 出力が渡される", async () => {
