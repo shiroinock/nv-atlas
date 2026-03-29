@@ -36,7 +36,7 @@ export function keybindingToJSON(config: KeybindingConfig): string {
 }
 
 function escapeLangmapChar(char: string): string {
-  return char.replace(/[\\,;]/g, (c) => `\\${c}`);
+  return char.replace(/[\\,;"]/g, (c) => `\\${c}`);
 }
 
 export function keybindingToLangmap(config: KeybindingConfig): string {

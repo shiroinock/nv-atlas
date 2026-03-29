@@ -632,6 +632,39 @@ describe("keybindingToLangmap", () => {
 
       expect(result).toContain("a\\;");
     });
+
+    it('from 側のダブルクォート（"）がバックスラッシュでエスケープされる', () => {
+      // a: '"' → invertKeymap → { '"': 'a' } → ペア: \"a
+      const config = makeConfig({
+        customKeymap: { a: '"' },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain('\\"a');
+    });
+
+    it('to 側のダブルクォート（"）もバックスラッシュでエスケープされる', () => {
+      // '"': 'a' → invertKeymap → { a: '"' } → ペア: a\"
+      const config = makeConfig({
+        customKeymap: { '"': "a" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain('a\\"');
+    });
+
+    it("ダブルクォートを含む langmap が有効な Lua 文字列形式を維持する", () => {
+      // a: '"' → invertKeymap → { '"': 'a' } → vim.opt.langmap = "\"a"
+      const config = makeConfig({
+        customKeymap: { a: '"' },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toMatch(/^vim\.opt\.langmap = ".*"$/);
+    });
   });
 
   describe("ペア生成の方��", () => {
