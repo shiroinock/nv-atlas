@@ -148,6 +148,12 @@ describe("isVIADefinition", () => {
   it("プリミティブ値（文字列）で false を返す", () => {
     expect(isVIADefinition("invalid")).toBe(false);
   });
+
+  it("name が文字列でない場合 false を返す", () => {
+    const json = { name: 123, layouts: { keymap: [["0,0"]] } };
+
+    expect(isVIADefinition(json)).toBe(false);
+  });
 });
 
 describe("isKLEJSON", () => {
