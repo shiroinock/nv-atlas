@@ -33,8 +33,9 @@ export function ExportPanel() {
   );
   const copyTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const hasBindings = Object.values(config.bindings).some(
-    (bs) => bs.length > 0,
+  const hasBindings = useMemo(
+    () => Object.values(config.bindings).some((bs) => bs.length > 0),
+    [config.bindings],
   );
 
   const content = useMemo(
@@ -53,6 +54,12 @@ export function ExportPanel() {
       () => setCopyStatus("idle"),
       COPY_STATUS_RESET_MS,
     );
+  }, []);
+
+  const handleTabChange = useCallback((fmt: ExportFormat) => {
+    setActiveFormat(fmt);
+    setCopyStatus("idle");
+    clearTimeout(copyTimerRef.current);
   }, []);
 
   useEffect(() => {
@@ -97,11 +104,7 @@ export function ExportPanel() {
               key={fmt}
               type="button"
               className={`${styles.tab} ${activeFormat === fmt ? styles.tabActive : ""}`}
-              onClick={() => {
-                setActiveFormat(fmt);
-                setCopyStatus("idle");
-                clearTimeout(copyTimerRef.current);
-              }}
+              onClick={() => handleTabChange(fmt)}
             >
               {FORMAT_LABELS[fmt]}
             </button>

@@ -75,6 +75,7 @@ function setupContext(config: KeybindingConfig) {
 describe("ExportPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.restoreAllMocks();
     mockedKeybindingToLua.mockReturnValue("-- lua output");
     mockedKeybindingToJSON.mockReturnValue('{"json": "output"}');
   });
@@ -262,8 +263,6 @@ describe("ExportPanel", () => {
       await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
       expect(capturedAnchor?.download).toBe("keyviz-config.lua");
-
-      vi.mocked(document.createElement).mockRestore();
     });
   });
 
@@ -290,8 +289,6 @@ describe("ExportPanel", () => {
       await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
       expect(capturedAnchor?.download).toBe("keyviz-config.json");
-
-      vi.mocked(document.createElement).mockRestore();
     });
   });
 });
