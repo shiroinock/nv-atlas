@@ -12,18 +12,21 @@ vi.mock("../../context/KeybindingContext", () => ({
 vi.mock("../../utils/keybinding-exporters", () => ({
   keybindingToLua: vi.fn(),
   keybindingToJSON: vi.fn(),
+  keybindingToLangmap: vi.fn(),
 }));
 
 import { useKeybindingContext } from "../../context/KeybindingContext";
 import type { Keybinding, VimMode } from "../../types/keybinding";
 import {
   keybindingToJSON,
+  keybindingToLangmap,
   keybindingToLua,
 } from "../../utils/keybinding-exporters";
 
 const mockedUseKeybindingContext = vi.mocked(useKeybindingContext);
 const mockedKeybindingToLua = vi.mocked(keybindingToLua);
 const mockedKeybindingToJSON = vi.mocked(keybindingToJSON);
+const mockedKeybindingToLangmap = vi.mocked(keybindingToLangmap);
 
 function buildConfig(overrides?: Partial<KeybindingConfig>): KeybindingConfig {
   const now = new Date().toISOString();
@@ -79,6 +82,7 @@ describe("ExportPanel", () => {
     vi.restoreAllMocks();
     mockedKeybindingToLua.mockReturnValue("-- lua output");
     mockedKeybindingToJSON.mockReturnValue('{"json": "output"}');
+    mockedKeybindingToLangmap.mockReturnValue('vim.opt.langmap = "lw,he"');
   });
 
   describe("デフォルト表示", () => {
@@ -347,7 +351,7 @@ describe("ExportPanel", () => {
       render(<ExportPanel />);
 
       const tabs = screen.getAllByRole("tab");
-      expect(tabs).toHaveLength(2);
+      expect(tabs).toHaveLength(3);
     });
 
     test("デフォルト表示で Lua タブの aria-selected が true、JSON タブが false", () => {
@@ -425,6 +429,123 @@ describe("ExportPanel", () => {
         "aria-labelledby",
         "tab-json",
       );
+    });
+  });
+
+  describe("Langmap タブ", () => {
+    describe("表示", () => {
+      test("Langmap タブが表示される", () => {
+        const config = buildConfig({ customKeymap: { j: "t", k: "e" } });
+        setupContext(config);
+
+        render(<ExportPanel />);
+
+        expect(
+          screen.getByRole("tab", { name: "Langmap" }),
+        ).toBeInTheDocument();
+      });
+
+      test("Langmap タブをクリックすると langmap プレビューが表示される", async () => {
+        const user = userEvent.setup();
+        const config = buildConfig({ customKeymap: { j: "t", k: "e" } });
+        setupContext(config);
+
+        render(<ExportPanel />);
+
+        await user.click(screen.getByRole("tab", { name: "Langmap" }));
+
+        expect(
+          screen.getByText('vim.opt.langmap = "lw,he"'),
+        ).toBeInTheDocument();
+      });
+
+      test("Langmap タブに切り替えると keybindingToLangmap が config で呼ばれる", async () => {
+        const user = userEvent.setup();
+        const config = buildConfig({ customKeymap: { j: "t", k: "e" } });
+        setupContext(config);
+
+        render(<ExportPanel />);
+
+        await user.click(screen.getByRole("tab", { name: "Langmap" }));
+
+        expect(mockedKeybindingToLangmap).toHaveBeenCalledWith(config);
+      });
+    });
+
+    describe("customKeymap 未設定", () => {
+      test("Langmap タブで customKeymap 未設定の場合、専用メッセージが表示される", async () => {
+        const user = userEvent.setup();
+        const config = buildConfig();
+        setupContext(config);
+        mockedKeybindingToLangmap.mockReturnValue("");
+
+        render(<ExportPanel />);
+
+        await user.click(screen.getByRole("tab", { name: "Langmap" }));
+
+        expect(
+          screen.getByText(
+            "カスタムキーマップが設定されていないか、マッピングがありません。レイアウトを読み込んでください。",
+          ),
+        ).toBeInTheDocument();
+      });
+
+      test("Langmap タブで customKeymap 未設定の場合、コピーボタンが無効化される", async () => {
+        const user = userEvent.setup();
+        const config = buildConfig();
+        setupContext(config);
+        mockedKeybindingToLangmap.mockReturnValue("");
+
+        render(<ExportPanel />);
+
+        await user.click(screen.getByRole("tab", { name: "Langmap" }));
+
+        expect(screen.getByRole("button", { name: "コピー" })).toBeDisabled();
+      });
+
+      test("Langmap タブで customKeymap 未設定の場合、ダウンロードボタンが無効化される", async () => {
+        const user = userEvent.setup();
+        const config = buildConfig();
+        setupContext(config);
+        mockedKeybindingToLangmap.mockReturnValue("");
+
+        render(<ExportPanel />);
+
+        await user.click(screen.getByRole("tab", { name: "Langmap" }));
+
+        expect(
+          screen.getByRole("button", { name: "ダウンロード" }),
+        ).toBeDisabled();
+      });
+    });
+
+    describe("ダウンロード", () => {
+      test("Langmap タブでダウンロードすると keyviz-langmap.lua のファイル名が設定される", async () => {
+        const user = userEvent.setup();
+        const config = buildConfig({ customKeymap: { j: "t", k: "e" } });
+        setupContext(config);
+        const createObjectURL = vi.fn().mockReturnValue("blob:mock");
+        const revokeObjectURL = vi.fn();
+        vi.stubGlobal("URL", { createObjectURL, revokeObjectURL });
+
+        let capturedAnchor: HTMLAnchorElement | undefined;
+        const originalCreateElement = document.createElement.bind(document);
+        vi.spyOn(document, "createElement").mockImplementation(
+          (tag: string) => {
+            const el = originalCreateElement(tag);
+            if (tag === "a") capturedAnchor = el as HTMLAnchorElement;
+            return el;
+          },
+        );
+
+        render(<ExportPanel />);
+
+        await user.click(screen.getByRole("tab", { name: "Langmap" }));
+        await user.click(screen.getByRole("button", { name: "ダウンロード" }));
+
+        expect(capturedAnchor).toBeDefined();
+        expect(capturedAnchor?.download).toBe("keyviz-langmap.lua");
+      });
     });
   });
 });

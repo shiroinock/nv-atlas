@@ -1,3 +1,4 @@
+import { invertKeymap } from "../data/keymap";
 import type { KeybindingConfig, VimMode } from "../types/keybinding";
 
 const VIM_MODES: VimMode[] = ["n", "v", "x", "o", "i", "s", "c", "t"];
@@ -32,4 +33,28 @@ export function keybindingToLua(config: KeybindingConfig): string {
 
 export function keybindingToJSON(config: KeybindingConfig): string {
   return JSON.stringify(config, null, 2);
+}
+
+function escapeLangmapChar(char: string): string {
+  return char.replace(/[\\,;]/g, (c) => `\\${c}`);
+}
+
+export function keybindingToLangmap(config: KeybindingConfig): string {
+  if (config.customKeymap === undefined) {
+    return "";
+  }
+
+  const inverted = invertKeymap(config.customKeymap);
+
+  const pairs: string[] = [];
+  for (const [from, to] of Object.entries(inverted)) {
+    if (from === to) continue;
+    pairs.push(`${escapeLangmapChar(from)}${escapeLangmapChar(to)}`);
+  }
+
+  if (pairs.length === 0) {
+    return "";
+  }
+
+  return `vim.opt.langmap = "${pairs.join(",")}"`;
 }

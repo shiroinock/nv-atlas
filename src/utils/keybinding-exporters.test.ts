@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { defaultCustomKeymap } from "../data/keymap";
 import type { Keybinding, KeybindingConfig } from "../types/keybinding";
 import { emptyBindings } from "../types/keybinding";
-import { keybindingToJSON, keybindingToLua } from "./keybinding-exporters";
+import {
+  keybindingToJSON,
+  keybindingToLangmap,
+  keybindingToLua,
+} from "./keybinding-exporters";
 
 // テスト用ヘルパー: 最低限のフィールドで Keybinding を生成する
 function makeKeybinding(
@@ -507,6 +512,195 @@ describe("keybindingToJSON", () => {
       const parsed = JSON.parse(result);
 
       expect(parsed.updatedAt).toBe("2024-06-15T08:30:00.000Z");
+    });
+  });
+});
+
+// ─── keybindingToLangmap ───────────────────────────────────────────
+
+describe("keybindingToLangmap", () => {
+  describe("基本的な変換", () => {
+    it("customKeymap が設定されている場合、langmap 文字列を生成できる", () => {
+      const config = makeConfig({
+        customKeymap: { j: "t" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toBeTruthy();
+    });
+
+    it('出力形式が vim.opt.langmap = "..." である', () => {
+      const config = makeConfig({
+        customKeymap: { j: "t" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toMatch(/^vim\.opt\.langmap = ".*"$/);
+    });
+  });
+
+  describe("customKeymap 未設定", () => {
+    it("customKeymap が undefined の場合は空文字列を返す", () => {
+      const config = makeConfig();
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toBe("");
+    });
+  });
+
+  describe("同一文字マッピングのスキップ", () => {
+    it("同一文字マッピング（a→a）はスキップされる", () => {
+      // a: "a" は同一文字なのでペアに含まれない
+      const config = makeConfig({
+        customKeymap: { a: "a", j: "t" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      // tj ペアは含まれる
+      expect(result).toContain("tj");
+      // aa ペアは含まれない
+      expect(result).not.toContain("aa");
+    });
+
+    it("全エントリが同一文字マッピングの場合は空のペア列になる", () => {
+      const config = makeConfig({
+        customKeymap: { a: "a", b: "b" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toBe("");
+    });
+  });
+
+  describe("langmap 特殊文字のエスケープ", () => {
+    it("カンマ（,）がバックスラッシュでエスケープされる", () => {
+      // o: "," → invertKeymap → { ",": "o" } → ペア: \,o
+      const config = makeConfig({
+        customKeymap: { o: "," },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("\\,o");
+    });
+
+    it("セミコロン（;）がバックスラッシュでエスケープされる", () => {
+      // "/": ";" → invertKeymap → { ";": "/" } → ペア: \;/
+      const config = makeConfig({
+        customKeymap: { "/": ";" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("\\;/");
+    });
+
+    it("バックスラッシュ（\\）がバックスラッシュでエスケープされる", () => {
+      // "a": "\\" → invertKeymap → { "\\": "a" } → ペア: \\a
+      const config = makeConfig({
+        customKeymap: { a: "\\" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("\\\\a");
+    });
+
+    it("to 側のカンマもバックスラッシュでエスケープされる", () => {
+      // ",": "a" → invertKeymap → { a: "," } → ペア: a\,
+      const config = makeConfig({
+        customKeymap: { ",": "a" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("a\\,");
+    });
+
+    it("to 側のセミコロンもバックス��ッシュでエス���ープされる", () => {
+      // ";": "a" → invertKeymap �� { a: ";" } ��� ペア: a\;
+      const config = makeConfig({
+        customKeymap: { ";": "a" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("a\\;");
+    });
+  });
+
+  describe("ペア生成の方��", () => {
+    it("from=カスタム出力文字, to=QWERTY物理位置 の順序でペアが生成される", () => {
+      // customKeymap { j: "t" } → invertKeymap → { t: "j" } → langmap ペア "tj"
+      const config = makeConfig({
+        customKeymap: { j: "t" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("tj");
+    });
+
+    it("複数のペアはカンマ区切りで結合される", () => {
+      const config = makeConfig({
+        customKeymap: { j: "t", h: "k" },
+      });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("tj");
+      expect(result).toContain("kh");
+    });
+  });
+
+  describe("defaultCustomKeymap での統合テスト", () => {
+    it("defaultCustomKeymap を渡した場合に vim.opt.langmap 形式の文字列を返す", () => {
+      const config = makeConfig({ customKeymap: defaultCustomKeymap });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toMatch(/^vim\.opt\.langmap = ".*"$/);
+    });
+
+    it("defaultCustomKeymap の t→j マッピングが ペア 'tj' として含まれる", () => {
+      // j: "t" → invertKeymap → { t: "j" } → ペア: tj
+      const config = makeConfig({ customKeymap: defaultCustomKeymap });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("tj");
+    });
+
+    it("defaultCustomKeymap のカンママッピングが '\\,o' としてエスケープされる", () => {
+      // o: "," → invertKeymap → { ",": "o" } → ペア: \,o
+      const config = makeConfig({ customKeymap: defaultCustomKeymap });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("\\,o");
+    });
+
+    it("defaultCustomKeymap のセミコロンマッピングが '\\;/' としてエスケープされる", () => {
+      // "/": ";" → invertKeymap → { ";": "/" } → ペア: \;/
+      const config = makeConfig({ customKeymap: defaultCustomKeymap });
+
+      const result = keybindingToLangmap(config);
+
+      expect(result).toContain("\\;/");
+    });
+
+    it("defaultCustomKeymap の同一文字マッピング（a→a）はペアに含まれない", () => {
+      const config = makeConfig({ customKeymap: defaultCustomKeymap });
+
+      const result = keybindingToLangmap(config);
+
+      // aa ペアは含まれない
+      expect(result).not.toContain("aa");
     });
   });
 });

@@ -2,27 +2,33 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useKeybindingContext } from "../../context/KeybindingContext";
 import {
   keybindingToJSON,
+  keybindingToLangmap,
   keybindingToLua,
 } from "../../utils/keybinding-exporters";
 import styles from "./ExportPanel.module.css";
 
-type ExportFormat = "lua" | "json";
+type ExportFormat = "lua" | "json" | "langmap";
 type CopyStatus = "idle" | "copied" | "error";
 
 const FORMAT_LABELS: Record<ExportFormat, string> = {
   lua: "Lua",
   json: "JSON",
+  langmap: "Langmap",
 };
 
 const FILE_NAMES: Record<ExportFormat, string> = {
   lua: "keyviz-config.lua",
   json: "keyviz-config.json",
+  langmap: "keyviz-langmap.lua",
 };
 
 const MIME_TYPES: Record<ExportFormat, string> = {
   lua: "text/plain",
   json: "application/json",
+  langmap: "text/plain",
 };
+
+const EXPORT_FORMATS: ExportFormat[] = ["lua", "json", "langmap"];
 
 const COPY_STATUS_RESET_MS = 2000;
 
@@ -51,15 +57,15 @@ export function ExportPanel() {
     [config.bindings],
   );
 
-  const content = useMemo(
-    () =>
-      hasBindings
-        ? activeFormat === "lua"
-          ? keybindingToLua(config)
-          : keybindingToJSON(config)
-        : "",
-    [hasBindings, activeFormat, config],
-  );
+  const content = useMemo(() => {
+    if (activeFormat === "langmap") {
+      return keybindingToLangmap(config);
+    }
+    if (!hasBindings) return "";
+    return activeFormat === "lua"
+      ? keybindingToLua(config)
+      : keybindingToJSON(config);
+  }, [hasBindings, activeFormat, config]);
 
   const resetCopyStatus = useCallback(() => {
     clearTimeout(copyTimerRef.current);
@@ -105,7 +111,7 @@ export function ExportPanel() {
     <div className={styles.container}>
       <div className={styles.toolbar}>
         <div className={styles.tabs} role="tablist">
-          {(["lua", "json"] as ExportFormat[]).map((fmt) => (
+          {EXPORT_FORMATS.map((fmt) => (
             <button
               key={fmt}
               type="button"
@@ -125,7 +131,7 @@ export function ExportPanel() {
             type="button"
             className={`${styles.actionButton} ${COPY_STATUS_CLASS[copyStatus]}`}
             onClick={handleCopy}
-            disabled={!hasBindings}
+            disabled={!content}
           >
             {COPY_STATUS_LABELS[copyStatus]}
           </button>
@@ -133,7 +139,7 @@ export function ExportPanel() {
             type="button"
             className={styles.actionButton}
             onClick={handleDownload}
-            disabled={!hasBindings}
+            disabled={!content}
           >
             ダウンロード
           </button>
@@ -145,8 +151,12 @@ export function ExportPanel() {
         id="tabpanel-export"
         aria-labelledby={`tab-${activeFormat}`}
       >
-        {hasBindings ? (
+        {content ? (
           <pre className={styles.preview}>{content}</pre>
+        ) : activeFormat === "langmap" ? (
+          <p className={styles.empty}>
+            カスタムキーマップが設定されていないか、マッピングがありません。レイアウトを読み込んでください。
+          </p>
         ) : (
           <p className={styles.empty}>
             キーバインドが設定されていません。レイアウトとキーマップを読み込んでください。
