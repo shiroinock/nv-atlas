@@ -294,7 +294,7 @@ function AppContent() {
       )}
 
       {mode !== "edit" && (
-        <div className={styles.legend}>
+        <div className={styles.legend} data-testid="legend">
           {Object.entries(categoryColors).map(([cat, color]) => (
             <div key={cat} className={styles.legendItem}>
               <span

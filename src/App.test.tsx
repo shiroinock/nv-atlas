@@ -316,4 +316,15 @@ describe("App - 編集モードの統合", () => {
 
     expect(screen.queryByTestId("export-panel")).not.toBeInTheDocument();
   });
+
+  test("編集モードでは凡例が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "編集" }));
+
+    expect(screen.queryByTestId("legend")).not.toBeInTheDocument();
+  });
 });
