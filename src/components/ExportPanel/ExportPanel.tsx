@@ -130,6 +130,7 @@ export function ExportPanel() {
           <button
             type="button"
             className={`${styles.actionButton} ${COPY_STATUS_CLASS[copyStatus]}`}
+            data-status={copyStatus}
             onClick={handleCopy}
             disabled={!content}
           >

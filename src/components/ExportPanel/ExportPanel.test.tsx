@@ -230,7 +230,7 @@ describe("ExportPanel", () => {
       ).toBeInTheDocument();
     });
 
-    test("コピー失敗時「失敗」が表示され、actionButtonError クラスが付与される", async () => {
+    test("コピー失敗時「失敗」が表示され、data-status が error になる", async () => {
       const user = userEvent.setup();
       const config = buildConfigWithBindings();
       setupContext(config);
@@ -246,10 +246,10 @@ describe("ExportPanel", () => {
 
       const button = screen.getByRole("button", { name: "失敗" });
       expect(button).toBeInTheDocument();
-      expect(button.className).toMatch(/actionButtonError/);
+      expect(button).toHaveAttribute("data-status", "error");
     });
 
-    test("コピー成功時、actionButtonError クラスが付与されない", async () => {
+    test("コピー成功時、data-status が copied になる", async () => {
       const user = userEvent.setup();
       const config = buildConfigWithBindings();
       setupContext(config);
@@ -262,7 +262,7 @@ describe("ExportPanel", () => {
       await user.click(screen.getByRole("button", { name: "コピー" }));
 
       const button = screen.getByRole("button", { name: "コピー済み" });
-      expect(button.className).not.toMatch(/actionButtonError/);
+      expect(button).toHaveAttribute("data-status", "copied");
     });
 
     test("JSON タブに切り替えてコピーすると JSON 出力が渡される", async () => {
