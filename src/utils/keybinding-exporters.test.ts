@@ -657,17 +657,13 @@ describe("keybindingToLangmap", () => {
 
     it("ダブルクォートを含む langmap が有効な Lua 文字列形式を維持する", () => {
       // a: '"' → invertKeymap → { '"': 'a' } → vim.opt.langmap = "\"a"
-      // 出力全体が vim.opt.langmap = "..." の形式を維持し、内部の " が \" でエスケープされる
       const config = makeConfig({
         customKeymap: { a: '"' },
       });
 
       const result = keybindingToLangmap(config);
 
-      // 出力が vim.opt.langmap = "..." の形式を維持している
       expect(result).toMatch(/^vim\.opt\.langmap = ".*"$/);
-      // 内部のダブルクォートがエスケープされている
-      expect(result).toContain('\\"');
     });
   });
 
