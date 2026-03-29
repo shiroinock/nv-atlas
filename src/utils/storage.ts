@@ -1,6 +1,15 @@
 import { type KeybindingConfig, VIM_MODES } from "../types/keybinding";
 
 const STORAGE_PREFIX = "keyviz:";
+
+/** 現在のキーバインド設定スキーマバージョン */
+export const CURRENT_KEYBINDING_VERSION = 1;
+
+/** v0 データ（version フィールドなし）の型 */
+type KeybindingConfigV0 = Omit<KeybindingConfig, "version">;
+
+/** マイグレーション対象データの型（v0 または最新バージョン） */
+type MigrationInput = KeybindingConfigV0 | KeybindingConfig;
 const LAYOUT_KEY = `${STORAGE_PREFIX}layout`;
 const KEYMAP_KEY = `${STORAGE_PREFIX}keymap`;
 const KEYBINDING_CONFIG_KEY = `${STORAGE_PREFIX}keybinding-config`;
@@ -116,6 +125,31 @@ function hasValidBindings(bindings: Record<string, unknown>): boolean {
   );
 }
 
+/**
+ * キーバインド設定を最新バージョンにマイグレーションする。
+ * v0（version フィールドなし）から順次最新バージョンへ変換する。
+ * 未知のバージョンの場合は null を返す。
+ */
+export function migrateKeybindingConfig(
+  data: MigrationInput,
+): KeybindingConfig | null {
+  // version フィールドがない場合は v0 として扱う
+  const version = "version" in data ? data.version : 0;
+
+  if (version === CURRENT_KEYBINDING_VERSION) {
+    // 既に最新バージョン
+    return data as KeybindingConfig;
+  }
+
+  // v0 → v1: version フィールドを追加する
+  if (version === 0) {
+    return { ...data, version: 1 };
+  }
+
+  // 未知のバージョン（将来のバージョンや不正値）
+  return null;
+}
+
 export function isStoredKeybindingConfig(
   value: unknown,
 ): value is KeybindingConfig {
@@ -124,6 +158,10 @@ export function isStoredKeybindingConfig(
   const v = value as Record<string, unknown>;
 
   return (
+    "version" in v &&
+    typeof v.version === "number" &&
+    Number.isInteger(v.version) &&
+    (v.version as number) >= 1 &&
     "name" in v &&
     typeof v.name === "string" &&
     "bindings" in v &&
@@ -146,8 +184,26 @@ export function loadKeybindingConfig(): KeybindingConfig | null {
   if (raw === null) return null;
 
   const parsed = safeJsonParse(raw);
+  if (parsed === null || typeof parsed !== "object") {
+    clearKeybindingConfig();
+    return null;
+  }
+
+  // 既に最新バージョンなら型ガードのみ実行
   if (isStoredKeybindingConfig(parsed)) return parsed;
-  return null;
+
+  // version フィールドがない、または古いバージョンはマイグレーションを試みる
+  const migrated = migrateKeybindingConfig(parsed as MigrationInput);
+
+  if (!isStoredKeybindingConfig(migrated)) {
+    // マイグレーション後も型ガードに失敗した場合はクリア
+    clearKeybindingConfig();
+    return null;
+  }
+
+  // マイグレーション結果を localStorage に再保存して永続化
+  localStorage.setItem(KEYBINDING_CONFIG_KEY, JSON.stringify(migrated));
+  return migrated;
 }
 
 export function clearKeybindingConfig(): void {

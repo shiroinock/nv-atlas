@@ -2,7 +2,8 @@ import { renderHook } from "@testing-library/react";
 import type React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("../utils/storage", () => ({
+vi.mock("../utils/storage", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../utils/storage")>()),
   loadKeybindingConfig: vi.fn(),
   saveKeybindingConfig: vi.fn(),
 }));
@@ -14,6 +15,7 @@ import { KeybindingProvider, useKeybindingContext } from "./KeybindingContext";
 const mockLoadKeybindingConfig = vi.mocked(loadKeybindingConfig);
 
 const savedConfig: KeybindingConfig = {
+  version: 1,
   name: "保存済み設定",
   bindings: {
     n: [
@@ -39,6 +41,7 @@ const savedConfig: KeybindingConfig = {
 };
 
 const initialConfig: KeybindingConfig = {
+  version: 1,
   name: "initial prop 設定",
   bindings: {
     n: [

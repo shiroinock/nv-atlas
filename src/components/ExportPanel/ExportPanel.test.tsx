@@ -28,6 +28,7 @@ const mockedKeybindingToJSON = vi.mocked(keybindingToJSON);
 function buildConfig(overrides?: Partial<KeybindingConfig>): KeybindingConfig {
   const now = new Date().toISOString();
   return {
+    version: 1,
     name: "test-config",
     bindings: emptyBindings(),
     createdAt: now,

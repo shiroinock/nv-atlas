@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { KeybindingConfig } from "../types/keybinding";
 import {
+  CURRENT_KEYBINDING_VERSION,
   clearAllStorage,
   clearKeybindingConfig,
   clearKeymap,
@@ -9,6 +10,7 @@ import {
   loadKeybindingConfig,
   loadKeymap,
   loadLayout,
+  migrateKeybindingConfig,
   saveKeybindingConfig,
   saveKeymap,
   saveLayout,
@@ -159,6 +161,7 @@ describe("clearAllStorage", () => {
 
   it("keybinding-config もクリアされる", () => {
     const config: KeybindingConfig = {
+      version: CURRENT_KEYBINDING_VERSION,
       name: "Test Config",
       bindings: { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] },
       createdAt: "2024-01-01T00:00:00.000Z",
@@ -173,6 +176,7 @@ describe("clearAllStorage", () => {
 });
 
 const validConfig: KeybindingConfig = {
+  version: CURRENT_KEYBINDING_VERSION,
   name: "My Config",
   bindings: { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] },
   createdAt: "2024-01-01T00:00:00.000Z",
@@ -558,5 +562,212 @@ describe("保存キー", () => {
     expect(storedRaw).not.toBeNull();
     const stored = JSON.parse(storedRaw as string);
     expect(stored).toEqual({ json, matrixCols, name });
+  });
+});
+
+describe("マイグレーション: v0 → v1", () => {
+  const v0Config = {
+    name: "v0 Config",
+    bindings: { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] },
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-02T00:00:00.000Z",
+  };
+
+  it("v0 データ（version フィールドなし）が version: 1 に変換される", () => {
+    const result = migrateKeybindingConfig(v0Config);
+
+    expect(result).not.toBeNull();
+    expect(result!.version).toBe(1);
+  });
+
+  it("v0 データの name フィールドが保持される", () => {
+    const result = migrateKeybindingConfig(v0Config);
+
+    expect(result).not.toBeNull();
+    expect(result!.name).toBe("v0 Config");
+  });
+
+  it("v0 データの bindings フィールドが保持される", () => {
+    const result = migrateKeybindingConfig(v0Config);
+
+    expect(result).not.toBeNull();
+    expect(result!.bindings).toEqual(v0Config.bindings);
+  });
+
+  it("v0 データの createdAt フィールドが保持される", () => {
+    const result = migrateKeybindingConfig(v0Config);
+
+    expect(result).not.toBeNull();
+    expect(result!.createdAt).toBe("2024-01-01T00:00:00.000Z");
+  });
+
+  it("v0 データの updatedAt フィールドが保持される", () => {
+    const result = migrateKeybindingConfig(v0Config);
+
+    expect(result).not.toBeNull();
+    expect(result!.updatedAt).toBe("2024-01-02T00:00:00.000Z");
+  });
+
+  it("v0 データの customKeymap フィールドが保持される", () => {
+    const v0WithKeymap = { ...v0Config, customKeymap: { a: "a", s: "r" } };
+
+    const result = migrateKeybindingConfig(v0WithKeymap);
+
+    expect(result).not.toBeNull();
+    expect(result!.customKeymap).toEqual({ a: "a", s: "r" });
+  });
+
+  it("customKeymap がない v0 データも正しく変換される", () => {
+    const result = migrateKeybindingConfig(v0Config);
+
+    expect(result).not.toBeNull();
+    expect(result!.customKeymap).toBeUndefined();
+    expect(result!.version).toBe(1);
+  });
+
+  it("既に version: 1 のデータはそのまま返される", () => {
+    const v1Config = { ...v0Config, version: 1 };
+
+    const result = migrateKeybindingConfig(v1Config);
+
+    expect(result).not.toBeNull();
+    expect(result!.version).toBe(1);
+    expect(result!.name).toBe("v0 Config");
+  });
+});
+
+describe("loadKeybindingConfig のバージョンマイグレーション", () => {
+  const v0ConfigRaw = {
+    name: "Migrated Config",
+    bindings: { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] },
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-02T00:00:00.000Z",
+  };
+
+  it("v0 データを localStorage から読み込むと version: 1 のデータが返る", () => {
+    localStorageMock.setItem(
+      "keyviz:keybinding-config",
+      JSON.stringify(v0ConfigRaw),
+    );
+
+    const result = loadKeybindingConfig();
+
+    expect(result).not.toBeNull();
+    expect(result?.version).toBe(1);
+  });
+
+  it("v0 データを読み込んだ後 name や bindings が保持される", () => {
+    localStorageMock.setItem(
+      "keyviz:keybinding-config",
+      JSON.stringify(v0ConfigRaw),
+    );
+
+    const result = loadKeybindingConfig();
+
+    expect(result?.name).toBe("Migrated Config");
+    expect(result?.bindings).toEqual(v0ConfigRaw.bindings);
+  });
+
+  it("マイグレーション後のデータが localStorage に再保存される（永続化）", () => {
+    localStorageMock.setItem(
+      "keyviz:keybinding-config",
+      JSON.stringify(v0ConfigRaw),
+    );
+
+    loadKeybindingConfig();
+
+    const storedRaw = localStorageMock.getItem("keyviz:keybinding-config");
+    expect(storedRaw).not.toBeNull();
+    const stored = JSON.parse(storedRaw as string);
+    expect(stored.version).toBe(1);
+  });
+
+  it("マイグレーション不可能な壊れたデータの場合は null を返す", () => {
+    localStorageMock.setItem("keyviz:keybinding-config", "{ broken json ::::");
+
+    const result = loadKeybindingConfig();
+
+    expect(result).toBeNull();
+  });
+
+  it("マイグレーション後に型ガードに失敗するデータの場合は null を返す", () => {
+    localStorageMock.setItem(
+      "keyviz:keybinding-config",
+      JSON.stringify({ name: "incomplete" }),
+    );
+
+    const result = loadKeybindingConfig();
+
+    expect(result).toBeNull();
+  });
+
+  it("壊れたデータの場合は localStorage がクリアされる", () => {
+    localStorageMock.setItem("keyviz:keybinding-config", "{ broken json ::::");
+
+    loadKeybindingConfig();
+
+    expect(localStorageMock.removeItem).toHaveBeenCalledWith(
+      "keyviz:keybinding-config",
+    );
+  });
+});
+
+describe("isStoredKeybindingConfig の version 検証", () => {
+  it("version: 1 を含む正常なデータは true を返す", () => {
+    expect(isStoredKeybindingConfig(validConfig)).toBe(true);
+  });
+
+  it("version フィールドがない（v0）データは false を返す", () => {
+    const v0Data = {
+      name: "v0 Config",
+      bindings: { n: [], v: [], x: [], o: [], i: [], s: [], c: [], t: [] },
+      createdAt: "2024-01-01T00:00:00.000Z",
+      updatedAt: "2024-01-02T00:00:00.000Z",
+    };
+
+    expect(isStoredKeybindingConfig(v0Data)).toBe(false);
+  });
+
+  it("version が string の場合は false を返す", () => {
+    const withStringVersion = { ...validConfig, version: "1" };
+
+    expect(isStoredKeybindingConfig(withStringVersion)).toBe(false);
+  });
+
+  it("version が null の場合は false を返す", () => {
+    const withNullVersion = { ...validConfig, version: null };
+
+    expect(isStoredKeybindingConfig(withNullVersion)).toBe(false);
+  });
+
+  it("version が負の数の場合は false を返す", () => {
+    const withNegativeVersion = { ...validConfig, version: -1 };
+
+    expect(isStoredKeybindingConfig(withNegativeVersion)).toBe(false);
+  });
+
+  it("version が 0 の場合は false を返す", () => {
+    const withZeroVersion = { ...validConfig, version: 0 };
+
+    expect(isStoredKeybindingConfig(withZeroVersion)).toBe(false);
+  });
+});
+
+describe("saveKeybindingConfig の version 保持", () => {
+  it("saveKeybindingConfig で保存した config に version: 1 が含まれる", () => {
+    saveKeybindingConfig(validConfig);
+
+    const storedRaw = localStorageMock.getItem("keyviz:keybinding-config");
+    expect(storedRaw).not.toBeNull();
+    const stored = JSON.parse(storedRaw as string);
+    expect(stored.version).toBe(1);
+  });
+
+  it("loadKeybindingConfig で取得した config に version: 1 が含まれる", () => {
+    saveKeybindingConfig(validConfig);
+
+    const result = loadKeybindingConfig();
+
+    expect(result?.version).toBe(1);
   });
 });

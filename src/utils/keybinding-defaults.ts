@@ -6,6 +6,7 @@ import type {
 } from "../types/keybinding";
 import { emptyBindings } from "../types/keybinding";
 import type { VimCommand } from "../types/vim";
+import { CURRENT_KEYBINDING_VERSION } from "./storage";
 
 /**
  * VimCommand → Keybinding 変換
@@ -42,6 +43,7 @@ export function createDefaultConfig(name = "QWERTY Default"): KeybindingConfig {
 
   const now = new Date().toISOString();
   return {
+    version: CURRENT_KEYBINDING_VERSION,
     name,
     bindings,
     createdAt: now,

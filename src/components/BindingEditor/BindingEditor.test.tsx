@@ -18,6 +18,7 @@ const makeBinding = (overrides: Partial<Keybinding> = {}): Keybinding => ({
 });
 
 const makeConfig = (bindings: Keybinding[] = []): KeybindingConfig => ({
+  version: 1,
   name: "test",
   bindings: { ...emptyBindings(), n: bindings },
   createdAt: "2024-01-01T00:00:00Z",

@@ -67,7 +67,8 @@ vi.mock("./hooks/useNvimMaps", () => ({
 }));
 
 // storage をモック化して localStorage アクセスを回避する
-vi.mock("./utils/storage", () => ({
+vi.mock("./utils/storage", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./utils/storage")>()),
   loadKeymap: vi.fn(() => null),
   loadKeybindingConfig: vi.fn(() => null),
   saveKeymap: vi.fn(),
@@ -91,6 +92,7 @@ const mockedUseNvimMaps = vi.mocked(useNvimMaps);
 function buildConfig(customKeymap?: Record<string, string>): KeybindingConfig {
   const now = new Date().toISOString();
   return {
+    version: 1,
     name: "test-config",
     bindings: emptyBindings(),
     customKeymap,

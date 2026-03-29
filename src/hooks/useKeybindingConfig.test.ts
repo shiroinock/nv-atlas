@@ -1,7 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("../utils/storage", () => ({
+vi.mock("../utils/storage", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../utils/storage")>()),
   saveKeybindingConfig: vi.fn(),
 }));
 

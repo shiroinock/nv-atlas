@@ -55,6 +55,8 @@ export interface Keybinding {
 
 /** キーバインド設定全体 */
 export interface KeybindingConfig {
+  /** スキーマバージョン */
+  version: number;
   /** 設定名 */
   name: string;
   /** モードごとのバインディング */

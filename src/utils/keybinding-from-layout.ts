@@ -3,6 +3,7 @@ import { decomposeVimKey, vimCommands } from "../data/vim-commands";
 import type { Keybinding, KeybindingConfig } from "../types/keybinding";
 import { emptyBindings } from "../types/keybinding";
 import type { VimCommand } from "../types/vim";
+import { CURRENT_KEYBINDING_VERSION } from "./storage";
 
 /**
  * カスタム配列から KeybindingConfig を生成する。
@@ -47,6 +48,7 @@ export function deriveFromLayout(
 
   const now = new Date().toISOString();
   return {
+    version: CURRENT_KEYBINDING_VERSION,
     name,
     bindings,
     customKeymap,
