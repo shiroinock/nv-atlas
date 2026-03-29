@@ -1,11 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
+import { DEFAULT_LAYOUT_NAME } from "../../data/default-layout";
 import { defaultCustomKeymap } from "../../data/keymap";
 import { LayoutLoader } from "./LayoutLoader";
 
 const defaultProps = {
-  layoutName: "ANSI 60%",
+  layoutName: DEFAULT_LAYOUT_NAME,
   keymapFileName: null,
   customKeymap: defaultCustomKeymap,
   onLoadLayout: vi.fn(),
@@ -27,9 +28,9 @@ describe("LayoutLoader", () => {
   });
 
   test("layoutName が 'ANSI 60%' の場合、レイアウトドロップゾーンにファイル名が表示されない", () => {
-    render(<LayoutLoader {...defaultProps} layoutName="ANSI 60%" />);
+    render(<LayoutLoader {...defaultProps} layoutName={DEFAULT_LAYOUT_NAME} />);
 
-    expect(screen.queryByText("ANSI 60%")).not.toBeInTheDocument();
+    expect(screen.queryByText(DEFAULT_LAYOUT_NAME)).not.toBeInTheDocument();
     expect(
       screen.getByText("VIA 定義 JSON をドロップ or クリック"),
     ).toBeInTheDocument();

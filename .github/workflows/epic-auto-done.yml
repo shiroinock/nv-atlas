@@ -115,29 +115,52 @@ jobs:
             echo "All sub-issues closed for epic #${parent_number}. Finding project item..."
 
             # user() は個人アカウントのプロジェクト用。Org の場合は organization() に変更
-            ITEM_ID=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
-              query($owner: String!, $number: Int!) {
-                user(login: $owner) {
-                  projectV2(number: $number) {
-                    items(first: 100) {
-                      nodes {
-                        id
-                        content {
-                          ... on Issue {
-                            number
+            # カーソルベースのページネーションで全 items を取得
+            ITEM_ID=""
+            ITEMS_CURSOR=""
+            while true; do
+              AFTER_OPTS=()
+              [ -n "$ITEMS_CURSOR" ] && AFTER_OPTS+=(-f after="$ITEMS_CURSOR")
+              ITEMS_RESULT=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
+                query($owner: String!, $number: Int!, $after: String) {
+                  user(login: $owner) {
+                    projectV2(number: $number) {
+                      items(first: 100, after: $after) {
+                        pageInfo {
+                          hasNextPage
+                          endCursor
+                        }
+                        nodes {
+                          id
+                          content {
+                            ... on Issue {
+                              number
+                            }
                           }
                         }
                       }
                     }
                   }
-                }
-              }' -f owner="$PROJECT_OWNER" \
-                 -F number="$PROJECT_NUMBER" \
-              --argjson pnum "$parent_number" \
-              --jq '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .id') || {
-              echo "::warning::Failed to query project items for epic #${parent_number}"
-              continue
-            }
+                }' -f owner="$PROJECT_OWNER" \
+                   -F number="$PROJECT_NUMBER" \
+                   "${AFTER_OPTS[@]}") || {
+                echo "::warning::Failed to query project items for epic #${parent_number}"
+                break
+              }
+
+              FOUND=$(echo "$ITEMS_RESULT" | jq -r --argjson pnum "$parent_number" \
+                '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .id')
+              if [ -n "$FOUND" ]; then
+                ITEM_ID="$FOUND"
+                break
+              fi
+
+              ITEMS_HAS_NEXT=$(echo "$ITEMS_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.hasNextPage')
+              if [ "$ITEMS_HAS_NEXT" != "true" ]; then
+                break
+              fi
+              ITEMS_CURSOR=$(echo "$ITEMS_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.endCursor')
+            done
 
             if [ -z "$ITEM_ID" ]; then
               echo "Epic #${parent_number} is not in project, skipping."
@@ -155,39 +178,66 @@ jobs:
             VERIFIED=false
             for i in 1 2 3; do
               sleep 3
-              CURRENT_STATUS=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
-                query($owner: String!, $number: Int!) {
-                  user(login: $owner) {
-                    projectV2(number: $number) {
-                      items(first: 100) {
-                        nodes {
-                          id
-                          fieldValues(first: 20) {
-                            nodes {
-                              ... on ProjectV2ItemFieldSingleSelectValue {
-                                optionId
-                                field {
-                                  ... on ProjectV2SingleSelectField {
-                                    id
+              # カーソルベースのページネーションで検証対象の item を検索
+              CURRENT_STATUS=""
+              VERIFY_CURSOR=""
+              while true; do
+                VERIFY_AFTER_OPTS=()
+                [ -n "$VERIFY_CURSOR" ] && VERIFY_AFTER_OPTS+=(-f after="$VERIFY_CURSOR")
+                VERIFY_RESULT=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
+                  query($owner: String!, $number: Int!, $after: String) {
+                    user(login: $owner) {
+                      projectV2(number: $number) {
+                        items(first: 100, after: $after) {
+                          pageInfo {
+                            hasNextPage
+                            endCursor
+                          }
+                          nodes {
+                            id
+                            fieldValues(first: 20) {
+                              nodes {
+                                ... on ProjectV2ItemFieldSingleSelectValue {
+                                  optionId
+                                  field {
+                                    ... on ProjectV2SingleSelectField {
+                                      id
+                                    }
                                   }
                                 }
                               }
                             }
-                          }
-                          content {
-                            ... on Issue {
-                              number
+                            content {
+                              ... on Issue {
+                                number
+                              }
                             }
                           }
                         }
                       }
                     }
-                  }
-                }' -f owner="$PROJECT_OWNER" \
-                   -F number="$PROJECT_NUMBER" \
-                --argjson pnum "$parent_number" \
-                --arg sfid "$STATUS_FIELD_ID" \
-                --jq '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .fieldValues.nodes[] | select(.field.id == $sfid) | .optionId')
+                  }' -f owner="$PROJECT_OWNER" \
+                     -F number="$PROJECT_NUMBER" \
+                     "${VERIFY_AFTER_OPTS[@]}") || {
+                  echo "::warning::Failed to query project items for verification (attempt ${i})"
+                  break
+                }
+
+                FOUND_STATUS=$(echo "$VERIFY_RESULT" | jq -r \
+                  --argjson pnum "$parent_number" \
+                  --arg sfid "$STATUS_FIELD_ID" \
+                  '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .fieldValues.nodes[] | select(.field.id == $sfid) | .optionId')
+                if [ -n "$FOUND_STATUS" ]; then
+                  CURRENT_STATUS="$FOUND_STATUS"
+                  break
+                fi
+
+                VERIFY_HAS_NEXT=$(echo "$VERIFY_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.hasNextPage')
+                if [ "$VERIFY_HAS_NEXT" != "true" ]; then
+                  break
+                fi
+                VERIFY_CURSOR=$(echo "$VERIFY_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.endCursor')
+              done
 
               echo "Attempt ${i}: current optionId=${CURRENT_STATUS}"
 

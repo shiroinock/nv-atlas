@@ -16,7 +16,7 @@ describe("ModeSelector", () => {
     test("全7モード分のボタンがレンダリングされる", () => {
       render(<ModeSelector {...defaultProps} />);
 
-      expect(screen.getAllByRole("button")).toHaveLength(7);
+      expect(screen.getAllByRole("tab")).toHaveLength(7);
     });
 
     test("各ボタンに正しい title 属性（ラベル）がある", () => {
@@ -126,6 +126,70 @@ describe("ModeSelector", () => {
       await user.click(screen.getByTitle("Insert"));
 
       expect(onModeChange).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe("アクセシビリティ", () => {
+    test("tabs コンテナに role='tablist' が付与されている", () => {
+      render(<ModeSelector {...defaultProps} />);
+
+      expect(screen.getByRole("tablist")).toBeInTheDocument();
+    });
+
+    test("アクティブモードのタブに aria-selected='true' が付与されている", () => {
+      render(<ModeSelector {...defaultProps} activeMode="n" />);
+
+      expect(screen.getByTitle("Normal")).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    test("非アクティブなタブに aria-selected='false' が付与されている", () => {
+      render(<ModeSelector {...defaultProps} activeMode="n" />);
+
+      expect(screen.getByTitle("Visual")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      expect(screen.getByTitle("Op-pending")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      expect(screen.getByTitle("Insert")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      expect(screen.getByTitle("Command-line")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      expect(screen.getByTitle("Select")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+      expect(screen.getByTitle("Terminal")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
+    });
+
+    test("各タブに id='tab-vim-{mode}' が付与されている", () => {
+      render(<ModeSelector {...defaultProps} />);
+
+      expect(screen.getByTitle("Normal")).toHaveAttribute("id", "tab-vim-n");
+      expect(screen.getByTitle("Visual")).toHaveAttribute("id", "tab-vim-v");
+      expect(screen.getByTitle("Op-pending")).toHaveAttribute(
+        "id",
+        "tab-vim-o",
+      );
+      expect(screen.getByTitle("Insert")).toHaveAttribute("id", "tab-vim-i");
+      expect(screen.getByTitle("Command-line")).toHaveAttribute(
+        "id",
+        "tab-vim-c",
+      );
+      expect(screen.getByTitle("Select")).toHaveAttribute("id", "tab-vim-s");
+      expect(screen.getByTitle("Terminal")).toHaveAttribute("id", "tab-vim-t");
     });
   });
 

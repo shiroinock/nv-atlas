@@ -1,5 +1,9 @@
+:root {
+  --section-gap: 24px;
+}
+
 .header {
-  margin-bottom: 24px;
+  margin-bottom: var(--section-gap);
 }
 
 .headerTop {
@@ -105,7 +109,7 @@
 .keyboardWrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--section-gap);
   overflow-x: auto;
   padding: 16px 0;
 }
@@ -118,19 +122,19 @@
 }
 
 .detail {
-  margin-bottom: 24px;
+  margin-bottom: var(--section-gap);
 }
 
 .reference {
-  margin-bottom: 24px;
+  margin-bottom: var(--section-gap);
 }
 
 .editor {
-  margin-bottom: 24px;
+  margin-bottom: var(--section-gap);
 }
 
 .export {
-  margin-bottom: 24px;
+  margin-bottom: var(--section-gap);
 }
 
 .legend {
