@@ -89,10 +89,13 @@ function AppContent() {
     [nvimMaps],
   );
 
-  const handleHover = (cmd: VimCommand | null, customKey: string | null) => {
-    setHoveredCommand(cmd);
-    setHoveredCustomKey(customKey);
-  };
+  const handleHover = useCallback(
+    (cmd: VimCommand | null, customKey: string | null) => {
+      setHoveredCommand(cmd);
+      setHoveredCustomKey(customKey);
+    },
+    [],
+  );
 
   const handleHighlightKeys = useCallback((keys: HighlightEntry[]) => {
     setHighlightKeys(keys);

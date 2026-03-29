@@ -409,6 +409,35 @@ describe("App - 編集モードの統合", () => {
   });
 });
 
+describe("App - handleHover の参照安定性", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  // handleHover が useCallback でラップされていれば、
+  // 再レンダー後も Keyboard に渡される onHover は同一参照であること
+  test("可視化モードで再レンダーされても Keyboard に渡される onHover の参照が変わらない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    // 初回レンダー時の onHover 参照を取得
+    const calls = mockedKeyboard.mock.calls;
+    const firstOnHover = calls[calls.length - 1][0].onHover;
+
+    // Vim モードタブをクリックして AppContent を再レンダーさせる
+    // ModeSelector は可視化モード時に表示され、クリックで setActiveVimMode が呼ばれる
+    await user.click(screen.getByRole("tab", { name: "VVisual" }));
+
+    // 再レンダー後の onHover 参照を取得
+    const callsAfter = mockedKeyboard.mock.calls;
+    const secondOnHover = callsAfter[callsAfter.length - 1][0].onHover;
+
+    expect(secondOnHover).toBe(firstOnHover);
+  });
+});
+
 describe("App - モードタブの動的生成", () => {
   beforeEach(() => {
     vi.clearAllMocks();
