@@ -11,6 +11,13 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
   const capturedKeyRef = useRef<string | null>(null);
   const [capturedKey, setCapturedKey] = useState<string | null>(null);
 
+  const onConfirmRef = useRef(onConfirm);
+  const onCancelRef = useRef(onCancel);
+  useEffect(() => {
+    onConfirmRef.current = onConfirm;
+    onCancelRef.current = onCancel;
+  });
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const vimKey = normalizeKeyEvent(e);
@@ -20,17 +27,17 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
       e.preventDefault();
 
       if (e.key === "Escape") {
-        onCancel();
+        onCancelRef.current();
         return;
       }
 
       if (e.key === "Enter" && capturedKeyRef.current !== null) {
-        onConfirm(capturedKeyRef.current);
+        onConfirmRef.current(capturedKeyRef.current);
         return;
       }
 
       if (vimKey === capturedKeyRef.current) {
-        onConfirm(capturedKeyRef.current);
+        onConfirmRef.current(capturedKeyRef.current);
         return;
       }
 
@@ -40,10 +47,10 @@ export function KeyCapture({ onConfirm, onCancel }: KeyCaptureProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onConfirm, onCancel]);
+  }, []);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} aria-live="polite">
       {capturedKey === null ? (
         <span className={styles.placeholder}>キーを押してください…</span>
       ) : (
