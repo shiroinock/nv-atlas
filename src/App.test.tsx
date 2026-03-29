@@ -9,6 +9,10 @@ vi.mock("./components/ExportPanel/ExportPanel", () => ({
   ExportPanel: vi.fn(() => <div data-testid="export-panel" />),
 }));
 
+vi.mock("./components/BindingEditor/BindingEditor", () => ({
+  BindingEditor: vi.fn(() => <div data-testid="binding-editor" />),
+}));
+
 // 子コンポーネントをモック化して渡された customKeymap props を検証する
 vi.mock("./components/PracticeMode/PracticeMode", () => ({
   PracticeMode: vi.fn(
@@ -252,5 +256,75 @@ describe("App - ExportPanel の表示", () => {
     await user.click(screen.getByRole("button", { name: "辞書" }));
 
     expect(screen.queryByTestId("export-panel")).not.toBeInTheDocument();
+  });
+});
+
+describe("App - 編集モードの統合", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("「編集」タブが表示される", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    expect(screen.getByRole("button", { name: "編集" })).toBeInTheDocument();
+  });
+
+  test("「編集」タブをクリックすると BindingEditor が表示される", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "編集" }));
+
+    expect(screen.getByTestId("binding-editor")).toBeInTheDocument();
+  });
+
+  test("編集モードでは Keyboard が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "編集" }));
+
+    expect(screen.queryByTestId("keyboard")).not.toBeInTheDocument();
+  });
+
+  test("編集モードから可視化モードに切り替えると BindingEditor が非表示になる", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "編集" }));
+    await user.click(screen.getByRole("button", { name: "可視化" }));
+
+    expect(screen.queryByTestId("binding-editor")).not.toBeInTheDocument();
+  });
+
+  test("編集モードでは ExportPanel が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "編集" }));
+
+    expect(screen.queryByTestId("export-panel")).not.toBeInTheDocument();
+  });
+
+  test("編集モードでは凡例が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "編集" }));
+
+    expect(screen.queryByTestId("legend")).not.toBeInTheDocument();
   });
 });

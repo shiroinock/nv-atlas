@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./App.module.css";
+import { BindingEditor } from "./components/BindingEditor/BindingEditor";
 import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { CommandReference } from "./components/CommandReference/CommandReference";
 import { ExportPanel } from "./components/ExportPanel/ExportPanel";
@@ -53,9 +54,9 @@ function AppContent() {
   const [viaKeymapFull, setViaKeymapFull] = useState<VIAKeymapFull | null>(
     null,
   );
-  const [mode, setMode] = useState<"visualize" | "practice" | "reference">(
-    "visualize",
-  );
+  const [mode, setMode] = useState<
+    "visualize" | "practice" | "reference" | "edit"
+  >("visualize");
   const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
@@ -200,8 +201,15 @@ function AppContent() {
               >
                 辞書
               </button>
+              <button
+                type="button"
+                className={`${styles.modeTab} ${mode === "edit" ? styles.modeTabActive : ""}`}
+                onClick={() => setMode("edit")}
+              >
+                編集
+              </button>
             </div>
-            {mode !== "practice" && (
+            {(mode === "visualize" || mode === "reference") && (
               <ModeSelector
                 activeMode={activeVimMode}
                 onModeChange={setActiveVimMode}
@@ -232,23 +240,25 @@ function AppContent() {
         </div>
       )}
 
-      <div
-        className={`${styles.keyboardWrapper} ${mode === "reference" ? styles.keyboardSticky : ""}`}
-      >
-        <Keyboard
-          layout={layout}
-          customKeymap={customKeymap}
-          matrixKeymap={matrixKeymap}
-          onHover={mode === "visualize" ? handleHover : noopHover}
-          highlightKeys={
-            mode === "practice" || mode === "reference"
-              ? highlightKeys
-              : undefined
-          }
-          plain={mode === "practice" || mode === "reference"}
-          activeVimMode={activeVimMode}
-        />
-      </div>
+      {mode !== "edit" && (
+        <div
+          className={`${styles.keyboardWrapper} ${mode === "reference" ? styles.keyboardSticky : ""}`}
+        >
+          <Keyboard
+            layout={layout}
+            customKeymap={customKeymap}
+            matrixKeymap={matrixKeymap}
+            onHover={mode === "visualize" ? handleHover : noopHover}
+            highlightKeys={
+              mode === "practice" || mode === "reference"
+                ? highlightKeys
+                : undefined
+            }
+            plain={mode === "practice" || mode === "reference"}
+            activeVimMode={activeVimMode}
+          />
+        </div>
+      )}
 
       {mode === "reference" && (
         <div className={styles.reference}>
@@ -259,6 +269,12 @@ function AppContent() {
             mergedCommands={mergedCommands}
             activeVimMode={activeVimMode}
           />
+        </div>
+      )}
+
+      {mode === "edit" && (
+        <div className={styles.editor}>
+          <BindingEditor />
         </div>
       )}
 
@@ -277,17 +293,19 @@ function AppContent() {
         </div>
       )}
 
-      <div className={styles.legend}>
-        {Object.entries(categoryColors).map(([cat, color]) => (
-          <div key={cat} className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ backgroundColor: color }}
-            />
-            {categoryLabels[cat]}
-          </div>
-        ))}
-      </div>
+      {mode !== "edit" && (
+        <div className={styles.legend} data-testid="legend">
+          {Object.entries(categoryColors).map(([cat, color]) => (
+            <div key={cat} className={styles.legendItem}>
+              <span
+                className={styles.legendDot}
+                style={{ backgroundColor: color }}
+              />
+              {categoryLabels[cat]}
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }
