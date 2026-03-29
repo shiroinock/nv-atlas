@@ -1,3 +1,4 @@
+# NOTE: deploy.yml の workflow_run トリガーがこの name を参照している
 name: CI
 
 on:
