@@ -65,3 +65,32 @@
   border-color: #f38ba8;
   color: #f38ba8;
 }
+
+.keymapGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 250px;
+}
+
+.presetSelect {
+  background: #1e1e2e;
+  border: 2px solid #45475a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #cdd6f4;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+  appearance: none;
+  width: 100%;
+}
+
+.presetSelect:hover,
+.presetSelect:focus {
+  border-color: #89b4fa;
+  outline: none;
+}

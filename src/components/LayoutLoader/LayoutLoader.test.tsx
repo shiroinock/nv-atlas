@@ -1,13 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test, vi } from "vitest";
+import { defaultCustomKeymap } from "../../data/keymap";
 import { LayoutLoader } from "./LayoutLoader";
 
 const defaultProps = {
   layoutName: "ANSI 60%",
   keymapFileName: null,
+  customKeymap: defaultCustomKeymap,
   onLoadLayout: vi.fn(),
   onLoadKeymap: vi.fn(),
+  onSelectPreset: vi.fn(),
   onClearStorage: vi.fn(),
   error: null,
 };
@@ -48,9 +51,7 @@ describe("LayoutLoader", () => {
 
     expect(screen.getByText("my-keymap.json")).toBeInTheDocument();
     expect(
-      screen.queryByText(
-        "VIA エクスポートした keymap JSON をドロップ or クリック",
-      ),
+      screen.queryByText("または VIA JSON をドロップ or クリック"),
     ).not.toBeInTheDocument();
   });
 
@@ -80,5 +81,80 @@ describe("LayoutLoader", () => {
     );
 
     expect(onClearStorage).toHaveBeenCalledOnce();
+  });
+
+  test("プリセット選択ドロップダウンが表示される", () => {
+    render(<LayoutLoader {...defaultProps} />);
+
+    const select = screen.getByRole("combobox");
+    expect(select).toBeInTheDocument();
+    expect(screen.getByText("QWERTY")).toBeInTheDocument();
+    expect(screen.getByText("Colemak DH")).toBeInTheDocument();
+    expect(screen.getByText("Dvorak")).toBeInTheDocument();
+  });
+
+  test("customKeymap がプリセットに一致する場合、そのプリセットが選択状態になる", () => {
+    const qwertyKeymap = Object.fromEntries(
+      [
+        "q",
+        "w",
+        "e",
+        "r",
+        "t",
+        "y",
+        "u",
+        "i",
+        "o",
+        "p",
+        "a",
+        "s",
+        "d",
+        "f",
+        "g",
+        "h",
+        "j",
+        "k",
+        "l",
+        ";",
+        "z",
+        "x",
+        "c",
+        "v",
+        "b",
+        "n",
+        "m",
+        ",",
+        ".",
+        "/",
+      ].map((k) => [k, k]),
+    );
+    render(<LayoutLoader {...defaultProps} customKeymap={qwertyKeymap} />);
+
+    const select = screen.getByRole("combobox") as HTMLSelectElement;
+    expect(select.value).toBe("qwerty");
+  });
+
+  test("customKeymap がプリセットに一致しない場合、「カスタム」選択肢が表示される", () => {
+    const customKeymap = { a: "z", z: "a" };
+    render(<LayoutLoader {...defaultProps} customKeymap={customKeymap} />);
+
+    expect(screen.getByText("カスタム")).toBeInTheDocument();
+  });
+
+  test("プリセットを選択すると onSelectPreset が対応する keymap で呼ばれる", async () => {
+    const onSelectPreset = vi.fn();
+    const user = userEvent.setup();
+    render(<LayoutLoader {...defaultProps} onSelectPreset={onSelectPreset} />);
+
+    await user.selectOptions(screen.getByRole("combobox"), "qwerty");
+
+    expect(onSelectPreset).toHaveBeenCalledOnce();
+    // QWERTY キーマップは各キーが自身にマップされている
+    const calledWith = onSelectPreset.mock.calls[0][0] as Record<
+      string,
+      string
+    >;
+    expect(calledWith.q).toBe("q");
+    expect(calledWith.a).toBe("a");
   });
 });

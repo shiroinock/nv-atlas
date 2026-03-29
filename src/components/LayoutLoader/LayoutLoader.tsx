@@ -1,5 +1,12 @@
 import { useCallback, useRef } from "react";
+import { getPresets } from "../../data/keybinding-presets";
+import type { KeybindingPreset } from "../../types/keybinding";
 import styles from "./LayoutLoader.module.css";
+
+/** カスタム選択肢の value 定数 */
+const CUSTOM_PRESET_VALUE = "__custom__";
+
+const PRESETS = getPresets();
 
 interface FileDropZoneProps {
   label: string;
@@ -81,11 +88,32 @@ function FileDropZone({
   );
 }
 
+/** 2 つのキーマップが等しいか比較する */
+function isKeymapEqual(
+  a: Record<string, string>,
+  b: Record<string, string>,
+): boolean {
+  const keysA = Object.keys(a);
+  return (
+    keysA.length === Object.keys(b).length && keysA.every((k) => a[k] === b[k])
+  );
+}
+
+/** 現在のキーマップに一致するプリセットを返す（なければ null） */
+function findMatchingPreset(
+  keymap: Record<string, string>,
+  presets: KeybindingPreset[],
+): KeybindingPreset | null {
+  return presets.find((p) => isKeymapEqual(keymap, p.keymap)) ?? null;
+}
+
 interface LayoutLoaderProps {
   layoutName: string;
   keymapFileName: string | null;
+  customKeymap: Record<string, string>;
   onLoadLayout: (json: string) => void;
   onLoadKeymap: (json: string) => void;
+  onSelectPreset: (keymap: Record<string, string>) => void;
   onClearStorage: () => void;
   error: string | null;
 }
@@ -93,11 +121,28 @@ interface LayoutLoaderProps {
 export function LayoutLoader({
   layoutName,
   keymapFileName,
+  customKeymap,
   onLoadLayout,
   onLoadKeymap,
+  onSelectPreset,
   onClearStorage,
   error,
 }: LayoutLoaderProps) {
+  const matchingPreset = findMatchingPreset(customKeymap, PRESETS);
+  const selectedValue = matchingPreset
+    ? matchingPreset.id
+    : CUSTOM_PRESET_VALUE;
+
+  const handlePresetChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const preset = PRESETS.find((p) => p.id === e.target.value);
+      if (preset) {
+        onSelectPreset(preset.keymap);
+      }
+    },
+    [onSelectPreset],
+  );
+
   return (
     <div className={styles.container}>
       <FileDropZone
@@ -106,12 +151,31 @@ export function LayoutLoader({
         fileName={layoutName !== "ANSI 60%" ? layoutName : null}
         onLoad={onLoadLayout}
       />
-      <FileDropZone
-        label="2. キーマップ"
-        description="VIA エクスポートした keymap JSON をドロップ or クリック"
-        fileName={keymapFileName}
-        onLoad={onLoadKeymap}
-      />
+      {/* select + dropzone を束ねるため、ラベルは group 直下に配置 */}
+      <div className={styles.keymapGroup}>
+        <span className={styles.label}>2. キーマップ</span>
+        <select
+          className={styles.presetSelect}
+          value={selectedValue}
+          onChange={handlePresetChange}
+        >
+          {PRESETS.map((preset) => (
+            <option key={preset.id} value={preset.id}>
+              {preset.name}
+            </option>
+          ))}
+          {/* プリセットに一致しない場合のみ表示 */}
+          {!matchingPreset && (
+            <option value={CUSTOM_PRESET_VALUE}>カスタム</option>
+          )}
+        </select>
+        <FileDropZone
+          label=""
+          description="または VIA JSON をドロップ or クリック"
+          fileName={keymapFileName}
+          onLoad={onLoadKeymap}
+        />
+      </div>
       {error && <span className={styles.error}>{error}</span>}
       <button
         type="button"

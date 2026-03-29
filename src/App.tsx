@@ -36,7 +36,7 @@ const CORNE_V4_MATRIX_COLS = 7;
 const KEYMAP_LOADED_LABEL = "keymap loaded";
 
 function AppContent() {
-  const { config } = useKeybindingContext();
+  const { config, dispatch } = useKeybindingContext();
 
   // Context の customKeymap を優先し、未設定の場合はデフォルトにフォールバック
   const customKeymap = useMemo(
@@ -132,6 +132,13 @@ function AppContent() {
     [matrixCols],
   );
 
+  const handleSelectPreset = useCallback(
+    (keymap: Record<string, string>) => {
+      dispatch({ type: "IMPORT_LAYOUT", customKeymap: keymap });
+    },
+    [dispatch],
+  );
+
   const handleClearStorage = useCallback(() => {
     clearAllStorage();
     // デフォルト状態に戻す
@@ -221,8 +228,10 @@ function AppContent() {
         <LayoutLoader
           layoutName={layout.name}
           keymapFileName={keymapFileName}
+          customKeymap={customKeymap}
           onLoadLayout={handleLoadLayout}
           onLoadKeymap={handleLoadKeymap}
+          onSelectPreset={handleSelectPreset}
           onClearStorage={handleClearStorage}
           error={error}
         />
