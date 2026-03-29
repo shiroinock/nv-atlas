@@ -42,7 +42,7 @@ export function mergeWithNvimMaps(
       const newEntryKey = makeEntryKey(key, expandedModes);
       if (addedNewEntryKeys.has(newEntryKey)) continue;
 
-      const description = cleanDescription(nvMap.description);
+      const description = nvMap.description;
       if (!description) continue; // description なしはスキップ
 
       merged.push({
@@ -97,12 +97,4 @@ function normalizeNvimKey(lhs: string): string {
     /<C-(\w)>/gi,
     (_, ch: string) => `<C-${ch.toLowerCase()}>`,
   );
-}
-
-/**
- * nvim の description をクリーンアップ
- */
-function cleanDescription(desc: string): string {
-  if (!desc) return "";
-  return desc;
 }
