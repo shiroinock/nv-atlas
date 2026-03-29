@@ -75,6 +75,11 @@
   color: #a6e3a1;
 }
 
+.actionButtonError {
+  border-color: #f38ba8;
+  color: #f38ba8;
+}
+
 .preview {
   background: #181825;
   border: 1px solid #313244;

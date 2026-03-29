@@ -7,6 +7,7 @@ import {
 import styles from "./ExportPanel.module.css";
 
 type ExportFormat = "lua" | "json";
+type CopyStatus = "idle" | "copied" | "error";
 
 const FORMAT_LABELS: Record<ExportFormat, string> = {
   lua: "Lua",
@@ -25,12 +26,22 @@ const MIME_TYPES: Record<ExportFormat, string> = {
 
 const COPY_STATUS_RESET_MS = 2000;
 
+const COPY_STATUS_LABELS: Record<CopyStatus, string> = {
+  idle: "コピー",
+  copied: "コピー済み",
+  error: "失敗",
+};
+
+const COPY_STATUS_CLASS: Record<CopyStatus, string> = {
+  idle: "",
+  copied: styles.actionButtonSuccess,
+  error: styles.actionButtonError,
+};
+
 export function ExportPanel() {
   const { config } = useKeybindingContext();
   const [activeFormat, setActiveFormat] = useState<ExportFormat>("lua");
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">(
-    "idle",
-  );
+  const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -90,13 +101,6 @@ export function ExportPanel() {
     setTimeout(() => URL.revokeObjectURL(url), 0);
   }, [content, activeFormat]);
 
-  const copyLabel =
-    copyStatus === "copied"
-      ? "コピー済み"
-      : copyStatus === "error"
-        ? "失敗"
-        : "コピー";
-
   return (
     <div className={styles.container}>
       <div className={styles.toolbar}>
@@ -119,11 +123,11 @@ export function ExportPanel() {
         <div className={styles.actions}>
           <button
             type="button"
-            className={`${styles.actionButton} ${copyStatus === "copied" ? styles.actionButtonSuccess : ""}`}
+            className={`${styles.actionButton} ${COPY_STATUS_CLASS[copyStatus]}`}
             onClick={handleCopy}
             disabled={!hasBindings}
           >
-            {copyLabel}
+            {COPY_STATUS_LABELS[copyStatus]}
           </button>
           <button
             type="button"
