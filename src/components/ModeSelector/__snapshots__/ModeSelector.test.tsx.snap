@@ -54,6 +54,25 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     <button
       aria-selected="false"
       class="_tab_e815f2 "
+      id="tab-vim-x"
+      role="tab"
+      title="Visual Block"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        X
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Visual Block
+      </span>
+    </button>
+    <button
+      aria-selected="false"
+      class="_tab_e815f2 "
       id="tab-vim-o"
       role="tab"
       title="Op-pending"

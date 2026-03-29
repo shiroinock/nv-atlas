@@ -13,10 +13,10 @@ describe("ModeSelector", () => {
     vi.clearAllMocks();
   });
   describe("レンダリング", () => {
-    test("全7モード分のボタンがレンダリングされる", () => {
+    test("全8モード分のボタンがレンダリングされる", () => {
       render(<ModeSelector {...defaultProps} />);
 
-      expect(screen.getAllByRole("tab")).toHaveLength(7);
+      expect(screen.getAllByRole("tab")).toHaveLength(8);
     });
 
     test("各ボタンに正しい title 属性（ラベル）がある", () => {
@@ -24,6 +24,7 @@ describe("ModeSelector", () => {
 
       expect(screen.getByTitle("Normal")).toBeInTheDocument();
       expect(screen.getByTitle("Visual")).toBeInTheDocument();
+      expect(screen.getByTitle("Visual Block")).toBeInTheDocument();
       expect(screen.getByTitle("Op-pending")).toBeInTheDocument();
       expect(screen.getByTitle("Insert")).toBeInTheDocument();
       expect(screen.getByTitle("Command-line")).toBeInTheDocument();
@@ -51,6 +52,14 @@ describe("ModeSelector", () => {
       render(<ModeSelector {...defaultProps} activeMode="s" />);
 
       expect(screen.getByTitle("Select").className).toContain("tabActive");
+    });
+
+    test("activeMode='x' のとき Visual Block ボタンに tabActive クラスが付く", () => {
+      render(<ModeSelector {...defaultProps} activeMode="x" />);
+
+      expect(screen.getByTitle("Visual Block").className).toContain(
+        "tabActive",
+      );
     });
 
     test("activeMode='t' のとき Terminal ボタンに tabActive クラスが付く", () => {
@@ -86,6 +95,16 @@ describe("ModeSelector", () => {
       await user.click(screen.getByTitle("Visual"));
 
       expect(onModeChange).toHaveBeenCalledWith("v");
+    });
+
+    test("Visual Block ボタンクリックで onModeChange が 'x' で呼ばれる", async () => {
+      const onModeChange = vi.fn();
+      const user = userEvent.setup();
+      render(<ModeSelector {...defaultProps} onModeChange={onModeChange} />);
+
+      await user.click(screen.getByTitle("Visual Block"));
+
+      expect(onModeChange).toHaveBeenCalledWith("x");
     });
 
     test("Command-line ボタンクリックで onModeChange が 'c' で呼ばれる", async () => {
@@ -152,6 +171,10 @@ describe("ModeSelector", () => {
         "aria-selected",
         "false",
       );
+      expect(screen.getByTitle("Visual Block")).toHaveAttribute(
+        "aria-selected",
+        "false",
+      );
       expect(screen.getByTitle("Op-pending")).toHaveAttribute(
         "aria-selected",
         "false",
@@ -179,6 +202,10 @@ describe("ModeSelector", () => {
 
       expect(screen.getByTitle("Normal")).toHaveAttribute("id", "tab-vim-n");
       expect(screen.getByTitle("Visual")).toHaveAttribute("id", "tab-vim-v");
+      expect(screen.getByTitle("Visual Block")).toHaveAttribute(
+        "id",
+        "tab-vim-x",
+      );
       expect(screen.getByTitle("Op-pending")).toHaveAttribute(
         "id",
         "tab-vim-o",

@@ -9,6 +9,7 @@ interface Props {
 const vimModes: { mode: VimMode; label: string; short: string }[] = [
   { mode: "n", label: "Normal", short: "N" },
   { mode: "v", label: "Visual", short: "V" },
+  { mode: "x", label: "Visual Block", short: "X" },
   { mode: "o", label: "Op-pending", short: "O" },
   { mode: "i", label: "Insert", short: "I" },
   { mode: "c", label: "Command-line", short: "C" },
