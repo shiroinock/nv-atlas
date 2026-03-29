@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_LAYOUT_NAME } from "../data/default-layout";
 import { useKeyboardLayout } from "./useKeyboardLayout";
 
 vi.mock("../utils/storage", () => ({
@@ -27,7 +28,7 @@ describe("初期化時の localStorage 復元", () => {
 
     const { result } = renderHook(() => useKeyboardLayout());
 
-    expect(result.current.layout.name).toBe("ANSI 60%");
+    expect(result.current.layout.name).toBe(DEFAULT_LAYOUT_NAME);
   });
 
   it("localStorage に有効なデータがある → 復元されたレイアウトが返される", () => {
@@ -48,7 +49,7 @@ describe("初期化時の localStorage 復元", () => {
 
     const { result } = renderHook(() => useKeyboardLayout());
 
-    expect(result.current.layout.name).toBe("ANSI 60%");
+    expect(result.current.layout.name).toBe(DEFAULT_LAYOUT_NAME);
   });
 });
 

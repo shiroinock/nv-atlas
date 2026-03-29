@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { DEFAULT_LAYOUT_NAME } from "./data/default-layout";
 import { defaultCustomKeymap } from "./data/keymap";
 import type { KeybindingConfig } from "./types/keybinding";
 import { emptyBindings } from "./types/keybinding";
@@ -50,7 +51,7 @@ vi.mock("./components/Keyboard/Keyboard", () => ({
 // useKeyboardLayout をモック化してファイルシステムアクセスを回避する
 vi.mock("./hooks/useKeyboardLayout", () => ({
   useKeyboardLayout: vi.fn(() => ({
-    layout: { name: "ANSI 60%", keys: [] },
+    layout: { name: DEFAULT_LAYOUT_NAME, keys: [] },
     loadFromJSON: vi.fn(),
     error: null,
   })),

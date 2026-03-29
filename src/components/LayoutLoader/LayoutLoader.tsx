@@ -1,4 +1,5 @@
 import { useCallback, useRef } from "react";
+import { DEFAULT_LAYOUT_NAME } from "../../data/default-layout";
 import { getPresets } from "../../data/keybinding-presets";
 import type { KeybindingPreset } from "../../types/keybinding";
 import styles from "./LayoutLoader.module.css";
@@ -148,7 +149,7 @@ export function LayoutLoader({
       <FileDropZone
         label="1. キーボードレイアウト"
         description="VIA 定義 JSON をドロップ or クリック"
-        fileName={layoutName !== "ANSI 60%" ? layoutName : null}
+        fileName={layoutName !== DEFAULT_LAYOUT_NAME ? layoutName : null}
         onLoad={onLoadLayout}
       />
       {/* select + dropzone を束ねるため、ラベルは group 直下に配置 */}
