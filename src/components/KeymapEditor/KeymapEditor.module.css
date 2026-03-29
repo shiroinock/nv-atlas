@@ -1,0 +1,156 @@
+/* Catppuccin Mocha テーマに準拠したキーマップエディタ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #1e1e2e;
+  border-radius: 12px;
+  border: 1px solid #313244;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #cdd6f4;
+  margin: 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.headerRow th {
+  padding: 8px 12px;
+  text-align: left;
+  color: #6c7086;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #313244;
+}
+
+/* 行グループのヘッダー行（Top / Home / Bottom） */
+.groupHeader td {
+  padding: 6px 12px;
+  background: #181825;
+  color: #6c7086;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-top: 1px solid #313244;
+  border-bottom: 1px solid #313244;
+}
+
+.row {
+  transition: background-color 0.1s;
+}
+
+.row:hover {
+  background: #24273a;
+}
+
+.row td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #181825;
+  vertical-align: middle;
+}
+
+/* 列幅 */
+.thGroup,
+.tdGroup {
+  width: 80px;
+  white-space: nowrap;
+}
+
+.thQwerty,
+.tdQwerty {
+  width: 120px;
+  white-space: nowrap;
+}
+
+.thOutput,
+.tdOutput {
+  min-width: 180px;
+  position: relative;
+}
+
+.keyBadge {
+  display: inline-block;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: "SF Mono", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #89b4fa;
+  letter-spacing: 0.02em;
+}
+
+/* 出力文字表示ボタン（クリックで編集モードへ） */
+.outputValue {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #cdd6f4;
+  font-size: 13px;
+  font-family: "SF Mono", monospace;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition:
+    background-color 0.1s,
+    border-color 0.1s;
+  min-width: 32px;
+  text-align: left;
+}
+
+.outputValue:hover {
+  background: #313244;
+  border-color: #45475a;
+}
+
+/* エラーのあるセル（outputValue と組み合わせて使用） */
+.outputValue.errorCell {
+  border-color: #f38ba8;
+  color: #f38ba8;
+}
+
+/* インライン編集の input */
+.inputCell {
+  background: #181825;
+  border: 1px solid #89b4fa;
+  border-radius: 4px;
+  color: #cdd6f4;
+  font-size: 13px;
+  font-family: "SF Mono", monospace;
+  padding: 2px 8px;
+  outline: none;
+  width: 80px;
+}
+
+.inputCell:focus {
+  border-color: #cba6f7;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #cba6f7 20%, transparent);
+}
+
+/* エラーメッセージ */
+.errorMessage {
+  display: block;
+  color: #f38ba8;
+  font-size: 11px;
+  margin-top: 3px;
+  line-height: 1.4;
+}

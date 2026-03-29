@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { defaultCustomKeymap } from "../data/keymap";
 import { vimCommands } from "../data/vim-commands";
 import type {
   Keybinding,
@@ -25,6 +26,7 @@ type KeybindingAction =
   | { type: "SWAP_BINDING"; mode: VimMode; indexA: number; indexB: number }
   | { type: "IMPORT_NVIM"; maps: NvimMapping[] }
   | { type: "IMPORT_LAYOUT"; customKeymap: Record<string, string> }
+  | { type: "UPDATE_KEYMAP_ENTRY"; qwertyKey: string; outputChar: string }
   | { type: "RESET_TO_DEFAULTS" };
 
 // ── Reducer ──
@@ -90,6 +92,17 @@ function keybindingReducer(
       return {
         ...state,
         customKeymap: action.customKeymap,
+        updatedAt: now,
+      };
+    }
+
+    case "UPDATE_KEYMAP_ENTRY": {
+      return {
+        ...state,
+        customKeymap: {
+          ...(state.customKeymap ?? defaultCustomKeymap),
+          [action.qwertyKey]: action.outputChar,
+        },
         updatedAt: now,
       };
     }

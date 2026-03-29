@@ -240,3 +240,153 @@ describe("useKeybindingConfig — IMPORT_NVIM", () => {
     });
   });
 });
+
+describe("useKeybindingConfig — UPDATE_KEYMAP_ENTRY", () => {
+  describe("state.customKeymap の更新", () => {
+    it("UPDATE_KEYMAP_ENTRY dispatch 後に config.customKeymap[qwertyKey] が outputChar になる", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+
+      act(() => {
+        result.current.dispatch({
+          type: "IMPORT_LAYOUT",
+          customKeymap: { q: "q", w: "w", a: "a" },
+        });
+      });
+
+      act(() => {
+        result.current.dispatch({
+          type: "UPDATE_KEYMAP_ENTRY",
+          qwertyKey: "q",
+          outputChar: "b",
+        });
+      });
+
+      expect(result.current.config.customKeymap?.q).toBe("b");
+    });
+  });
+
+  describe("既存エントリの上書き", () => {
+    it("既に値がある qwertyKey に dispatch すると値が上書きされる", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+
+      act(() => {
+        result.current.dispatch({
+          type: "IMPORT_LAYOUT",
+          customKeymap: { q: "original" },
+        });
+      });
+
+      act(() => {
+        result.current.dispatch({
+          type: "UPDATE_KEYMAP_ENTRY",
+          qwertyKey: "q",
+          outputChar: "overwritten",
+        });
+      });
+
+      expect(result.current.config.customKeymap?.q).toBe("overwritten");
+    });
+  });
+
+  describe("他のエントリへの影響なし", () => {
+    it("更新対象以外の customKeymap エントリは変更されない", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+
+      act(() => {
+        result.current.dispatch({
+          type: "IMPORT_LAYOUT",
+          customKeymap: { q: "q", w: "w", a: "a" },
+        });
+      });
+
+      act(() => {
+        result.current.dispatch({
+          type: "UPDATE_KEYMAP_ENTRY",
+          qwertyKey: "q",
+          outputChar: "x",
+        });
+      });
+
+      expect(result.current.config.customKeymap?.w).toBe("w");
+      expect(result.current.config.customKeymap?.a).toBe("a");
+    });
+  });
+
+  describe("永続化", () => {
+    it("UPDATE_KEYMAP_ENTRY dispatch 後に saveKeybindingConfig が呼ばれる", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+
+      act(() => {
+        result.current.dispatch({
+          type: "IMPORT_LAYOUT",
+          customKeymap: { q: "q" },
+        });
+      });
+
+      mockSaveKeybindingConfig.mockClear();
+
+      act(() => {
+        result.current.dispatch({
+          type: "UPDATE_KEYMAP_ENTRY",
+          qwertyKey: "q",
+          outputChar: "b",
+        });
+      });
+
+      expect(mockSaveKeybindingConfig).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("updatedAt の更新", () => {
+    it("UPDATE_KEYMAP_ENTRY dispatch 後に updatedAt が更新される", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
+
+      const { result } = renderHook(() => useKeybindingConfig());
+
+      act(() => {
+        result.current.dispatch({
+          type: "IMPORT_LAYOUT",
+          customKeymap: { q: "q" },
+        });
+      });
+
+      const before = result.current.config.updatedAt;
+
+      vi.setSystemTime(new Date("2026-01-01T00:00:01.000Z"));
+
+      act(() => {
+        result.current.dispatch({
+          type: "UPDATE_KEYMAP_ENTRY",
+          qwertyKey: "q",
+          outputChar: "b",
+        });
+      });
+
+      expect(result.current.config.updatedAt).not.toBe(before);
+      vi.useRealTimers();
+    });
+  });
+
+  describe("customKeymap 未設定時のフォールバック", () => {
+    it("customKeymap が undefined のまま UPDATE_KEYMAP_ENTRY を dispatch すると defaultCustomKeymap をベースにする", () => {
+      const { result } = renderHook(() => useKeybindingConfig());
+
+      expect(result.current.config.customKeymap).toBeUndefined();
+
+      act(() => {
+        result.current.dispatch({
+          type: "UPDATE_KEYMAP_ENTRY",
+          qwertyKey: "q",
+          outputChar: "z",
+        });
+      });
+
+      expect(result.current.config.customKeymap?.q).toBe("z");
+      expect(result.current.config.customKeymap?.w).toBeDefined();
+      expect(Object.keys(result.current.config.customKeymap ?? {}).length).toBe(
+        30,
+      );
+    });
+  });
+});
