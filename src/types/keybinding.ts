@@ -15,6 +15,17 @@ export const VIM_MODES = [
   "t",
 ] as const satisfies VimMode[];
 
+/** アプリモード */
+export type AppMode = "visualize" | "practice" | "reference" | "edit";
+
+/** AppMode の全値リスト */
+export const APP_MODES = [
+  "visualize",
+  "practice",
+  "reference",
+  "edit",
+] as const satisfies AppMode[];
+
 /** バインディングの出自 */
 export type KeybindingSource =
   | "default"

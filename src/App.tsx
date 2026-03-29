@@ -21,7 +21,7 @@ import {
 } from "./data/vim-commands";
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
 import { useNvimMaps } from "./hooks/useNvimMaps";
-import type { KeybindingConfig, VimMode } from "./types/keybinding";
+import type { AppMode, KeybindingConfig, VimMode } from "./types/keybinding";
 import type { HighlightEntry, VIAKeymapFull, VimCommand } from "./types/vim";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import {
@@ -54,9 +54,7 @@ function AppContent() {
   const [viaKeymapFull, setViaKeymapFull] = useState<VIAKeymapFull | null>(
     null,
   );
-  const [mode, setMode] = useState<
-    "visualize" | "practice" | "reference" | "edit"
-  >("visualize");
+  const [mode, setMode] = useState<AppMode>("visualize");
   const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
