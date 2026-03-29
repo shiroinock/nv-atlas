@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useKeybindingContext } from "../../context/KeybindingContext";
 import {
   keybindingToJSON,
@@ -37,8 +37,11 @@ export function ExportPanel() {
     (bs) => bs.length > 0,
   );
 
-  const content =
-    activeFormat === "lua" ? keybindingToLua(config) : keybindingToJSON(config);
+  const content = hasBindings
+    ? activeFormat === "lua"
+      ? keybindingToLua(config)
+      : keybindingToJSON(config)
+    : "";
 
   const resetCopyStatus = useCallback(() => {
     clearTimeout(copyTimerRef.current);
@@ -46,6 +49,10 @@ export function ExportPanel() {
       () => setCopyStatus("idle"),
       COPY_STATUS_RESET_MS,
     );
+  }, []);
+
+  useEffect(() => {
+    return () => clearTimeout(copyTimerRef.current);
   }, []);
 
   const handleCopy = useCallback(async () => {
@@ -64,7 +71,9 @@ export function ExportPanel() {
     const a = document.createElement("a");
     a.href = url;
     a.download = FILE_NAMES[activeFormat];
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }, [content, activeFormat]);
 
