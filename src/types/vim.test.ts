@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { NvimMapMode, VimMode } from "./vim";
-import { expandNvimMapMode } from "./vim";
+import { expandNvimMapMode, matchesVimMode } from "./vim";
 
 describe("expandNvimMapMode", () => {
   describe("単一モードの展開", () => {
@@ -49,6 +49,94 @@ describe("expandNvimMapMode", () => {
         const result = expandNvimMapMode(mode);
         expect(Array.isArray(result)).toBe(true);
         expect(result.length).toBeGreaterThan(0);
+      }
+    });
+  });
+});
+
+describe("matchesVimMode", () => {
+  describe('activeMode="v"（Visual+Select）のマッチ', () => {
+    it('modes に "v" を含む場合は true', () => {
+      const result = matchesVimMode(["v"] satisfies VimMode[], "v");
+      expect(result).toBe(true);
+    });
+
+    it('modes に "x"（Visual-exclusive）を含む場合は true', () => {
+      const result = matchesVimMode(["x"] satisfies VimMode[], "v");
+      expect(result).toBe(true);
+    });
+
+    it('modes に "s"（Select）のみの場合は false', () => {
+      const result = matchesVimMode(["s"] satisfies VimMode[], "v");
+      expect(result).toBe(false);
+    });
+
+    it('modes に "n" のみの場合は false', () => {
+      const result = matchesVimMode(["n"] satisfies VimMode[], "v");
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('activeMode="n"（Normal）のマッチ', () => {
+    it('modes に "n" を含む場合は true', () => {
+      const result = matchesVimMode(["n"] satisfies VimMode[], "n");
+      expect(result).toBe(true);
+    });
+
+    it('modes に "v" のみの場合は false', () => {
+      const result = matchesVimMode(["v"] satisfies VimMode[], "n");
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('activeMode="s"（Select）のマッチ', () => {
+    it('modes に "s" を含む場合は true', () => {
+      const result = matchesVimMode(["s"] satisfies VimMode[], "s");
+      expect(result).toBe(true);
+    });
+
+    it('modes に "v"（Visual+Select を包含）を含む場合は true', () => {
+      const result = matchesVimMode(["v"] satisfies VimMode[], "s");
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('activeMode="x"（Visual-exclusive）のマッチ', () => {
+    it('modes に "x" を含む場合は true', () => {
+      const result = matchesVimMode(["x"] satisfies VimMode[], "x");
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("その他のモードは自分自身のみにマッチ", () => {
+    it('activeMode="o" で modes に "o" を含む場合は true', () => {
+      const result = matchesVimMode(["o"] satisfies VimMode[], "o");
+      expect(result).toBe(true);
+    });
+
+    it('activeMode="i" で modes に "i" を含む場合は true', () => {
+      const result = matchesVimMode(["i"] satisfies VimMode[], "i");
+      expect(result).toBe(true);
+    });
+
+    it('activeMode="c" で modes に "c" を含む場合は true', () => {
+      const result = matchesVimMode(["c"] satisfies VimMode[], "c");
+      expect(result).toBe(true);
+    });
+
+    it('activeMode="t" で modes に "t" を含む場合は true', () => {
+      const result = matchesVimMode(["t"] satisfies VimMode[], "t");
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("空配列のエッジケース", () => {
+    it("modes が空配列の場合はどのモードでも false", () => {
+      const emptyModes: VimMode[] = [];
+      const allModes: VimMode[] = ["n", "v", "x", "o", "i", "s", "c", "t"];
+      for (const activeMode of allModes) {
+        const result = matchesVimMode(emptyModes, activeMode);
+        expect(result).toBe(false);
       }
     });
   });

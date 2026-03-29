@@ -45,6 +45,34 @@ export interface NvimMapping {
   sourceDetail: string;
 }
 
+/**
+ * UI のモードセレクタで選択された activeMode に対して、
+ * コマンドの modes 配列がマッチするかを判定する。
+ *
+ * モード階層:
+ * - "v"（Visual+Select）を選択 → "v" または "x"（Visual-exclusive）にマッチ
+ * - "s"（Select）を選択 → "s" または "v"（Visual+Select を包含）にマッチ
+ * - その他 → 自分自身のみにマッチ
+ */
+export function matchesVimMode(
+  commandModes: VimMode[],
+  activeMode: VimMode,
+): boolean {
+  if (commandModes.length === 0) return false;
+
+  // activeMode="v" は "v"（Visual+Select）と "x"（Visual-exclusive）を包含
+  if (activeMode === "v") {
+    return commandModes.includes("v") || commandModes.includes("x");
+  }
+
+  // activeMode="s" は "s"（Select）と "v"（Visual+Select を包含）にマッチ
+  if (activeMode === "s") {
+    return commandModes.includes("s") || commandModes.includes("v");
+  }
+
+  return commandModes.includes(activeMode);
+}
+
 export type VimCommandSource = "hardcoded" | NvimMapSource;
 
 export interface MergedVimCommand extends VimCommand {
