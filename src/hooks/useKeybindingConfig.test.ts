@@ -1,11 +1,11 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("~/utils/storage", () => ({
+vi.mock("../utils/storage", () => ({
   saveKeybindingConfig: vi.fn(),
 }));
 
-import { saveKeybindingConfig } from "~/utils/storage";
+import { saveKeybindingConfig } from "../utils/storage";
 import { useKeybindingConfig } from "./useKeybindingConfig";
 
 const mockSaveKeybindingConfig = vi.mocked(saveKeybindingConfig);
