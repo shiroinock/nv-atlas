@@ -425,17 +425,6 @@ describe("App - モードタブの動的生成", () => {
     }
   });
 
-  test("初期状態では「可視化」タブが4つのタブとして存在し、他の3つも存在する", () => {
-    const config = buildConfig(undefined);
-
-    renderAppContent(config);
-
-    const tabButtons = APP_MODES.map((mode) =>
-      screen.getByRole("button", { name: APP_MODE_LABELS[mode] }),
-    );
-    expect(tabButtons).toHaveLength(4);
-  });
-
   test("「練習」タブをクリックするとモードが切り替わる", async () => {
     const user = userEvent.setup();
     const config = buildConfig(undefined);
@@ -490,6 +479,7 @@ describe("App - モードタブの動的生成", () => {
       screen.getByRole("button", { name: APP_MODE_LABELS[mode] }),
     );
     const tabContainer = tabButtons[0].parentElement;
+    expect(tabContainer).not.toBeNull();
     expect(tabContainer).toMatchSnapshot();
   });
 });
