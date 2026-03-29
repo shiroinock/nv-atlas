@@ -383,10 +383,38 @@ classify-files が提案したパスを厳守:
 - 途中でエラーが起きた場合は更新しない
 - Issue のクローズはユーザーに確認してから
 
-### 3. PR 作成について
+### 3. PR 作成・マージについて
+
+#### PR 作成
 - パイプライン完了後、ユーザーに PR 作成を提案する
 - ユーザーが同意した場合のみ `gh pr create` を実行
 - PR 本文に Issue 番号を含める（`Closes #{番号}`）
+
+#### PR マージ
+
+worktree 環境では `--delete-branch` が内部で `git checkout main` を実行し、`fatal: 'main' is already used by worktree` で失敗する。マージ自体は成功するが、コマンド全体がエラーコード 1 で終了するため混乱を招く。
+
+**worktree 判定**:
+```bash
+# .git でなければ worktree 環境
+IS_WORKTREE=$([ "$(git rev-parse --git-common-dir)" != ".git" ] && echo true || echo false)
+```
+
+**worktree 環境の場合** — マージとブランチ削除を分離:
+```bash
+# 1. マージのみ（--delete-branch を使わない）
+gh pr merge {番号} --squash
+
+# 2. リモートブランチを API で削除
+BRANCH=$(gh pr view {番号} --json headRefName -q '.headRefName')
+gh api repos/{owner}/{repo}/git/refs/heads/${BRANCH} -X DELETE
+```
+> ローカルブランチは worktree 終了時に自動クリーンアップされるため、リモート削除のみで十分。
+
+**通常環境の場合**:
+```bash
+gh pr merge {番号} --squash --delete-branch
+```
 
 ---
 
