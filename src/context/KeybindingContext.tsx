@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { useKeybindingConfig } from "../hooks/useKeybindingConfig";
 import type {
   Keybinding,
@@ -23,8 +23,12 @@ export function KeybindingProvider({
   children: React.ReactNode;
   initial?: KeybindingConfig;
 }) {
-  // initial が指定されていない場合、localStorage から復元を試みる
-  const resolvedInitial = initial ?? loadKeybindingConfig() ?? undefined;
+  const resolvedInitial = useMemo(
+    () => initial ?? loadKeybindingConfig() ?? undefined,
+    // initial は初回マウント時にのみ使用されるため空の依存配列で固定
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
   const value = useKeybindingConfig(resolvedInitial);
   return (
     <KeybindingContext.Provider value={value}>

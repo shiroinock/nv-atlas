@@ -113,13 +113,11 @@ export function useKeybindingConfig(initial?: KeybindingConfig) {
     initial ?? createDefaultConfig(),
   );
 
-  // 初回レンダリング時は保存をスキップする
-  const isMounted = useRef(false);
+  // config が実際に変更された場合のみ保存（初回・StrictMode 再マウント時はスキップ）
+  const prevConfigRef = useRef(config);
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
+    if (prevConfigRef.current === config) return;
+    prevConfigRef.current = config;
     saveKeybindingConfig(config);
   }, [config]);
 
