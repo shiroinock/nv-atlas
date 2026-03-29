@@ -8,5 +8,8 @@
       "Bash(pnpm build)",
       "Bash(pnpm exec:*)"
     ]
+  },
+  "worktree": {
+    "symlinkDirectories": ["node_modules"]
   }
 }
