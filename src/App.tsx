@@ -93,8 +93,8 @@ function AppContent() {
 
   const activeMatrixKeymap = useMemo(() => {
     if (!viaKeymapFull) return matrixKeymap;
-    if (activeLayer === 0) return matrixKeymap;
-    return viaKeymapFull.layerKeys[activeLayer - 1] ?? matrixKeymap;
+    if (activeLayer === 0) return viaKeymapFull.baseKeys;
+    return viaKeymapFull.layerKeys[activeLayer - 1] ?? viaKeymapFull.baseKeys;
   }, [viaKeymapFull, activeLayer, matrixKeymap]);
 
   // viaKeymapFull が存在する場合: Layer 0 + layerKeys の数
@@ -219,7 +219,7 @@ function AppContent() {
                 onModeChange={setActiveVimMode}
               />
             )}
-            {viaKeymapFull && (
+            {layerCount > 1 && (
               <LayerSelector
                 layerCount={layerCount}
                 activeLayer={activeLayer}
