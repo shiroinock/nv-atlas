@@ -8,6 +8,25 @@ user-invocable: true
 
 GitHub Issue から次のタスクを選定し、テストパターン判定に基づいて適切なTDDパイプラインで実装します。
 
+## 自律行動原則
+
+このパイプラインは**確認なしで自律的に最後まで進行**する。以下のルールに従い、判断に迷う場面以外ではユーザーに質問しない。
+
+### 確認不要（自動で進める）
+- **Issue 選定**: 選定基準に合致する Issue を選び、そのまま着手する
+- **classify-files 結果**: 判定結果に従って即座にパイプラインを開始する
+- **review WARN / レビュー指摘**: 現在の Issue スコープ内の指摘は全て修正する。スコープ外の指摘は `/create-issue` スキル で別 Issue に切り出す。判断基準は Issue の受け入れ条件と照合すること
+- **テストが Red にならない**: 原因を調査し、テストが正しく失敗するよう修正を試みる（最大3回）。解決しない場合のみ警告を出力して続行する
+- **local-ci 失敗**: plan-fix → implement → local-ci のリトライを自動で回す（最大3回）
+- **PR 作成**: パイプライン完了後、自動で PR を作成する
+- **PR 作成後**: CI を watch → レビュー指摘があればスコープ内修正 & スコープ外は `/create-issue` スキル → 再 push → CI watch のループを回す
+- **PR マージ**: 新たなレビュー指摘がなくなったら自己判断でマージする
+
+### 確認が必要（ユーザーに聞く）
+- **classify-files が判定不能**: tddMode / testPattern を手動選択してもらう
+- **リトライ上限到達**: 3回リトライしても解決しない場合のみ報告する
+- **設計判断・スコープ変更**: Issue の受け入れ条件と合致しない変更が必要になった場合
+
 ## CI チェックに関する重要な区別
 
 このパイプラインでは **local-ci コマンド**を使用します。以下の違いを理解しておいてください：
@@ -52,7 +71,7 @@ gh api graphql -f query='
 - **Blocked by が全て CLOSED**（未解決の依存がない）
 - `priority:high` ラベルがあるものを優先
 - ラベルがない場合は番号が小さい（古い）ものを優先
-- ユーザーに選定結果を提示し、確認を取る
+- 選定結果はレポートに記載し、確認なしでそのまま着手する
 
 > **Note**: 対象の Issue がない場合は、先に `issue-enrichment` スキルで Issue を詳細化するよう提案してください。
 
@@ -180,9 +199,9 @@ classify-files の判定結果に基づき、適切なパイプラインを**順
 
 6. (local-ci 成功時) review-file エージェント起動 【Refactor判断】
    目的: コード品質を確認（TDD Refactor フェーズ）
-   - 判定: PASS → 完了 / WARN → ユーザーに確認 / FAIL → 必須修正
+   - 判定: PASS → 完了 / WARN → スコープ内は全修正、スコープ外は /create-issue / FAIL → 必須修正
 
-7. (失敗 or WARN承認 or FAIL 時) plan-fix → implement → local-ci → review-file
+7. (失敗 or WARN or FAIL 時) plan-fix → implement → local-ci → review-file
    最大3回までリトライ
 ```
 
@@ -407,14 +426,14 @@ Skill({
 ## エラーハンドリング
 
 ### テストが Red にならない場合 (test-writer 直後)
-→ 警告を出力 → 続行するかユーザーに確認
+→ 原因を調査（テストが既存実装で満たされていないか、アサーション条件が甘くないか等を確認）→ test-writer を再起動してテストを修正 → test-runner で Red 確認 → 最大3回リトライ → 解決しない場合のみ警告を出力して続行する
 
 ### local-ci が失敗する場合 (implement 直後)
 → 全エラーを確認 → plan-fix → implement 再起動 → 最大3回リトライ → ユーザーに報告
 → リトライ上限で中断する場合は Project Status を In Progress → Todo にロールバック
 
 ### classify-files の判定が不明確な場合
-→ ユーザーに確認 → 手動で tddMode と testPattern を選択
+→ ユーザーに確認し、tddMode と testPattern を手動選択してもらう（数少ない確認が必要なケース）
 
 ## 重要な注意事項
 
@@ -431,8 +450,7 @@ classify-files が提案したパスを厳守:
 ### 3. PR 作成・マージについて
 
 #### PR 作成
-- パイプライン完了後、ユーザーに PR 作成を提案する
-- ユーザーが同意した場合のみ `gh pr create` を実行
+- パイプライン完了後、確認なしで `gh pr create` を実行する
 - PR 本文に Issue 番号を含める（`Closes #{番号}`）
 
 #### PR マージ
