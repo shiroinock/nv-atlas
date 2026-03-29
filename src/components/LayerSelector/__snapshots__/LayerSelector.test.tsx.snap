@@ -1,0 +1,75 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LayerSelector > スナップショット > layerCount=3, activeLayer=0 のデフォルト状態 1`] = `
+<div
+  class="_container_77270a"
+>
+  <span
+    class="_label_77270a"
+  >
+    Layer:
+  </span>
+  <div
+    class="_tabs_77270a"
+    role="tablist"
+  >
+    <button
+      aria-selected="true"
+      class="_tab_77270a _tabActive_77270a"
+      id="tab-layer-0"
+      role="tab"
+      title="Layer 0"
+      type="button"
+    >
+      <span
+        class="_short_77270a"
+      >
+        0
+      </span>
+      <span
+        class="_full_77270a"
+      >
+        Layer 0
+      </span>
+    </button>
+    <button
+      aria-selected="false"
+      class="_tab_77270a "
+      id="tab-layer-1"
+      role="tab"
+      title="Layer 1"
+      type="button"
+    >
+      <span
+        class="_short_77270a"
+      >
+        1
+      </span>
+      <span
+        class="_full_77270a"
+      >
+        Layer 1
+      </span>
+    </button>
+    <button
+      aria-selected="false"
+      class="_tab_77270a "
+      id="tab-layer-2"
+      role="tab"
+      title="Layer 2"
+      type="button"
+    >
+      <span
+        class="_short_77270a"
+      >
+        2
+      </span>
+      <span
+        class="_full_77270a"
+      >
+        Layer 2
+      </span>
+    </button>
+  </div>
+</div>
+`;

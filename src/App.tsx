@@ -5,6 +5,7 @@ import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { CommandReference } from "./components/CommandReference/CommandReference";
 import { ExportPanel } from "./components/ExportPanel/ExportPanel";
 import { Keyboard } from "./components/Keyboard/Keyboard";
+import { LayerSelector } from "./components/LayerSelector/LayerSelector";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
 import { ModeSelector } from "./components/ModeSelector/ModeSelector";
 import { PracticeMode } from "./components/PracticeMode/PracticeMode";
@@ -57,6 +58,7 @@ function AppContent() {
   );
   const [mode, setMode] = useState<AppMode>("visualize");
   const [activeVimMode, setActiveVimMode] = useState<VimMode>("n");
+  const [activeLayer, setActiveLayer] = useState(0);
   const [highlightKeys, setHighlightKeys] = useState<HighlightEntry[]>([]);
   const [keymapFileName, setKeymapFileName] = useState<string | null>(null);
   const [matrixCols, setMatrixCols] = useState(CORNE_V4_MATRIX_COLS);
@@ -88,6 +90,15 @@ function AppContent() {
     () => (nvimMaps ? mergeWithNvimMaps(vimCommands, nvimMaps) : null),
     [nvimMaps],
   );
+
+  const activeMatrixKeymap = useMemo(() => {
+    if (!viaKeymapFull) return matrixKeymap;
+    if (activeLayer === 0) return viaKeymapFull.baseKeys;
+    return viaKeymapFull.layerKeys[activeLayer - 1] ?? viaKeymapFull.baseKeys;
+  }, [viaKeymapFull, activeLayer, matrixKeymap]);
+
+  // viaKeymapFull が存在する場合: Layer 0 + layerKeys の数
+  const layerCount = viaKeymapFull ? viaKeymapFull.layerKeys.length + 1 : 0;
 
   const handleHover = useCallback(
     (cmd: VimCommand | null, customKey: string | null) => {
@@ -126,6 +137,7 @@ function AppContent() {
         const full = parseVIAKeymapFull(parsed, matrixCols);
         setViaKeymapFull(full);
         setKeymapFileName(KEYMAP_LOADED_LABEL);
+        setActiveLayer(0);
         saveKeymap(jsonString, matrixCols, KEYMAP_LOADED_LABEL);
       } catch (e) {
         setKeymapFileName(
@@ -151,6 +163,7 @@ function AppContent() {
     setViaKeymapFull(null);
     setKeymapFileName(null);
     setMatrixCols(CORNE_V4_MATRIX_COLS); // Corne v4 default
+    setActiveLayer(0);
   }, [loadFromJSON]);
 
   const noopHover = useCallback(() => {}, []);
@@ -206,6 +219,13 @@ function AppContent() {
                 onModeChange={setActiveVimMode}
               />
             )}
+            {layerCount > 1 && (
+              <LayerSelector
+                layerCount={layerCount}
+                activeLayer={activeLayer}
+                onLayerChange={setActiveLayer}
+              />
+            )}
           </div>
         </div>
       </header>
@@ -240,7 +260,7 @@ function AppContent() {
           <Keyboard
             layout={layout}
             customKeymap={customKeymap}
-            matrixKeymap={matrixKeymap}
+            matrixKeymap={activeMatrixKeymap}
             onHover={mode === "visualize" ? handleHover : noopHover}
             highlightKeys={
               mode === "practice" || mode === "reference"
