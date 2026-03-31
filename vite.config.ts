@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 import { nvimPlugin } from "./vite-plugin-nvim";
 
 export default defineConfig({
-  base: "/keyviz/",
+  base: "/nv-atlas/",
   plugins: [react(), nvimPlugin()],
   test: {
     environment: "jsdom",

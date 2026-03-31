@@ -17,9 +17,9 @@ const FORMAT_LABELS: Record<ExportFormat, string> = {
 };
 
 const FILE_NAMES: Record<ExportFormat, string> = {
-  lua: "keyviz-config.lua",
-  json: "keyviz-config.json",
-  langmap: "keyviz-langmap.lua",
+  lua: "nv-atlas-config.lua",
+  json: "nv-atlas-config.json",
+  langmap: "nv-atlas-langmap.lua",
 };
 
 const MIME_TYPES: Record<ExportFormat, string> = {

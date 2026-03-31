@@ -104,7 +104,7 @@ gh api graphql -f query='
         }
       }
     }
-  }' -f owner="shiroinock" -f repo="keyviz" -F number="$PR_NUMBER" \
+  }' -f owner="shiroinock" -f repo="nv-atlas" -F number="$PR_NUMBER" \
   --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isOutdated == false and .isResolved == false)'
 ```
 
@@ -123,7 +123,7 @@ gh api graphql -f query='
 2. **対応方針を PR スレッドに返信**:
    ```bash
    # レビュースレッドに返信（in_reply_to で元コメントのスレッドに紐付け）
-   gh api repos/shiroinock/keyviz/pulls/${PR_NUMBER}/comments \
+   gh api repos/shiroinock/nv-atlas/pulls/${PR_NUMBER}/comments \
      -f body="対応方針の提案内容" \
      -F in_reply_to=PARENT_COMMENT_DATABASE_ID
    ```
