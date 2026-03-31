@@ -1,4 +1,4 @@
-# KeyViz
+# nv-atlas
 
 カスタムキーボード配列で Neovim キーバインドを可視化する Web アプリ。
 

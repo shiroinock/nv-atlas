@@ -6,12 +6,12 @@ user-invocable: true
 
 # 並列実装可能 Issue 提案スキル
 
-GitHub Project（KeyViz #6）から実装可能な Issue を取得し、対象ファイルの競合がない同時実装可能な組み合わせを提案します。
+GitHub Project（nv-atlas #6）から実装可能な Issue を取得し、対象ファイルの競合がない同時実装可能な組み合わせを提案します。
 `issue-enrichment` で書き込まれた「対象ファイル」セクションを前提とします。
 
 ## GitHub Project 情報
 
-- **Project**: `shiroinock` owner, number `6`（KeyViz）
+- **Project**: `shiroinock` owner, number `6`（nv-atlas）
 
 ## 実行フロー
 
@@ -31,7 +31,7 @@ gh project item-list 6 --owner shiroinock --limit 100 --format json \
 # Issue の blockedBy を確認（GraphQL）
 gh api graphql -f query='
   query {
-    repository(owner: "shiroinock", name: "keyviz") {
+    repository(owner: "shiroinock", name: "nv-atlas") {
       issue(number: {番号}) {
         blockedBy(first: 10) {
           nodes { number state }

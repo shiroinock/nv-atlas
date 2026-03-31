@@ -1,8 +1,8 @@
-# KeyViz
+# nv-atlas
 
 カスタムキーボード配列で Neovim キーバインドを可視化する Web アプリ。
 
-Colemak や Dvorak などの非 QWERTY 配列を使っていると、Vim のキーバインドガイドがそのまま当てはまりません。KeyViz は VIA のキーマップ JSON を読み込み、自分の配列上でどのキーがどの Vim 操作に対応するかをキーボード上に表示します。
+Colemak や Dvorak などの非 QWERTY 配列を使っていると、Vim のキーバインドガイドがそのまま当てはまりません。nv-atlas は VIA のキーマップ JSON を読み込み、自分の配列上でどのキーがどの Vim 操作に対応するかをキーボード上に表示します。
 
 ## 機能
 

@@ -100,7 +100,7 @@ describe("loadLayout", () => {
   });
 
   it("壊れた JSON の場合 null を返す（フォールバック）", () => {
-    localStorageMock.setItem("keyviz:layout", "{ broken json ::::");
+    localStorageMock.setItem("nv-atlas:layout", "{ broken json ::::");
 
     const result = loadLayout();
 
@@ -116,7 +116,7 @@ describe("loadKeymap", () => {
   });
 
   it("壊れた JSON の場合 null を返す（フォールバック）", () => {
-    localStorageMock.setItem("keyviz:keymap", "not valid json {{");
+    localStorageMock.setItem("nv-atlas:keymap", "not valid json {{");
 
     const result = loadKeymap();
 
@@ -184,11 +184,11 @@ const validConfig: KeybindingConfig = {
 };
 
 describe("saveKeybindingConfig", () => {
-  it('"keyviz:keybinding-config" キーに JSON 形式で保存する', () => {
+  it('"nv-atlas:keybinding-config" キーに JSON 形式で保存する', () => {
     saveKeybindingConfig(validConfig);
 
     expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
       expect.any(String),
     );
   });
@@ -196,7 +196,7 @@ describe("saveKeybindingConfig", () => {
   it("保存値が KeybindingConfig と一致する", () => {
     saveKeybindingConfig(validConfig);
 
-    const storedRaw = localStorageMock.getItem("keyviz:keybinding-config");
+    const storedRaw = localStorageMock.getItem("nv-atlas:keybinding-config");
     expect(storedRaw).not.toBeNull();
     const stored = JSON.parse(storedRaw as string);
     expect(stored).toEqual(validConfig);
@@ -253,7 +253,7 @@ describe("loadKeybindingConfig", () => {
   });
 
   it("壊れた JSON の場合 null を返す", () => {
-    localStorageMock.setItem("keyviz:keybinding-config", "{ broken json ::::");
+    localStorageMock.setItem("nv-atlas:keybinding-config", "{ broken json ::::");
 
     const result = loadKeybindingConfig();
 
@@ -262,7 +262,7 @@ describe("loadKeybindingConfig", () => {
 
   it("型ガードに失敗するデータの場合 null を返す", () => {
     localStorageMock.setItem(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
       JSON.stringify({ invalid: true }),
     );
 
@@ -293,11 +293,11 @@ describe("clearKeybindingConfig", () => {
     expect(loadKeymap()).not.toBeNull();
   });
 
-  it('"keyviz:keybinding-config" キーで removeItem が呼ばれる', () => {
+  it('"nv-atlas:keybinding-config" キーで removeItem が呼ばれる', () => {
     clearKeybindingConfig();
 
     expect(localStorageMock.removeItem).toHaveBeenCalledWith(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
     );
   });
 });
@@ -558,44 +558,44 @@ describe("isStoredKeybindingConfig", () => {
 });
 
 describe("保存キー", () => {
-  it('saveLayout は "keyviz:layout" キーに保存する', () => {
+  it('saveLayout は "nv-atlas:layout" キーに保存する', () => {
     saveLayout('{"layout":true}', "Layout");
 
     expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      "keyviz:layout",
+      "nv-atlas:layout",
       expect.any(String),
     );
   });
 
-  it('saveKeymap は "keyviz:keymap" キーに保存する', () => {
+  it('saveKeymap は "nv-atlas:keymap" キーに保存する', () => {
     saveKeymap("[[1,2]]", 2, "Keymap");
 
     expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      "keyviz:keymap",
+      "nv-atlas:keymap",
       expect.any(String),
     );
   });
 
-  it('"keyviz:layout" の保存値に json と name が含まれる', () => {
+  it('"nv-atlas:layout" の保存値に json と name が含まれる', () => {
     const json = '{"layout":true}';
     const name = "Test Layout";
 
     saveLayout(json, name);
 
-    const storedRaw = localStorageMock.getItem("keyviz:layout");
+    const storedRaw = localStorageMock.getItem("nv-atlas:layout");
     expect(storedRaw).not.toBeNull();
     const stored = JSON.parse(storedRaw as string);
     expect(stored).toEqual({ json, name });
   });
 
-  it('"keyviz:keymap" の保存値に json, matrixCols, name が含まれる', () => {
+  it('"nv-atlas:keymap" の保存値に json, matrixCols, name が含まれる', () => {
     const json = "[[4,4]]";
     const matrixCols = 12;
     const name = "Test Keymap";
 
     saveKeymap(json, matrixCols, name);
 
-    const storedRaw = localStorageMock.getItem("keyviz:keymap");
+    const storedRaw = localStorageMock.getItem("nv-atlas:keymap");
     expect(storedRaw).not.toBeNull();
     const stored = JSON.parse(storedRaw as string);
     expect(stored).toEqual({ json, matrixCols, name });
@@ -683,7 +683,7 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
 
   it("v0 データを localStorage から読み込むと version: 1 のデータが返る", () => {
     localStorageMock.setItem(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
       JSON.stringify(v0ConfigRaw),
     );
 
@@ -695,7 +695,7 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
 
   it("v0 データを読み込んだ後 name や bindings が保持される", () => {
     localStorageMock.setItem(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
       JSON.stringify(v0ConfigRaw),
     );
 
@@ -707,20 +707,20 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
 
   it("マイグレーション後のデータが localStorage に再保存される（永続化）", () => {
     localStorageMock.setItem(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
       JSON.stringify(v0ConfigRaw),
     );
 
     loadKeybindingConfig();
 
-    const storedRaw = localStorageMock.getItem("keyviz:keybinding-config");
+    const storedRaw = localStorageMock.getItem("nv-atlas:keybinding-config");
     expect(storedRaw).not.toBeNull();
     const stored = JSON.parse(storedRaw as string);
     expect(stored.version).toBe(1);
   });
 
   it("マイグレーション不可能な壊れたデータの場合は null を返す", () => {
-    localStorageMock.setItem("keyviz:keybinding-config", "{ broken json ::::");
+    localStorageMock.setItem("nv-atlas:keybinding-config", "{ broken json ::::");
 
     const result = loadKeybindingConfig();
 
@@ -729,7 +729,7 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
 
   it("マイグレーション後に型ガードに失敗するデータの場合は null を返す", () => {
     localStorageMock.setItem(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
       JSON.stringify({ name: "incomplete" }),
     );
 
@@ -739,12 +739,12 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
   });
 
   it("壊れたデータの場合は localStorage がクリアされる", () => {
-    localStorageMock.setItem("keyviz:keybinding-config", "{ broken json ::::");
+    localStorageMock.setItem("nv-atlas:keybinding-config", "{ broken json ::::");
 
     loadKeybindingConfig();
 
     expect(localStorageMock.removeItem).toHaveBeenCalledWith(
-      "keyviz:keybinding-config",
+      "nv-atlas:keybinding-config",
     );
   });
 });
@@ -794,7 +794,7 @@ describe("saveKeybindingConfig の version 保持", () => {
   it("saveKeybindingConfig で保存した config に version: 1 が含まれる", () => {
     saveKeybindingConfig(validConfig);
 
-    const storedRaw = localStorageMock.getItem("keyviz:keybinding-config");
+    const storedRaw = localStorageMock.getItem("nv-atlas:keybinding-config");
     expect(storedRaw).not.toBeNull();
     const stored = JSON.parse(storedRaw as string);
     expect(stored.version).toBe(1);

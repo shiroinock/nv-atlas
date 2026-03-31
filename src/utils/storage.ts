@@ -6,7 +6,7 @@ import {
 } from "../types/keybinding";
 import { VIM_COMMAND_CATEGORIES, type VimCommandCategory } from "../types/vim";
 
-const STORAGE_PREFIX = "keyviz:";
+const STORAGE_PREFIX = "nv-atlas:";
 
 /** 現在のキーバインド設定スキーマバージョン */
 export const CURRENT_KEYBINDING_VERSION = 1;

@@ -87,7 +87,7 @@ gh project item-list 6 --owner shiroinock --limit 100 --format json \
 # Issue の blockedBy を確認（GraphQL）
 gh api graphql -f query='
   query {
-    repository(owner: "shiroinock", name: "keyviz") {
+    repository(owner: "shiroinock", name: "nv-atlas") {
       issue(number: {番号}) {
         blockedBy(first: 10) {
           nodes { number state }

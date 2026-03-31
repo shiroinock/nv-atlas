@@ -173,7 +173,7 @@ function AppContent() {
       <header className={styles.header}>
         <div className={styles.headerTop}>
           <div>
-            <h1 className={styles.title}>KeyViz</h1>
+            <h1 className={styles.title}>nv-atlas</h1>
             <p className={styles.subtitle}>
               カスタムキーボード配列で Neovim キーバインドを可視化
             </p>

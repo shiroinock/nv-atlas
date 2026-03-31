@@ -282,7 +282,7 @@ describe("ExportPanel", () => {
   });
 
   describe("ダウンロードボタン（Lua）", () => {
-    test("Lua タブでダウンロードすると keyviz-config.lua のファイル名が設定される", async () => {
+    test("Lua タブでダウンロードすると nv-atlas-config.lua のファイル名が設定される", async () => {
       const user = userEvent.setup();
       const config = buildConfigWithBindings();
       setupContext(config);
@@ -303,12 +303,12 @@ describe("ExportPanel", () => {
       await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
       expect(capturedAnchor).toBeDefined();
-      expect(capturedAnchor?.download).toBe("keyviz-config.lua");
+      expect(capturedAnchor?.download).toBe("nv-atlas-config.lua");
     });
   });
 
   describe("ダウンロードボタン（JSON）", () => {
-    test("JSON タブでダウンロードすると keyviz-config.json のファイル名が設定される", async () => {
+    test("JSON タブでダウンロードすると nv-atlas-config.json のファイル名が設定される", async () => {
       const user = userEvent.setup();
       const config = buildConfigWithBindings();
       setupContext(config);
@@ -330,7 +330,7 @@ describe("ExportPanel", () => {
       await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
       expect(capturedAnchor).toBeDefined();
-      expect(capturedAnchor?.download).toBe("keyviz-config.json");
+      expect(capturedAnchor?.download).toBe("nv-atlas-config.json");
     });
   });
 
@@ -520,7 +520,7 @@ describe("ExportPanel", () => {
     });
 
     describe("ダウンロード", () => {
-      test("Langmap タブでダウンロードすると keyviz-langmap.lua のファイル名が設定される", async () => {
+      test("Langmap タブでダウンロードすると nv-atlas-langmap.lua のファイル名が設定される", async () => {
         const user = userEvent.setup();
         const config = buildConfig({ customKeymap: { j: "t", k: "e" } });
         setupContext(config);
@@ -544,7 +544,7 @@ describe("ExportPanel", () => {
         await user.click(screen.getByRole("button", { name: "ダウンロード" }));
 
         expect(capturedAnchor).toBeDefined();
-        expect(capturedAnchor?.download).toBe("keyviz-langmap.lua");
+        expect(capturedAnchor?.download).toBe("nv-atlas-langmap.lua");
       });
     });
   });
