@@ -253,7 +253,10 @@ describe("loadKeybindingConfig", () => {
   });
 
   it("壊れた JSON の場合 null を返す", () => {
-    localStorageMock.setItem("nv-atlas:keybinding-config", "{ broken json ::::");
+    localStorageMock.setItem(
+      "nv-atlas:keybinding-config",
+      "{ broken json ::::",
+    );
 
     const result = loadKeybindingConfig();
 
@@ -720,7 +723,10 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
   });
 
   it("マイグレーション不可能な壊れたデータの場合は null を返す", () => {
-    localStorageMock.setItem("nv-atlas:keybinding-config", "{ broken json ::::");
+    localStorageMock.setItem(
+      "nv-atlas:keybinding-config",
+      "{ broken json ::::",
+    );
 
     const result = loadKeybindingConfig();
 
@@ -739,7 +745,10 @@ describe("loadKeybindingConfig のバージョンマイグレーション", () =
   });
 
   it("壊れたデータの場合は localStorage がクリアされる", () => {
-    localStorageMock.setItem("nv-atlas:keybinding-config", "{ broken json ::::");
+    localStorageMock.setItem(
+      "nv-atlas:keybinding-config",
+      "{ broken json ::::",
+    );
 
     loadKeybindingConfig();
 
