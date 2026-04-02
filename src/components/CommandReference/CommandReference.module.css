@@ -1,11 +1,11 @@
 .container {
   width: 100%;
 
-  /* 不透明度のカスタムプロパティ（コンポーネントスコープ） */
-  --opacity-hover-subtle: 3%;
-  --opacity-selected: 5%;
-  --opacity-border: 30%;
-  --opacity-highlight: 15%;
+  /* color-mix() 混合率のカスタムプロパティ（コンポーネントスコープ） */
+  --mix-hover-subtle: 3%;
+  --mix-selected: 5%;
+  --mix-border: 30%;
+  --mix-highlight: 15%;
 }
 
 .controls {
@@ -42,7 +42,7 @@
 .filterSelected {
   background: color-mix(
     in srgb,
-    var(--ctp-foreground) var(--opacity-selected),
+    var(--ctp-foreground) var(--mix-selected),
     transparent
   );
 }
@@ -126,7 +126,7 @@
 .row:hover {
   background: color-mix(
     in srgb,
-    var(--ctp-foreground) var(--opacity-hover-subtle),
+    var(--ctp-foreground) var(--mix-hover-subtle),
     transparent
   );
 }
@@ -134,7 +134,7 @@
 .row td {
   padding: 5px 10px;
   border-bottom: 1px solid
-    color-mix(in srgb, var(--ctp-surface2) var(--opacity-border), transparent);
+    color-mix(in srgb, var(--ctp-surface2) var(--mix-border), transparent);
 }
 
 .cellKey {
@@ -152,7 +152,7 @@
 .cellDiff code {
   background: color-mix(
     in srgb,
-    var(--ctp-blue) var(--opacity-highlight),
+    var(--ctp-blue) var(--mix-highlight),
     transparent
   );
   color: var(--ctp-blue);
