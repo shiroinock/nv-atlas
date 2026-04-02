@@ -8,8 +8,9 @@ exports[`LayerSelector > スナップショット > layerCount=3, activeLayer=0 
     class="_label_77270a"
     id="_r_g_"
   >
-    Layer:
+    Layer
   </span>
+  :
   <div
     aria-labelledby="_r_g_"
     class="_tabs_77270a"

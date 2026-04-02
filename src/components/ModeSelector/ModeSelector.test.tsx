@@ -201,7 +201,7 @@ describe("ModeSelector", () => {
       render(<ModeSelector {...defaultProps} />);
 
       expect(
-        screen.getByRole("tablist", { name: "Vim mode:" }),
+        screen.getByRole("tablist", { name: "Vim mode" }),
       ).toBeInTheDocument();
     });
 

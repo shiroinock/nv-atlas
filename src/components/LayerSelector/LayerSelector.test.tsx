@@ -138,7 +138,7 @@ describe("LayerSelector", () => {
       render(<LayerSelector {...defaultProps} />);
 
       expect(
-        screen.getByRole("tablist", { name: "Layer:" }),
+        screen.getByRole("tablist", { name: "Layer" }),
       ).toBeInTheDocument();
     });
 

@@ -8,8 +8,9 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     class="_label_e815f2"
     id="_r_k_"
   >
-    Vim mode:
+    Vim mode
   </span>
+  :
   <div
     aria-labelledby="_r_k_"
     class="_tabs_e815f2"
