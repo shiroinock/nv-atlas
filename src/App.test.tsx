@@ -48,6 +48,10 @@ vi.mock("./components/Keyboard/Keyboard", () => ({
   ),
 }));
 
+vi.mock("./components/KeymapEditor/KeymapEditor", () => ({
+  KeymapEditor: vi.fn(() => <div data-testid="keymap-editor" />),
+}));
+
 // useKeyboardLayout をモック化してファイルシステムアクセスを回避する
 vi.mock("./hooks/useKeyboardLayout", () => ({
   useKeyboardLayout: vi.fn(() => ({
@@ -435,6 +439,78 @@ describe("App - handleHover の参照安定性", () => {
     const secondOnHover = callsAfter[callsAfter.length - 1][0].onHover;
 
     expect(secondOnHover).toBe(firstOnHover);
+  });
+});
+
+describe("App - キーマップ編集モードの統合", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("「配列編集」タブが表示される", () => {
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    expect(
+      screen.getByRole("button", { name: "配列編集" }),
+    ).toBeInTheDocument();
+  });
+
+  test("「配列編集」タブをクリックすると KeymapEditor が表示される", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "配列編集" }));
+
+    expect(screen.getByTestId("keymap-editor")).toBeInTheDocument();
+  });
+
+  test("キーマップ編集モードでも Keyboard が表示される", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "配列編集" }));
+
+    expect(screen.getByTestId("keyboard")).toBeInTheDocument();
+  });
+
+  test("キーマップ編集モードから可視化モードに切り替えると KeymapEditor が非表示になる", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "配列編集" }));
+    await user.click(screen.getByRole("button", { name: "可視化" }));
+
+    expect(screen.queryByTestId("keymap-editor")).not.toBeInTheDocument();
+  });
+
+  test("キーマップ編集モードでは ExportPanel が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "配列編集" }));
+
+    expect(screen.queryByTestId("export-panel")).not.toBeInTheDocument();
+  });
+
+  test("キーマップ編集モードでは凡例が表示されない", async () => {
+    const user = userEvent.setup();
+    const config = buildConfig(undefined);
+
+    renderAppContent(config);
+
+    await user.click(screen.getByRole("button", { name: "配列編集" }));
+
+    expect(screen.queryByTestId("legend")).not.toBeInTheDocument();
   });
 });
 

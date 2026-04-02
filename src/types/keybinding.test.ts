@@ -3,12 +3,18 @@ import type { AppMode, KeybindingSource } from "./keybinding";
 import { APP_MODE_LABELS, APP_MODES, KEYBINDING_SOURCES } from "./keybinding";
 
 describe("APP_MODES", () => {
-  test("4つの要素を持つ", () => {
-    expect(APP_MODES).toHaveLength(4);
+  test("5つの要素を持つ", () => {
+    expect(APP_MODES).toHaveLength(5);
   });
 
   describe("全ての AppMode 値を含む", () => {
-    const cases: AppMode[] = ["visualize", "practice", "reference", "edit"];
+    const cases = [
+      "visualize",
+      "practice",
+      "reference",
+      "edit",
+      "keymap-edit",
+    ] as AppMode[];
 
     test.each(cases)('"%s" を含む', (mode) => {
       expect(APP_MODES).toContain(mode);
@@ -58,6 +64,7 @@ describe("APP_MODE_LABELS", () => {
       ["practice", "練習"],
       ["reference", "辞書"],
       ["edit", "編集"],
+      ["keymap-edit" as AppMode, "配列編集"],
     ];
 
     test.each(cases)('"%s" のラベルは "%s"', (mode, expected) => {

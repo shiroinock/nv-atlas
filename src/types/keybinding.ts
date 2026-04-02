@@ -16,7 +16,12 @@ export const VIM_MODES = [
 ] as const satisfies VimMode[];
 
 /** アプリモード */
-export type AppMode = "visualize" | "practice" | "reference" | "edit";
+export type AppMode =
+  | "visualize"
+  | "practice"
+  | "reference"
+  | "edit"
+  | "keymap-edit";
 
 /** AppMode の全値リスト */
 export const APP_MODES = [
@@ -24,6 +29,7 @@ export const APP_MODES = [
   "practice",
   "reference",
   "edit",
+  "keymap-edit",
 ] as const satisfies AppMode[];
 
 /** AppMode の表示ラベル */
@@ -32,6 +38,7 @@ export const APP_MODE_LABELS: Record<AppMode, string> = {
   practice: "練習",
   reference: "辞書",
   edit: "編集",
+  "keymap-edit": "配列編集",
 };
 
 /** バインディングの出自 */

@@ -5,6 +5,7 @@ import { CommandDetail } from "./components/CommandDetail/CommandDetail";
 import { CommandReference } from "./components/CommandReference/CommandReference";
 import { ExportPanel } from "./components/ExportPanel/ExportPanel";
 import { Keyboard } from "./components/Keyboard/Keyboard";
+import { KeymapEditor } from "./components/KeymapEditor/KeymapEditor";
 import { LayerSelector } from "./components/LayerSelector/LayerSelector";
 import { LayoutLoader } from "./components/LayoutLoader/LayoutLoader";
 import { ModeSelector } from "./components/ModeSelector/ModeSelector";
@@ -267,7 +268,11 @@ function AppContent() {
                 ? highlightKeys
                 : undefined
             }
-            plain={mode === "practice" || mode === "reference"}
+            plain={
+              mode === "practice" ||
+              mode === "reference" ||
+              mode === "keymap-edit"
+            }
             activeVimMode={activeVimMode}
           />
         </div>
@@ -291,6 +296,12 @@ function AppContent() {
         </div>
       )}
 
+      {mode === "keymap-edit" && (
+        <div className={styles.editor}>
+          <KeymapEditor />
+        </div>
+      )}
+
       {mode === "visualize" && (
         <div className={styles.detail}>
           <CommandDetail
@@ -306,7 +317,7 @@ function AppContent() {
         </div>
       )}
 
-      {mode !== "edit" && (
+      {mode !== "edit" && mode !== "keymap-edit" && (
         <div className={styles.legend} data-testid="legend">
           {Object.entries(categoryColors).map(([cat, color]) => (
             <div key={cat} className={styles.legendItem}>
