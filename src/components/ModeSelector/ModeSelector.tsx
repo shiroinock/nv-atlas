@@ -20,8 +20,14 @@ const vimModes: { mode: VimMode; label: string; short: string }[] = [
 export function ModeSelector({ activeMode, onModeChange }: Props) {
   return (
     <div className={styles.container}>
-      <span className={styles.label}>Vim mode:</span>
-      <div className={styles.tabs} role="tablist" aria-label="Vim mode">
+      <span id="mode-selector-label" className={styles.label}>
+        Vim mode:
+      </span>
+      <div
+        className={styles.tabs}
+        role="tablist"
+        aria-labelledby="mode-selector-label"
+      >
         {vimModes.map(({ mode, label, short }) => (
           <button
             type="button"

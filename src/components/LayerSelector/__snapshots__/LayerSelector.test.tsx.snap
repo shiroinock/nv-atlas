@@ -6,11 +6,12 @@ exports[`LayerSelector > スナップショット > layerCount=3, activeLayer=0 
 >
   <span
     class="_label_77270a"
+    id="layer-selector-label"
   >
     Layer:
   </span>
   <div
-    aria-label="Layer"
+    aria-labelledby="layer-selector-label"
     class="_tabs_77270a"
     role="tablist"
   >

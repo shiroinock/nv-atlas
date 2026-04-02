@@ -6,11 +6,12 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
 >
   <span
     class="_label_e815f2"
+    id="mode-selector-label"
   >
     Vim mode:
   </span>
   <div
-    aria-label="Vim mode"
+    aria-labelledby="mode-selector-label"
     class="_tabs_e815f2"
     role="tablist"
   >

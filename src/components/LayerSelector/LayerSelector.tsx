@@ -15,8 +15,14 @@ export function LayerSelector({
 
   return (
     <div className={styles.container}>
-      <span className={styles.label}>Layer:</span>
-      <div className={styles.tabs} role="tablist" aria-label="Layer">
+      <span id="layer-selector-label" className={styles.label}>
+        Layer:
+      </span>
+      <div
+        className={styles.tabs}
+        role="tablist"
+        aria-labelledby="layer-selector-label"
+      >
         {layers.map((layer) => (
           <button
             type="button"

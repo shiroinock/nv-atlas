@@ -134,12 +134,16 @@ describe("LayerSelector", () => {
       );
     });
 
-    test("tablist に aria-label='Layer' が付与されている", () => {
+    test("tablist が aria-labelledby で可視ラベルを参照している", () => {
       render(<LayerSelector {...defaultProps} />);
 
-      expect(screen.getByRole("tablist")).toHaveAttribute(
-        "aria-label",
-        "Layer",
+      const tablist = screen.getByRole("tablist");
+      expect(tablist).toHaveAttribute(
+        "aria-labelledby",
+        "layer-selector-label",
+      );
+      expect(document.getElementById("layer-selector-label")).toHaveTextContent(
+        "Layer:",
       );
     });
 
