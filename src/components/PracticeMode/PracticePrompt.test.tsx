@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ComponentProps } from "react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { KeyInputSpec, PracticeScore, VimCommand } from "../../types/vim";
-import type { ComponentProps } from "react";
 import { PracticePrompt } from "./PracticePrompt";
 
 const mockCommand: VimCommand = {
