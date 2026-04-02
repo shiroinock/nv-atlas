@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { VimMode } from "../../types/keybinding";
 import styles from "./ModeSelector.module.css";
 
@@ -18,16 +19,13 @@ const vimModes: { mode: VimMode; label: string; short: string }[] = [
 ];
 
 export function ModeSelector({ activeMode, onModeChange }: Props) {
+  const labelId = useId();
   return (
     <div className={styles.container}>
-      <span id="mode-selector-label" className={styles.label}>
+      <span id={labelId} className={styles.label}>
         Vim mode:
       </span>
-      <div
-        className={styles.tabs}
-        role="tablist"
-        aria-labelledby="mode-selector-label"
-      >
+      <div className={styles.tabs} role="tablist" aria-labelledby={labelId}>
         {vimModes.map(({ mode, label, short }) => (
           <button
             type="button"

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import styles from "./LayerSelector.module.css";
 
 interface Props {
@@ -11,18 +12,15 @@ export function LayerSelector({
   activeLayer,
   onLayerChange,
 }: Props) {
+  const labelId = useId();
   const layers = Array.from({ length: layerCount }, (_, i) => i);
 
   return (
     <div className={styles.container}>
-      <span id="layer-selector-label" className={styles.label}>
+      <span id={labelId} className={styles.label}>
         Layer:
       </span>
-      <div
-        className={styles.tabs}
-        role="tablist"
-        aria-labelledby="layer-selector-label"
-      >
+      <div className={styles.tabs} role="tablist" aria-labelledby={labelId}>
         {layers.map((layer) => (
           <button
             type="button"
