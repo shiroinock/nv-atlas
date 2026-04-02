@@ -1,41 +1,12 @@
+import { QWERTY_KEYS } from "../data/keymap";
+
 export type KeymapValidationError = {
   type: "duplicate-output" | "invalid-qwerty" | "empty-output";
   keys: string[];
   message: string;
 };
 
-const QWERTY_KEYS = new Set([
-  "q",
-  "w",
-  "e",
-  "r",
-  "t",
-  "y",
-  "u",
-  "i",
-  "o",
-  "p",
-  "a",
-  "s",
-  "d",
-  "f",
-  "g",
-  "h",
-  "j",
-  "k",
-  "l",
-  ";",
-  "z",
-  "x",
-  "c",
-  "v",
-  "b",
-  "n",
-  "m",
-  ",",
-  ".",
-  "/",
-]);
+const QWERTY_KEY_SET: Set<string> = new Set(QWERTY_KEYS);
 
 export function validateKeymap(
   keymap: Record<string, string>,
@@ -43,7 +14,7 @@ export function validateKeymap(
   const errors: KeymapValidationError[] = [];
 
   const invalidKeys = Object.keys(keymap).filter(
-    (key) => !QWERTY_KEYS.has(key),
+    (key) => !QWERTY_KEY_SET.has(key),
   );
   if (invalidKeys.length > 0) {
     errors.push({

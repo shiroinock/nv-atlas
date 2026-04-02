@@ -1,39 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { QWERTY_KEYS } from "../data/keymap";
 import type { KeymapValidationError } from "./keymap-validator";
 import { validateKeymap } from "./keymap-validator";
-
-const VALID_QWERTY_KEYS = [
-  "q",
-  "w",
-  "e",
-  "r",
-  "t",
-  "y",
-  "u",
-  "i",
-  "o",
-  "p",
-  "a",
-  "s",
-  "d",
-  "f",
-  "g",
-  "h",
-  "j",
-  "k",
-  "l",
-  ";",
-  "z",
-  "x",
-  "c",
-  "v",
-  "b",
-  "n",
-  "m",
-  ",",
-  ".",
-  "/",
-];
 
 describe("validateKeymap", () => {
   describe("正常系", () => {
@@ -193,7 +161,7 @@ describe("validateKeymap", () => {
 
     it("有効な QWERTY キー 30種が全て受け入れられる", () => {
       const keymap = Object.fromEntries(
-        VALID_QWERTY_KEYS.map((key, i) => [key, String(i)]),
+        QWERTY_KEYS.map((key, i) => [key, String(i)]),
       );
 
       const result = validateKeymap(keymap);

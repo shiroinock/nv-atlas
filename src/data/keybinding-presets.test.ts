@@ -1,39 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getPresets } from "./keybinding-presets";
-import { defaultCustomKeymap } from "./keymap";
-
-const QWERTY_30_KEYS = [
-  "q",
-  "w",
-  "e",
-  "r",
-  "t",
-  "y",
-  "u",
-  "i",
-  "o",
-  "p",
-  "a",
-  "s",
-  "d",
-  "f",
-  "g",
-  "h",
-  "j",
-  "k",
-  "l",
-  ";",
-  "z",
-  "x",
-  "c",
-  "v",
-  "b",
-  "n",
-  "m",
-  ",",
-  ".",
-  "/",
-];
+import { defaultCustomKeymap, QWERTY_KEYS } from "./keymap";
 
 describe("getPresets", () => {
   describe("戻り値の基本構造", () => {
@@ -75,7 +42,7 @@ describe("getPresets", () => {
       const presets = getPresets();
       for (const preset of presets) {
         const keys = Object.keys(preset.keymap).sort();
-        expect(keys).toEqual([...QWERTY_30_KEYS].sort());
+        expect(keys).toEqual([...QWERTY_KEYS].sort());
       }
     });
   });
@@ -101,7 +68,7 @@ describe("getPresets", () => {
       const qwerty = presets.find((p) => p.id === "qwerty");
       expect(qwerty).toBeDefined();
       if (!qwerty) return;
-      for (const key of QWERTY_30_KEYS) {
+      for (const key of QWERTY_KEYS) {
         expect(qwerty.keymap[key]).toBe(key);
       }
     });

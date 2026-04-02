@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useKeybindingContext } from "../../context/KeybindingContext";
-import { defaultCustomKeymap } from "../../data/keymap";
+import { defaultCustomKeymap, QWERTY_KEYS } from "../../data/keymap";
 import { validateKeymap } from "../../utils/keymap-validator";
 import styles from "./KeymapEditor.module.css";
 
@@ -8,18 +8,9 @@ const MAX_OUTPUT_CHAR_LENGTH = 10;
 
 /** QWERTY物理配列の行グループ定義 */
 const KEY_ROWS = [
-  {
-    label: "Top",
-    keys: ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-  },
-  {
-    label: "Home",
-    keys: ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"],
-  },
-  {
-    label: "Bottom",
-    keys: ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"],
-  },
+  { label: "Top", keys: QWERTY_KEYS.slice(0, 10) },
+  { label: "Home", keys: QWERTY_KEYS.slice(10, 20) },
+  { label: "Bottom", keys: QWERTY_KEYS.slice(20, 30) },
 ] as const;
 
 /** バリデーションエラーをキー単位で引き当てるヘルパー */
