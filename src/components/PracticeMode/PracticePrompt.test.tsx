@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { KeyInputSpec, PracticeScore, VimCommand } from "../../types/vim";
+import type { ComponentProps } from "react";
 import { PracticePrompt } from "./PracticePrompt";
 
 const mockCommand: VimCommand = {
@@ -24,11 +25,11 @@ const defaultScore: PracticeScore = {
   streak: 0,
 };
 
-const defaultProps = {
+const defaultProps: ComponentProps<typeof PracticePrompt> = {
   command: mockCommand,
   inputSpec: mockInputSpec,
   score: defaultScore,
-  lastResult: null as "correct" | "incorrect" | null,
+  lastResult: null,
   started: true,
   onStart: vi.fn(),
 };
@@ -184,6 +185,7 @@ describe("PracticePrompt", () => {
       );
 
       const panel = container.firstChild as HTMLElement;
+      expect(panel).not.toBeNull();
       expect(panel.className).not.toMatch(/_correct_/);
       expect(panel.className).not.toMatch(/_incorrect_/);
     });
@@ -194,6 +196,7 @@ describe("PracticePrompt", () => {
       );
 
       const panel = container.firstChild as HTMLElement;
+      expect(panel).not.toBeNull();
       expect(panel.className).toMatch(/_correct_/);
     });
 
@@ -203,6 +206,7 @@ describe("PracticePrompt", () => {
       );
 
       const panel = container.firstChild as HTMLElement;
+      expect(panel).not.toBeNull();
       expect(panel.className).toMatch(/_incorrect_/);
     });
 
@@ -212,6 +216,7 @@ describe("PracticePrompt", () => {
       );
 
       const panel = container.firstChild as HTMLElement;
+      expect(panel).not.toBeNull();
       expect(panel.className).not.toMatch(/_incorrect_/);
     });
 
@@ -221,7 +226,7 @@ describe("PracticePrompt", () => {
       );
 
       const panel = container.firstChild as HTMLElement;
-      // CSS Modules は "_correct_xxxx" 形式になるため、"_correct_" で判定する
+      expect(panel).not.toBeNull();
       expect(panel.className).not.toMatch(/_correct_/);
     });
   });
