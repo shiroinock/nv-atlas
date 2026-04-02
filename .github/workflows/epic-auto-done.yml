@@ -18,19 +18,58 @@ jobs:
   check-and-update-epic:
     runs-on: ubuntu-latest
     steps:
-      - name: Get parent issues
-        id: get-parents
+      - name: Get parent issue
+        id: get-parent
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPO_OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
         run: |
-          PARENTS=$(gh api graphql -f query='
+          PARENT=$(gh api graphql -f query='
             query($owner: String!, $repo: String!, $number: Int!) {
               repository(owner: $owner, name: $repo) {
                 issue(number: $number) {
-                  trackedInIssues(first: 25) {
+                  parent {
+                    number
+                  }
+                }
+              }
+            }' -f owner="$REPO_OWNER" \
+               -f repo="$REPO_NAME" \
+               -F number="$ISSUE_NUMBER" \
+            --jq '.data.repository.issue.parent.number // empty') || {
+            echo "::warning::Failed to query parent issue"
+            exit 0
+          }
+
+          if [ -z "$PARENT" ]; then
+            echo "No parent issue found, skipping."
+            echo "has_parent=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Parent issue number: $PARENT"
+            echo "has_parent=true" >> "$GITHUB_OUTPUT"
+            echo "parent_number=$PARENT" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check sub-issues and update project status
+        if: steps.get-parent.outputs.has_parent == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          PARENT_NUMBER: ${{ steps.get-parent.outputs.parent_number }}
+        run: |
+          parent_number="$PARENT_NUMBER"
+          echo "Checking sub-issues for epic #${parent_number}..."
+
+          if ! SUBISSUES=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $number: Int!) {
+              repository(owner: $owner, name: $repo) {
+                issue(number: $number) {
+                  subIssues(first: 100) {
+                    totalCount
                     nodes {
                       number
                       state
@@ -40,88 +79,105 @@ jobs:
               }
             }' -f owner="$REPO_OWNER" \
                -f repo="$REPO_NAME" \
-               -F number="$ISSUE_NUMBER" \
-            --jq '[.data.repository.issue.trackedInIssues.nodes[] | .number] | .[]') || {
-            echo "::warning::Failed to query parent issues"
+               -F number="$parent_number"); then
+            echo "::warning::Failed to query sub-issues for epic #${parent_number}"
             exit 0
-          }
-
-          if [ -z "$PARENTS" ]; then
-            echo "No parent issues found, skipping."
-            echo "has_parents=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Parent issue numbers: $PARENTS"
-            echo "has_parents=true" >> "$GITHUB_OUTPUT"
-            echo "parent_numbers<<EOF" >> "$GITHUB_OUTPUT"
-            echo "$PARENTS" >> "$GITHUB_OUTPUT"
-            echo "EOF" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Check sub-issues and update project status
-        if: steps.get-parents.outputs.has_parents == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
-          REPO_OWNER: ${{ github.repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
-          PARENT_NUMBERS: ${{ steps.get-parents.outputs.parent_numbers }}
-        run: |
-          while IFS= read -r parent_number; do
-            [ -z "$parent_number" ] && continue
+          TOTAL=$(echo "$SUBISSUES" | jq '.data.repository.issue.subIssues.totalCount')
+          NODE_COUNT=$(echo "$SUBISSUES" | jq '.data.repository.issue.subIssues.nodes | length')
+          CLOSED_COUNT=$(echo "$SUBISSUES" | jq '[.data.repository.issue.subIssues.nodes[] | select(.state == "CLOSED")] | length')
 
-            echo "Checking sub-issues for epic #${parent_number}..."
+          echo "Epic #${parent_number}: total=${TOTAL}, fetched=${NODE_COUNT}, closed=${CLOSED_COUNT}"
 
-            if ! SUBISSUES=$(gh api graphql -f query='
-              query($owner: String!, $repo: String!, $number: Int!) {
-                repository(owner: $owner, name: $repo) {
-                  issue(number: $number) {
-                    subIssues(first: 100) {
-                      totalCount
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "Epic #${parent_number} has no sub-issues, skipping."
+            exit 0
+          fi
+
+          if [ "$NODE_COUNT" -lt "$TOTAL" ]; then
+            echo "::warning::Epic #${parent_number} has ${TOTAL} sub-issues but only ${NODE_COUNT} were fetched. Skipping to avoid incomplete judgment."
+            exit 0
+          fi
+
+          if [ "$TOTAL" -ne "$CLOSED_COUNT" ]; then
+            echo "Epic #${parent_number} still has open sub-issue(s) (total=${TOTAL}, closed=${CLOSED_COUNT}), skipping."
+            exit 0
+          fi
+
+          echo "All sub-issues closed for epic #${parent_number}. Finding project item..."
+
+          # user() は個人アカウントのプロジェクト用。Org の場合は organization() に変更
+          # カーソルベースのページネーションで全 items を取得
+          ITEM_ID=""
+          ITEMS_CURSOR=""
+          while true; do
+            AFTER_OPTS=()
+            [ -n "$ITEMS_CURSOR" ] && AFTER_OPTS+=(-f after="$ITEMS_CURSOR")
+            ITEMS_RESULT=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
+              query($owner: String!, $number: Int!, $after: String) {
+                user(login: $owner) {
+                  projectV2(number: $number) {
+                    items(first: 100, after: $after) {
+                      pageInfo {
+                        hasNextPage
+                        endCursor
+                      }
                       nodes {
-                        number
-                        state
+                        id
+                        content {
+                          ... on Issue {
+                            number
+                          }
+                        }
                       }
                     }
                   }
                 }
-              }' -f owner="$REPO_OWNER" \
-                 -f repo="$REPO_NAME" \
-                 -F number="$parent_number"); then
-              echo "::warning::Failed to query sub-issues for epic #${parent_number}"
-              continue
+              }' -f owner="$PROJECT_OWNER" \
+                 -F number="$PROJECT_NUMBER" \
+                 "${AFTER_OPTS[@]}") || {
+              echo "::warning::Failed to query project items for epic #${parent_number}"
+              break
+            }
+
+            FOUND=$(echo "$ITEMS_RESULT" | jq -r --argjson pnum "$parent_number" \
+              '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .id')
+            if [ -n "$FOUND" ]; then
+              ITEM_ID="$FOUND"
+              break
             fi
 
-            TOTAL=$(echo "$SUBISSUES" | jq '.data.repository.issue.subIssues.totalCount')
-            NODE_COUNT=$(echo "$SUBISSUES" | jq '.data.repository.issue.subIssues.nodes | length')
-            CLOSED_COUNT=$(echo "$SUBISSUES" | jq '[.data.repository.issue.subIssues.nodes[] | select(.state == "CLOSED")] | length')
-
-            echo "Epic #${parent_number}: total=${TOTAL}, fetched=${NODE_COUNT}, closed=${CLOSED_COUNT}"
-
-            if [ "$TOTAL" -eq 0 ]; then
-              echo "Epic #${parent_number} has no sub-issues, skipping."
-              continue
+            ITEMS_HAS_NEXT=$(echo "$ITEMS_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.hasNextPage')
+            if [ "$ITEMS_HAS_NEXT" != "true" ]; then
+              break
             fi
+            ITEMS_CURSOR=$(echo "$ITEMS_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.endCursor')
+          done
 
-            if [ "$NODE_COUNT" -lt "$TOTAL" ]; then
-              echo "::warning::Epic #${parent_number} has ${TOTAL} sub-issues but only ${NODE_COUNT} were fetched. Skipping to avoid incomplete judgment."
-              continue
-            fi
+          if [ -z "$ITEM_ID" ]; then
+            echo "Epic #${parent_number} is not in project, skipping."
+            exit 0
+          fi
 
-            if [ "$TOTAL" -ne "$CLOSED_COUNT" ]; then
-              echo "Epic #${parent_number} still has open sub-issue(s) (total=${TOTAL}, closed=${CLOSED_COUNT}), skipping."
-              continue
-            fi
+          echo "Updating project item ${ITEM_ID} to Done..."
+          GH_TOKEN="$PROJECT_TOKEN" gh project item-edit \
+            --project-id "$PROJECT_ID" \
+            --id "$ITEM_ID" \
+            --field-id "$STATUS_FIELD_ID" \
+            --single-select-option-id "$DONE_OPTION_ID"
 
-            echo "All sub-issues closed for epic #${parent_number}. Finding project item..."
-
-            # user() は個人アカウントのプロジェクト用。Org の場合は organization() に変更
-            # カーソルベースのページネーションで全 items を取得
-            ITEM_ID=""
-            ITEMS_CURSOR=""
+          echo "Verifying update for epic #${parent_number}..."
+          VERIFIED=false
+          for i in 1 2 3; do
+            sleep 3
+            # カーソルベースのページネーションで検証対象の item を検索
+            CURRENT_STATUS=""
+            VERIFY_CURSOR=""
             while true; do
-              AFTER_OPTS=()
-              [ -n "$ITEMS_CURSOR" ] && AFTER_OPTS+=(-f after="$ITEMS_CURSOR")
-              ITEMS_RESULT=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
+              VERIFY_AFTER_OPTS=()
+              [ -n "$VERIFY_CURSOR" ] && VERIFY_AFTER_OPTS+=(-f after="$VERIFY_CURSOR")
+              VERIFY_RESULT=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
                 query($owner: String!, $number: Int!, $after: String) {
                   user(login: $owner) {
                     projectV2(number: $number) {
@@ -132,6 +188,18 @@ jobs:
                         }
                         nodes {
                           id
+                          fieldValues(first: 20) {
+                            nodes {
+                              ... on ProjectV2ItemFieldSingleSelectValue {
+                                optionId
+                                field {
+                                  ... on ProjectV2SingleSelectField {
+                                    id
+                                  }
+                                }
+                              }
+                            }
+                          }
                           content {
                             ... on Issue {
                               number
@@ -143,114 +211,37 @@ jobs:
                   }
                 }' -f owner="$PROJECT_OWNER" \
                    -F number="$PROJECT_NUMBER" \
-                   "${AFTER_OPTS[@]}") || {
-                echo "::warning::Failed to query project items for epic #${parent_number}"
+                   "${VERIFY_AFTER_OPTS[@]}") || {
+                echo "::warning::Failed to query project items for verification (attempt ${i})"
                 break
               }
 
-              FOUND=$(echo "$ITEMS_RESULT" | jq -r --argjson pnum "$parent_number" \
-                '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .id')
-              if [ -n "$FOUND" ]; then
-                ITEM_ID="$FOUND"
+              FOUND_STATUS=$(echo "$VERIFY_RESULT" | jq -r \
+                --argjson pnum "$parent_number" \
+                --arg sfid "$STATUS_FIELD_ID" \
+                '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .fieldValues.nodes[] | select(.field.id == $sfid) | .optionId')
+              if [ -n "$FOUND_STATUS" ]; then
+                CURRENT_STATUS="$FOUND_STATUS"
                 break
               fi
 
-              ITEMS_HAS_NEXT=$(echo "$ITEMS_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.hasNextPage')
-              if [ "$ITEMS_HAS_NEXT" != "true" ]; then
+              VERIFY_HAS_NEXT=$(echo "$VERIFY_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.hasNextPage')
+              if [ "$VERIFY_HAS_NEXT" != "true" ]; then
                 break
               fi
-              ITEMS_CURSOR=$(echo "$ITEMS_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.endCursor')
+              VERIFY_CURSOR=$(echo "$VERIFY_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.endCursor')
             done
 
-            if [ -z "$ITEM_ID" ]; then
-              echo "Epic #${parent_number} is not in project, skipping."
-              continue
+            echo "Attempt ${i}: current optionId=${CURRENT_STATUS}"
+
+            if [ "$CURRENT_STATUS" = "$DONE_OPTION_ID" ]; then
+              echo "Verified: Epic #${parent_number} status is Done."
+              VERIFIED=true
+              break
             fi
+          done
 
-            echo "Updating project item ${ITEM_ID} to Done..."
-            GH_TOKEN="$PROJECT_TOKEN" gh project item-edit \
-              --project-id "$PROJECT_ID" \
-              --id "$ITEM_ID" \
-              --field-id "$STATUS_FIELD_ID" \
-              --single-select-option-id "$DONE_OPTION_ID"
-
-            echo "Verifying update for epic #${parent_number}..."
-            VERIFIED=false
-            for i in 1 2 3; do
-              sleep 3
-              # カーソルベースのページネーションで検証対象の item を検索
-              CURRENT_STATUS=""
-              VERIFY_CURSOR=""
-              while true; do
-                VERIFY_AFTER_OPTS=()
-                [ -n "$VERIFY_CURSOR" ] && VERIFY_AFTER_OPTS+=(-f after="$VERIFY_CURSOR")
-                VERIFY_RESULT=$(GH_TOKEN="$PROJECT_TOKEN" gh api graphql -f query='
-                  query($owner: String!, $number: Int!, $after: String) {
-                    user(login: $owner) {
-                      projectV2(number: $number) {
-                        items(first: 100, after: $after) {
-                          pageInfo {
-                            hasNextPage
-                            endCursor
-                          }
-                          nodes {
-                            id
-                            fieldValues(first: 20) {
-                              nodes {
-                                ... on ProjectV2ItemFieldSingleSelectValue {
-                                  optionId
-                                  field {
-                                    ... on ProjectV2SingleSelectField {
-                                      id
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                            content {
-                              ... on Issue {
-                                number
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }' -f owner="$PROJECT_OWNER" \
-                     -F number="$PROJECT_NUMBER" \
-                     "${VERIFY_AFTER_OPTS[@]}") || {
-                  echo "::warning::Failed to query project items for verification (attempt ${i})"
-                  break
-                }
-
-                FOUND_STATUS=$(echo "$VERIFY_RESULT" | jq -r \
-                  --argjson pnum "$parent_number" \
-                  --arg sfid "$STATUS_FIELD_ID" \
-                  '.data.user.projectV2.items.nodes[] | select(.content.number == $pnum) | .fieldValues.nodes[] | select(.field.id == $sfid) | .optionId')
-                if [ -n "$FOUND_STATUS" ]; then
-                  CURRENT_STATUS="$FOUND_STATUS"
-                  break
-                fi
-
-                VERIFY_HAS_NEXT=$(echo "$VERIFY_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.hasNextPage')
-                if [ "$VERIFY_HAS_NEXT" != "true" ]; then
-                  break
-                fi
-                VERIFY_CURSOR=$(echo "$VERIFY_RESULT" | jq -r '.data.user.projectV2.items.pageInfo.endCursor')
-              done
-
-              echo "Attempt ${i}: current optionId=${CURRENT_STATUS}"
-
-              if [ "$CURRENT_STATUS" = "$DONE_OPTION_ID" ]; then
-                echo "Verified: Epic #${parent_number} status is Done."
-                VERIFIED=true
-                break
-              fi
-            done
-
-            if [ "$VERIFIED" = "false" ]; then
-              echo "::error::Failed to verify Done status for epic #${parent_number} after 3 attempts."
-              exit 1
-            fi
-
-          done <<< "$PARENT_NUMBERS"
+          if [ "$VERIFIED" = "false" ]; then
+            echo "::error::Failed to verify Done status for epic #${parent_number} after 3 attempts."
+            exit 1
+          fi
