@@ -21,6 +21,7 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         Vim mode:
       </span>
       <div
+        aria-label="Vim mode"
         class="_tabs_e815f2"
         role="tablist"
       >
@@ -366,6 +367,7 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         Vim mode:
       </span>
       <div
+        aria-label="Vim mode"
         class="_tabs_e815f2"
         role="tablist"
       >

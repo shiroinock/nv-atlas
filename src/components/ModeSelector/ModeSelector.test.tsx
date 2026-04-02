@@ -197,6 +197,15 @@ describe("ModeSelector", () => {
       );
     });
 
+    test("tablist に aria-label='Vim mode' が付与されている", () => {
+      render(<ModeSelector {...defaultProps} />);
+
+      expect(screen.getByRole("tablist")).toHaveAttribute(
+        "aria-label",
+        "Vim mode",
+      );
+    });
+
     test("各タブに id='tab-vim-{mode}' が付与されている", () => {
       render(<ModeSelector {...defaultProps} />);
 

@@ -134,6 +134,15 @@ describe("LayerSelector", () => {
       );
     });
 
+    test("tablist に aria-label='Layer' が付与されている", () => {
+      render(<LayerSelector {...defaultProps} />);
+
+      expect(screen.getByRole("tablist")).toHaveAttribute(
+        "aria-label",
+        "Layer",
+      );
+    });
+
     test("各タブに id='tab-layer-{n}' が付与されている", () => {
       render(<LayerSelector {...defaultProps} />);
 
