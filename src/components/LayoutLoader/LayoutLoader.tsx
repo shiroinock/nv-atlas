@@ -1,9 +1,9 @@
 import { useCallback, useRef } from "react";
 import { DEFAULT_LAYOUT_NAME } from "../../data/default-layout";
 import { getPresets } from "../../data/keybinding-presets";
-import { useVialDevice } from "../../hooks/useVialDevice";
 import type { KeybindingPreset } from "../../types/keybinding";
 import styles from "./LayoutLoader.module.css";
+import { VialDeviceSection } from "./VialDeviceSection";
 
 /** カスタム選択肢の value 定数 */
 const CUSTOM_PRESET_VALUE = "__custom__";
@@ -135,15 +135,6 @@ export function LayoutLoader({
     ? matchingPreset.id
     : CUSTOM_PRESET_VALUE;
 
-  const {
-    status: vialStatus,
-    error: vialError,
-    deviceName,
-    connect,
-    disconnect,
-    isSupported,
-  } = useVialDevice({ onLoadLayout, onLoadKeymap });
-
   const handlePresetChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const preset = PRESETS.find((p) => p.id === e.target.value);
@@ -156,50 +147,10 @@ export function LayoutLoader({
 
   return (
     <div className={styles.container}>
-      {/* WebHID 非対応環境では Vial セクション全体を非表示にする */}
-      {isSupported && (
-        <div className={styles.vialSection}>
-          <span className={styles.label}>Vial デバイス</span>
-          {vialStatus === "disconnected" && (
-            <button
-              type="button"
-              className={styles.vialButton}
-              onClick={() => void connect()}
-            >
-              Vial デバイスから読み込み
-            </button>
-          )}
-          {vialStatus === "connecting" && (
-            <button type="button" className={styles.vialButton} disabled>
-              接続中...
-            </button>
-          )}
-          {vialStatus === "connected" && (
-            <div className={styles.vialConnected}>
-              <span className={styles.vialDeviceName}>{deviceName}</span>
-              <button
-                type="button"
-                className={styles.disconnectButton}
-                onClick={() => void disconnect()}
-              >
-                切断
-              </button>
-            </div>
-          )}
-          {vialStatus === "error" && (
-            <>
-              <span className={styles.vialError}>{vialError}</span>
-              <button
-                type="button"
-                className={styles.vialButton}
-                onClick={() => void connect()}
-              >
-                再試行
-              </button>
-            </>
-          )}
-        </div>
-      )}
+      <VialDeviceSection
+        onLoadLayout={onLoadLayout}
+        onLoadKeymap={onLoadKeymap}
+      />
       <FileDropZone
         label="1. キーボードレイアウト"
         description="VIA 定義 JSON をドロップ or クリック"
