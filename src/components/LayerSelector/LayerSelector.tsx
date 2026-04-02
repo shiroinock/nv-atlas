@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { cx } from "../../utils/cx";
 import styles from "./LayerSelector.module.css";
 
 interface Props {
@@ -29,7 +30,10 @@ export function LayerSelector({
             role="tab"
             id={`tab-layer-${layer}`}
             aria-selected={activeLayer === layer}
-            className={`${styles.tab} ${activeLayer === layer ? styles.tabActive : ""}`}
+            className={cx(
+              styles.tab,
+              activeLayer === layer && styles.tabActive,
+            )}
             onClick={() => onLayerChange(layer)}
             title={`Layer ${layer}`}
           >

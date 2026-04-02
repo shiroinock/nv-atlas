@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useKeybindingContext } from "../../context/KeybindingContext";
 import { defaultCustomKeymap, QWERTY_KEYS } from "../../data/keymap";
+import { cx } from "../../utils/cx";
 import { validateKeymap } from "../../utils/keymap-validator";
 import styles from "./KeymapEditor.module.css";
 
@@ -133,7 +134,10 @@ export function KeymapEditor() {
                     ) : (
                       <button
                         type="button"
-                        className={`${styles.outputValue} ${hasError ? styles.errorCell : ""}`}
+                        className={cx(
+                          styles.outputValue,
+                          hasError && styles.errorCell,
+                        )}
                         onClick={() => handleCellClick(qwertyKey)}
                       >
                         {keymap[qwertyKey] ?? ""}

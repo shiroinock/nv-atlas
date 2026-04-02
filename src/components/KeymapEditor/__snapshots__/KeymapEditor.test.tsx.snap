@@ -68,7 +68,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-q"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             q
@@ -95,7 +95,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-w"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             l
@@ -122,7 +122,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-e"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             h
@@ -149,7 +149,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-r"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             c
@@ -176,7 +176,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-t"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             f
@@ -203,7 +203,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-y"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             p
@@ -230,7 +230,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-u"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             b
@@ -257,7 +257,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-i"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             u
@@ -284,7 +284,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-o"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             ,
@@ -311,7 +311,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-p"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             .
@@ -349,7 +349,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-a"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             a
@@ -376,7 +376,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-s"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             n
@@ -403,7 +403,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-d"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             r
@@ -430,7 +430,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-f"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             s
@@ -457,7 +457,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-g"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             w
@@ -484,7 +484,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-h"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             k
@@ -511,7 +511,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-j"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             t
@@ -538,7 +538,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-k"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             e
@@ -565,7 +565,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-l"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             o
@@ -592,7 +592,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-;"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             i
@@ -630,7 +630,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-z"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             -
@@ -657,7 +657,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-x"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             z
@@ -684,7 +684,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-c"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             y
@@ -711,7 +711,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-v"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             m
@@ -738,7 +738,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-b"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             v
@@ -765,7 +765,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-n"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             g
@@ -792,7 +792,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-m"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             d
@@ -819,7 +819,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-,"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             j
@@ -846,7 +846,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-."
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             x
@@ -873,7 +873,7 @@ exports[`KeymapEditor > スナップショット > defaultCustomKeymap でレン
           data-testid="output-cell-/"
         >
           <button
-            class="_outputValue_5cd256 "
+            class="_outputValue_5cd256"
             type="button"
           >
             ;
