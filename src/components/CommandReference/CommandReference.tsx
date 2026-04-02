@@ -226,7 +226,7 @@ export function CommandReference({
             <button
               type="button"
               key={cat}
-              className={`${styles.catButton} ${selectedCategories.has(cat) ? styles.catSelected : ""}`}
+              className={`${styles.filterButton} ${selectedCategories.has(cat) ? styles.filterSelected : ""}`}
               style={
                 selectedCategories.has(cat)
                   ? {
@@ -247,7 +247,7 @@ export function CommandReference({
               <button
                 type="button"
                 key={src}
-                className={`${styles.srcButton} ${selectedSources.has(src) ? styles.srcSelected : ""}`}
+                className={`${styles.filterButton} ${selectedSources.has(src) ? styles.filterSelected : ""}`}
                 style={
                   selectedSources.has(src)
                     ? {

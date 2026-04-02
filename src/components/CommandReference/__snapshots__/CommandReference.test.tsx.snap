@@ -11,56 +11,56 @@ exports[`CommandReference スナップショット > mergedCommands ありでレ
       class="_categories_f61da2"
     >
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(79, 195, 247); color: rgb(79, 195, 247);"
         type="button"
       >
         移動
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(244, 143, 177); color: rgb(244, 143, 177);"
         type="button"
       >
         オペレータ
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(255, 138, 101); color: rgb(255, 138, 101);"
         type="button"
       >
         編集
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(206, 147, 216); color: rgb(206, 147, 216);"
         type="button"
       >
         挿入
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(174, 213, 129); color: rgb(174, 213, 129);"
         type="button"
       >
         検索
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(255, 241, 118); color: rgb(255, 241, 118);"
         type="button"
       >
         ビジュアル
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(128, 203, 196); color: rgb(128, 203, 196);"
         type="button"
       >
         テキストオブジェクト
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(144, 164, 174); color: rgb(144, 164, 174);"
         type="button"
       >
@@ -71,28 +71,28 @@ exports[`CommandReference スナップショット > mergedCommands ありでレ
       class="_sources_f61da2"
     >
       <button
-        class="_srcButton_f61da2 _srcSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(108, 112, 134); color: rgb(108, 112, 134);"
         type="button"
       >
         Vim 標準
       </button>
       <button
-        class="_srcButton_f61da2 _srcSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(137, 180, 250); color: rgb(137, 180, 250);"
         type="button"
       >
         Neovim
       </button>
       <button
-        class="_srcButton_f61da2 _srcSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(249, 226, 175); color: rgb(249, 226, 175);"
         type="button"
       >
         プラグイン
       </button>
       <button
-        class="_srcButton_f61da2 _srcSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(166, 227, 161); color: rgb(166, 227, 161);"
         type="button"
       >
@@ -251,56 +251,56 @@ exports[`CommandReference スナップショット > mergedCommands なしでレ
       class="_categories_f61da2"
     >
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(79, 195, 247); color: rgb(79, 195, 247);"
         type="button"
       >
         移動
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(244, 143, 177); color: rgb(244, 143, 177);"
         type="button"
       >
         オペレータ
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(255, 138, 101); color: rgb(255, 138, 101);"
         type="button"
       >
         編集
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(206, 147, 216); color: rgb(206, 147, 216);"
         type="button"
       >
         挿入
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(174, 213, 129); color: rgb(174, 213, 129);"
         type="button"
       >
         検索
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(255, 241, 118); color: rgb(255, 241, 118);"
         type="button"
       >
         ビジュアル
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(128, 203, 196); color: rgb(128, 203, 196);"
         type="button"
       >
         テキストオブジェクト
       </button>
       <button
-        class="_catButton_f61da2 _catSelected_f61da2"
+        class="_filterButton_f61da2 _filterSelected_f61da2"
         style="border-color: rgb(144, 164, 174); color: rgb(144, 164, 174);"
         type="button"
       >
