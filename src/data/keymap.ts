@@ -1,3 +1,4 @@
+/** QWERTY 物理位置の 30 キー一覧（top row 10 + home row 10 + bottom row 10） */
 export const QWERTY_KEYS = [
   "q",
   "w",

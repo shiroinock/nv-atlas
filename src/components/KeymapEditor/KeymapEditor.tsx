@@ -5,12 +5,13 @@ import { validateKeymap } from "../../utils/keymap-validator";
 import styles from "./KeymapEditor.module.css";
 
 const MAX_OUTPUT_CHAR_LENGTH = 10;
+const KEYS_PER_ROW = 10;
 
 /** QWERTY物理配列の行グループ定義 */
 const KEY_ROWS = [
-  { label: "Top", keys: QWERTY_KEYS.slice(0, 10) },
-  { label: "Home", keys: QWERTY_KEYS.slice(10, 20) },
-  { label: "Bottom", keys: QWERTY_KEYS.slice(20, 30) },
+  { label: "Top", keys: QWERTY_KEYS.slice(0, KEYS_PER_ROW) },
+  { label: "Home", keys: QWERTY_KEYS.slice(KEYS_PER_ROW, KEYS_PER_ROW * 2) },
+  { label: "Bottom", keys: QWERTY_KEYS.slice(KEYS_PER_ROW * 2) },
 ] as const;
 
 /** バリデーションエラーをキー単位で引き当てるヘルパー */
