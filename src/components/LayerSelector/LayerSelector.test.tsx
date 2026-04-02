@@ -134,6 +134,14 @@ describe("LayerSelector", () => {
       );
     });
 
+    test("tablist が aria-labelledby で可視ラベルを参照している", () => {
+      render(<LayerSelector {...defaultProps} />);
+
+      expect(
+        screen.getByRole("tablist", { name: "Layer" }),
+      ).toBeInTheDocument();
+    });
+
     test("各タブに id='tab-layer-{n}' が付与されている", () => {
       render(<LayerSelector {...defaultProps} />);
 

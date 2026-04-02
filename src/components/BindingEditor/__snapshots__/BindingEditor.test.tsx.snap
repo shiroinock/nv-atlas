@@ -17,10 +17,13 @@ exports[`BindingEditor > スナップショット > バインディングあり�
     >
       <span
         class="_label_e815f2"
+        id="_r_g_"
       >
-        Vim mode:
+        Vim mode
       </span>
+      :
       <div
+        aria-labelledby="_r_g_"
         class="_tabs_e815f2"
         role="tablist"
       >
@@ -362,10 +365,13 @@ exports[`BindingEditor > スナップショット > バインディングなし�
     >
       <span
         class="_label_e815f2"
+        id="_r_h_"
       >
-        Vim mode:
+        Vim mode
       </span>
+      :
       <div
+        aria-labelledby="_r_h_"
         class="_tabs_e815f2"
         role="tablist"
       >

@@ -197,6 +197,14 @@ describe("ModeSelector", () => {
       );
     });
 
+    test("tablist が aria-labelledby で可視ラベルを参照している", () => {
+      render(<ModeSelector {...defaultProps} />);
+
+      expect(
+        screen.getByRole("tablist", { name: "Vim mode" }),
+      ).toBeInTheDocument();
+    });
+
     test("各タブに id='tab-vim-{mode}' が付与されている", () => {
       render(<ModeSelector {...defaultProps} />);
 
