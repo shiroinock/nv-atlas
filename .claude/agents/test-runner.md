@@ -17,14 +17,19 @@ TDD のテスト実行と**状態判定**を担当するエージェントです
 
 ## テスト実行コマンド
 
+worktree 環境では safe-chain ラッパーが sandbox で動作しないため、pnpm パスを自動解決する。**全コマンドの先頭に以下を付与すること**:
+```bash
+PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm )
+```
+
 ### 全テスト実行
 ```bash
-pnpm test
+$PNPM test
 ```
 
 ### 特定ファイルのみ実行
 ```bash
-pnpm vitest run src/utils/calculator.test.ts
+$PNPM vitest run src/utils/calculator.test.ts
 ```
 
 ## 状態判定ロジック

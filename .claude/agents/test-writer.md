@@ -75,10 +75,11 @@ describe('targetFunction', () => {
 
 ## フォーマット自動修正
 
-テストファイルの作成が完了したら、`pnpm lint:fix` を実行してください。
+テストファイルの作成が完了したら、lint:fix を実行してください。worktree 環境では safe-chain ラッパーが sandbox で動作しないため、pnpm パスを自動解決する:
 
 ```bash
-pnpm lint:fix
+PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm )
+$PNPM lint:fix
 ```
 
 - Biome が自動修正可能な違反（import 順序、テンプレートリテラル推奨、行長制限など）を修正します

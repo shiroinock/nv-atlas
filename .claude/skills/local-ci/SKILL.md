@@ -11,10 +11,10 @@ user-invocable: true
 ## 実行手順
 
 1. 開始メッセージを表示: `Local CI を実行します...`
-2. 以下の 3 コマンドを **並列に Bash ツールで実行**（1 メッセージで 3 つの Bash tool call を送る）:
-   - `pnpm lint`
-   - `pnpm test`
-   - `pnpm build`
+2. 以下の 3 コマンドを **並列に Bash ツールで実行**（1 メッセージで 3 つの Bash tool call を送る）。各コマンドの先頭に worktree 検出の pnpm パス解決を付与する:
+   - `PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm ) && $PNPM lint`
+   - `PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm ) && $PNPM test`
+   - `PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm ) && $PNPM build`
 3. 各コマンドの **exit code** で PASS/FAIL を判定
 4. 結果をサマリーとして表示
 
