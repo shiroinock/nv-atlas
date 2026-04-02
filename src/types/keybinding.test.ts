@@ -1,6 +1,15 @@
 import { describe, expect, test } from "vitest";
 import type { AppMode, KeybindingSource } from "./keybinding";
-import { APP_MODE_LABELS, APP_MODES, KEYBINDING_SOURCES } from "./keybinding";
+import {
+  APP_MODE_LABELS,
+  APP_MODES,
+  HIGHLIGHT_MODES,
+  KEYBINDING_SOURCES,
+  KEYBOARD_HIDDEN_MODES,
+  KEYBOARD_PLAIN_MODES,
+  LEGEND_HIDDEN_MODES,
+  MODE_SELECTOR_VISIBLE_MODES,
+} from "./keybinding";
 
 describe("APP_MODES", () => {
   test("5つの要素を持つ", () => {
@@ -69,6 +78,141 @@ describe("APP_MODE_LABELS", () => {
 
     test.each(cases)('"%s" のラベルは "%s"', (mode, expected) => {
       expect(APP_MODE_LABELS[mode]).toBe(expected);
+    });
+  });
+});
+
+describe("KEYBOARD_HIDDEN_MODES", () => {
+  test("Set のインスタンスである", () => {
+    expect(KEYBOARD_HIDDEN_MODES).toBeInstanceOf(Set);
+  });
+
+  test("サイズが 1 である", () => {
+    expect(KEYBOARD_HIDDEN_MODES.size).toBe(1);
+  });
+
+  describe("含まれるべきモード", () => {
+    const included: AppMode[] = ["edit"];
+
+    test.each(included)('"%s" を含む', (mode) => {
+      expect(KEYBOARD_HIDDEN_MODES.has(mode)).toBe(true);
+    });
+  });
+
+  describe("含まれるべきでないモード", () => {
+    const excluded: AppMode[] = [
+      "visualize",
+      "practice",
+      "reference",
+      "keymap-edit",
+    ];
+
+    test.each(excluded)('"%s" を含まない', (mode) => {
+      expect(KEYBOARD_HIDDEN_MODES.has(mode)).toBe(false);
+    });
+  });
+});
+
+describe("LEGEND_HIDDEN_MODES", () => {
+  test("Set のインスタンスである", () => {
+    expect(LEGEND_HIDDEN_MODES).toBeInstanceOf(Set);
+  });
+
+  test("サイズが 2 である", () => {
+    expect(LEGEND_HIDDEN_MODES.size).toBe(2);
+  });
+
+  describe("含まれるべきモード", () => {
+    const included: AppMode[] = ["edit", "keymap-edit"];
+
+    test.each(included)('"%s" を含む', (mode) => {
+      expect(LEGEND_HIDDEN_MODES.has(mode)).toBe(true);
+    });
+  });
+
+  describe("含まれるべきでないモード", () => {
+    const excluded: AppMode[] = ["visualize", "practice", "reference"];
+
+    test.each(excluded)('"%s" を含まない', (mode) => {
+      expect(LEGEND_HIDDEN_MODES.has(mode)).toBe(false);
+    });
+  });
+});
+
+describe("KEYBOARD_PLAIN_MODES", () => {
+  test("Set のインスタンスである", () => {
+    expect(KEYBOARD_PLAIN_MODES).toBeInstanceOf(Set);
+  });
+
+  test("サイズが 3 である", () => {
+    expect(KEYBOARD_PLAIN_MODES.size).toBe(3);
+  });
+
+  describe("含まれるべきモード", () => {
+    const included: AppMode[] = ["practice", "reference", "keymap-edit"];
+
+    test.each(included)('"%s" を含む', (mode) => {
+      expect(KEYBOARD_PLAIN_MODES.has(mode)).toBe(true);
+    });
+  });
+
+  describe("含まれるべきでないモード", () => {
+    const excluded: AppMode[] = ["visualize", "edit"];
+
+    test.each(excluded)('"%s" を含まない', (mode) => {
+      expect(KEYBOARD_PLAIN_MODES.has(mode)).toBe(false);
+    });
+  });
+});
+
+describe("MODE_SELECTOR_VISIBLE_MODES", () => {
+  test("Set のインスタンスである", () => {
+    expect(MODE_SELECTOR_VISIBLE_MODES).toBeInstanceOf(Set);
+  });
+
+  test("サイズが 2 である", () => {
+    expect(MODE_SELECTOR_VISIBLE_MODES.size).toBe(2);
+  });
+
+  describe("含まれるべきモード", () => {
+    const included: AppMode[] = ["visualize", "reference"];
+
+    test.each(included)('"%s" を含む', (mode) => {
+      expect(MODE_SELECTOR_VISIBLE_MODES.has(mode)).toBe(true);
+    });
+  });
+
+  describe("含まれるべきでないモード", () => {
+    const excluded: AppMode[] = ["practice", "edit", "keymap-edit"];
+
+    test.each(excluded)('"%s" を含まない', (mode) => {
+      expect(MODE_SELECTOR_VISIBLE_MODES.has(mode)).toBe(false);
+    });
+  });
+});
+
+describe("HIGHLIGHT_MODES", () => {
+  test("Set のインスタンスである", () => {
+    expect(HIGHLIGHT_MODES).toBeInstanceOf(Set);
+  });
+
+  test("サイズが 2 である", () => {
+    expect(HIGHLIGHT_MODES.size).toBe(2);
+  });
+
+  describe("含まれるべきモード", () => {
+    const included: AppMode[] = ["practice", "reference"];
+
+    test.each(included)('"%s" を含む', (mode) => {
+      expect(HIGHLIGHT_MODES.has(mode)).toBe(true);
+    });
+  });
+
+  describe("含まれるべきでないモード", () => {
+    const excluded: AppMode[] = ["visualize", "edit", "keymap-edit"];
+
+    test.each(excluded)('"%s" を含まない', (mode) => {
+      expect(HIGHLIGHT_MODES.has(mode)).toBe(false);
     });
   });
 });

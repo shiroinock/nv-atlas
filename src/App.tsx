@@ -24,7 +24,15 @@ import {
 import { useKeyboardLayout } from "./hooks/useKeyboardLayout";
 import { useNvimMaps } from "./hooks/useNvimMaps";
 import type { AppMode, KeybindingConfig, VimMode } from "./types/keybinding";
-import { APP_MODE_LABELS, APP_MODES } from "./types/keybinding";
+import {
+  APP_MODE_LABELS,
+  APP_MODES,
+  HIGHLIGHT_MODES,
+  KEYBOARD_HIDDEN_MODES,
+  KEYBOARD_PLAIN_MODES,
+  LEGEND_HIDDEN_MODES,
+  MODE_SELECTOR_VISIBLE_MODES,
+} from "./types/keybinding";
 import type { HighlightEntry, VIAKeymapFull, VimCommand } from "./types/vim";
 import { mergeWithNvimMaps } from "./utils/merge-vim-commands";
 import {
@@ -214,7 +222,7 @@ function AppContent() {
                 </button>
               ))}
             </div>
-            {(mode === "visualize" || mode === "reference") && (
+            {MODE_SELECTOR_VISIBLE_MODES.has(mode) && (
               <ModeSelector
                 activeMode={activeVimMode}
                 onModeChange={setActiveVimMode}
@@ -254,7 +262,7 @@ function AppContent() {
         </div>
       )}
 
-      {mode !== "edit" && (
+      {!KEYBOARD_HIDDEN_MODES.has(mode) && (
         <div
           className={`${styles.keyboardWrapper} ${mode === "reference" ? styles.keyboardSticky : ""}`}
         >
@@ -264,15 +272,9 @@ function AppContent() {
             matrixKeymap={activeMatrixKeymap}
             onHover={mode === "visualize" ? handleHover : noopHover}
             highlightKeys={
-              mode === "practice" || mode === "reference"
-                ? highlightKeys
-                : undefined
+              HIGHLIGHT_MODES.has(mode) ? highlightKeys : undefined
             }
-            plain={
-              mode === "practice" ||
-              mode === "reference" ||
-              mode === "keymap-edit"
-            }
+            plain={KEYBOARD_PLAIN_MODES.has(mode)}
             activeVimMode={activeVimMode}
           />
         </div>
@@ -317,7 +319,7 @@ function AppContent() {
         </div>
       )}
 
-      {mode !== "edit" && mode !== "keymap-edit" && (
+      {!LEGEND_HIDDEN_MODES.has(mode) && (
         <div className={styles.legend} data-testid="legend">
           {Object.entries(categoryColors).map(([cat, color]) => (
             <div key={cat} className={styles.legendItem}>

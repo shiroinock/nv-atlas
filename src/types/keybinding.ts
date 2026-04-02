@@ -41,6 +41,25 @@ export const APP_MODE_LABELS: Record<AppMode, string> = {
   "keymap-edit": "配列編集",
 };
 
+export const KEYBOARD_HIDDEN_MODES: ReadonlySet<AppMode> = new Set(["edit"]);
+export const LEGEND_HIDDEN_MODES: ReadonlySet<AppMode> = new Set([
+  "edit",
+  "keymap-edit",
+]);
+export const KEYBOARD_PLAIN_MODES: ReadonlySet<AppMode> = new Set([
+  "practice",
+  "reference",
+  "keymap-edit",
+]);
+export const MODE_SELECTOR_VISIBLE_MODES: ReadonlySet<AppMode> = new Set([
+  "visualize",
+  "reference",
+]);
+export const HIGHLIGHT_MODES: ReadonlySet<AppMode> = new Set([
+  "practice",
+  "reference",
+]);
+
 /** バインディングの出自 */
 export type KeybindingSource =
   | "default"
