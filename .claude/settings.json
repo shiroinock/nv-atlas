@@ -14,5 +14,29 @@
   },
   "sandbox": {
     "excludedCommands": ["pnpm"]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/dispatch-on-write.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/detect-merge.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
   }
 }

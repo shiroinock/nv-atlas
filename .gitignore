@@ -28,3 +28,8 @@ dist-ssr
 
 # Claude Code worktrees
 .claude/worktrees
+
+# Dispatch runtime files (transient)
+.claude/dispatch-done/
+.claude/dispatch-queue.json
+.claude/dispatch-manifest.json
