@@ -8,6 +8,42 @@ const defaultProps = {
   onHighlightKeys: vi.fn(),
 };
 
+describe("CommandReference スナップショット", () => {
+  test("mergedCommands なしでレンダリングした結果のスナップショット", () => {
+    const { container } = render(<CommandReference {...defaultProps} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  test("mergedCommands ありでレンダリングした結果のスナップショット", () => {
+    const mergedCommands: MergedVimCommand[] = [
+      {
+        key: "h",
+        name: "Left",
+        description: "Move cursor left",
+        category: "motion",
+        source: "hardcoded",
+        modes: ["n"],
+      },
+      {
+        key: "j",
+        name: "Down",
+        description: "Move cursor down",
+        category: "motion",
+        source: "nvim-default",
+        modes: ["n"],
+      },
+    ];
+    const { container } = render(
+      <CommandReference
+        {...defaultProps}
+        mergedCommands={mergedCommands}
+        activeVimMode="n"
+      />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});
+
 describe("CommandReference モードフィルタリング", () => {
   describe("activeVimMode='v' のとき", () => {
     test("modes:['x'] のコマンドが表示される", () => {
