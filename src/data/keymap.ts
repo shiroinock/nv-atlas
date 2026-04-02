@@ -1,3 +1,37 @@
+/** QWERTY 物理位置の 30 キー一覧（top row 10 + home row 10 + bottom row 10） */
+export const QWERTY_KEYS = [
+  "q",
+  "w",
+  "e",
+  "r",
+  "t",
+  "y",
+  "u",
+  "i",
+  "o",
+  "p",
+  "a",
+  "s",
+  "d",
+  "f",
+  "g",
+  "h",
+  "j",
+  "k",
+  "l",
+  ";",
+  "z",
+  "x",
+  "c",
+  "v",
+  "b",
+  "n",
+  "m",
+  ",",
+  ".",
+  "/",
+] as const;
+
 /**
  * QWERTY物理位置 → カスタム配列の出力文字 マッピング
  *

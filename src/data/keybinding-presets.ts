@@ -1,43 +1,9 @@
 import type { KeybindingPreset } from "../types/keybinding";
-import { defaultCustomKeymap } from "./keymap";
-
-/** QWERTY 物理位置の 30 キー一覧 */
-const QWERTY_30_KEYS = [
-  "q",
-  "w",
-  "e",
-  "r",
-  "t",
-  "y",
-  "u",
-  "i",
-  "o",
-  "p",
-  "a",
-  "s",
-  "d",
-  "f",
-  "g",
-  "h",
-  "j",
-  "k",
-  "l",
-  ";",
-  "z",
-  "x",
-  "c",
-  "v",
-  "b",
-  "n",
-  "m",
-  ",",
-  ".",
-  "/",
-] as const;
+import { defaultCustomKeymap, QWERTY_KEYS } from "./keymap";
 
 /** QWERTY パススルーキーマップ（各キーが自身にマップ） */
 const QWERTY_KEYMAP = Object.fromEntries(
-  QWERTY_30_KEYS.map((key) => [key, key]),
+  QWERTY_KEYS.map((key) => [key, key]),
 ) satisfies Record<string, string>;
 
 /**

@@ -9,6 +9,7 @@ vi.mock("../../utils/storage", async (importOriginal) => ({
 }));
 
 import { KeybindingProvider } from "../../context/KeybindingContext";
+import { QWERTY_KEYS } from "../../data/keymap";
 import type { KeybindingConfig } from "../../types/keybinding";
 import { createDefaultConfig } from "../../utils/keybinding-defaults";
 import { KeymapEditor } from "./KeymapEditor";
@@ -25,42 +26,9 @@ function renderWithContext(customKeymap?: Record<string, string>) {
   );
 }
 
-const ALL_QWERTY_KEYS = [
-  "q",
-  "w",
-  "e",
-  "r",
-  "t",
-  "y",
-  "u",
-  "i",
-  "o",
-  "p",
-  "a",
-  "s",
-  "d",
-  "f",
-  "g",
-  "h",
-  "j",
-  "k",
-  "l",
-  ";",
-  "z",
-  "x",
-  "c",
-  "v",
-  "b",
-  "n",
-  "m",
-  ",",
-  ".",
-  "/",
-];
-
 /** テスト用の QWERTY → QWERTY 同一キーマップ（重複なし） */
 const IDENTITY_KEYMAP: Record<string, string> = Object.fromEntries(
-  ALL_QWERTY_KEYS.map((k) => [k, k]),
+  QWERTY_KEYS.map((k) => [k, k]),
 );
 
 /** テスト用の重複あり customKeymap（q と w に同じ "a" を割り当て） */
@@ -126,7 +94,7 @@ describe("KeymapEditor", () => {
     test("30キー全ての output-cell が表示される", () => {
       renderWithContext();
 
-      for (const key of ALL_QWERTY_KEYS) {
+      for (const key of QWERTY_KEYS) {
         expect(screen.getByTestId(`output-cell-${key}`)).toBeInTheDocument();
       }
     });
@@ -297,7 +265,7 @@ describe("KeymapEditor", () => {
     test("重複がないキーには data-error 属性が付かない", () => {
       renderWithContext(DEFAULT_KEYMAP);
 
-      for (const key of ALL_QWERTY_KEYS) {
+      for (const key of QWERTY_KEYS) {
         expect(screen.getByTestId(`output-cell-${key}`)).not.toHaveAttribute(
           "data-error",
           "true",

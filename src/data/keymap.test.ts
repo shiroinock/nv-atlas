@@ -1,5 +1,53 @@
 import { describe, expect, it } from "vitest";
-import { defaultCustomKeymap, invertKeymap } from "./keymap";
+import { defaultCustomKeymap, invertKeymap, QWERTY_KEYS } from "./keymap";
+
+describe("QWERTY_KEYS", () => {
+  it("30要素を持つ", () => {
+    expect(QWERTY_KEYS).toHaveLength(30);
+  });
+
+  it("defaultCustomKeymap のキーセットと完全に一致する", () => {
+    const keymapKeys = Object.keys(defaultCustomKeymap).sort();
+    const qwertyKeysSorted = [...QWERTY_KEYS].sort();
+    expect(qwertyKeysSorted).toEqual(keymapKeys);
+  });
+
+  it("各要素が QWERTY 物理位置のキー文字列である", () => {
+    const expectedKeys = [
+      "q",
+      "w",
+      "e",
+      "r",
+      "t",
+      "y",
+      "u",
+      "i",
+      "o",
+      "p",
+      "a",
+      "s",
+      "d",
+      "f",
+      "g",
+      "h",
+      "j",
+      "k",
+      "l",
+      ";",
+      "z",
+      "x",
+      "c",
+      "v",
+      "b",
+      "n",
+      "m",
+      ",",
+      ".",
+      "/",
+    ];
+    expect([...QWERTY_KEYS].sort()).toEqual(expectedKeys.sort());
+  });
+});
 
 describe("defaultCustomKeymap", () => {
   it("30キー（top row 10 + home row 10 + bottom row 10）を持つ", () => {
