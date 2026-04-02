@@ -150,5 +150,13 @@ export function isVIADefinition(json: unknown): json is VIADefinition {
 
 export function isKLEJSON(json: unknown): json is KLEJSON {
   if (!Array.isArray(json)) return false;
-  return json.every((row) => Array.isArray(row));
+  return json.every(
+    (row) =>
+      Array.isArray(row) &&
+      row.every(
+        (item) =>
+          typeof item === "string" ||
+          (typeof item === "object" && item !== null),
+      ),
+  );
 }

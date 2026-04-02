@@ -192,4 +192,34 @@ describe("isKLEJSON", () => {
 
     expect(isKLEJSON(json)).toBe(false);
   });
+
+  it("行要素に数値・null が含まれる場合 false を返す", () => {
+    const json = [[123, null]];
+
+    expect(isKLEJSON(json)).toBe(false);
+  });
+
+  it("行要素に文字列と数値が混在する場合 false を返す", () => {
+    const json = [["0,0", 123]];
+
+    expect(isKLEJSON(json)).toBe(false);
+  });
+
+  it("行要素に undefined が含まれる場合 false を返す", () => {
+    const json = [[undefined]];
+
+    expect(isKLEJSON(json)).toBe(false);
+  });
+
+  it("行要素に boolean が含まれる場合 false を返す", () => {
+    const json = [[true, false]];
+
+    expect(isKLEJSON(json)).toBe(false);
+  });
+
+  it("行要素が空オブジェクトの場合 true を返す（KLEKeyProperties は全プロパティがオプショナル）", () => {
+    const json = [[{}]];
+
+    expect(isKLEJSON(json)).toBe(true);
+  });
 });
