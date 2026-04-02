@@ -139,21 +139,13 @@ export function parseVIAorKLE(json: unknown): KeyboardLayout {
 }
 
 export function isVIADefinition(json: unknown): json is VIADefinition {
-  return (
-    typeof json === "object" &&
-    json !== null &&
-    "name" in json &&
-    typeof (json as Record<string, unknown>).name === "string" &&
-    "layouts" in json &&
-    typeof (json as Record<string, unknown>).layouts === "object" &&
-    (json as Record<string, unknown>).layouts !== null &&
-    "keymap" in
-      ((json as Record<string, unknown>).layouts as Record<string, unknown>) &&
-    isKLEJSON(
-      ((json as Record<string, unknown>).layouts as Record<string, unknown>)
-        .keymap,
-    )
-  );
+  if (typeof json !== "object" || json === null) return false;
+  if (!("name" in json) || typeof json.name !== "string") return false;
+  if (!("layouts" in json)) return false;
+  const layouts = json.layouts;
+  if (typeof layouts !== "object" || layouts === null) return false;
+  if (!("keymap" in layouts)) return false;
+  return isKLEJSON(layouts.keymap);
 }
 
 export function isKLEJSON(json: unknown): json is KLEJSON {
