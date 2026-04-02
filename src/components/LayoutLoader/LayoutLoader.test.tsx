@@ -4,10 +4,13 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { DEFAULT_LAYOUT_NAME } from "../../data/default-layout";
 import { defaultCustomKeymap } from "../../data/keymap";
 import { LayoutLoader } from "./LayoutLoader";
+import { VialDeviceSection } from "./VialDeviceSection";
 
 vi.mock("./VialDeviceSection", () => ({
-  VialDeviceSection: () => null,
+  VialDeviceSection: vi.fn(() => null),
 }));
+
+const mockVialDeviceSection = vi.mocked(VialDeviceSection);
 
 const defaultProps = {
   layoutName: DEFAULT_LAYOUT_NAME,
@@ -148,6 +151,18 @@ describe("LayoutLoader", () => {
     render(<LayoutLoader {...defaultProps} customKeymap={customKeymap} />);
 
     expect(screen.getByText("カスタム")).toBeInTheDocument();
+  });
+
+  test("VialDeviceSection に onLoadLayout / onLoadKeymap が渡される", () => {
+    render(<LayoutLoader {...defaultProps} />);
+
+    expect(mockVialDeviceSection).toHaveBeenCalledWith(
+      expect.objectContaining({
+        onLoadLayout: expect.any(Function),
+        onLoadKeymap: expect.any(Function),
+      }),
+      undefined,
+    );
   });
 
   test("プリセットを選択すると onSelectPreset が対応する keymap で呼ばれる", async () => {
