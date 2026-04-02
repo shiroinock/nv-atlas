@@ -3,6 +3,10 @@ import type { KeybindingConfig, VimMode } from "../types/keybinding";
 
 const VIM_MODES: VimMode[] = ["n", "v", "x", "o", "i", "s", "c", "t"];
 
+/**
+ * Lua 文字列リテラル用エスケープ。
+ * `\` と `"` を対象とし、`vim.keymap.set()` の引数として使用される。
+ */
 function escapeLua(str: string): string {
   return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
@@ -35,6 +39,10 @@ export function keybindingToJSON(config: KeybindingConfig): string {
   return JSON.stringify(config, null, 2);
 }
 
+/**
+ * Vim `langmap` オプション用エスケープ。
+ * `\`, `,`, `;`, `"` の 4 文字を対象とし、`vim.opt.langmap` の値として使用される。
+ */
 function escapeLangmapChar(char: string): string {
   return char.replace(/[\\,;"]/g, (c) => `\\${c}`);
 }
