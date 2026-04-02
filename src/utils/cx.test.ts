@@ -30,6 +30,11 @@ describe("cx", () => {
       expect(result).toBe("a b");
     });
 
+    it("空文字列を除外して残りの文字列を結合する", () => {
+      const result = cx("a", "", "b");
+      expect(result).toBe("a b");
+    });
+
     it("全引数が falsy の場合は空文字列を返す", () => {
       const result = cx(false, null, undefined);
       expect(result).toBe("");
