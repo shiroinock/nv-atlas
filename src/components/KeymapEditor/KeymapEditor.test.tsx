@@ -9,7 +9,7 @@ vi.mock("../../utils/storage", async (importOriginal) => ({
 }));
 
 import { KeybindingProvider } from "../../context/KeybindingContext";
-import { QWERTY_KEYS } from "../../data/keymap";
+import { defaultCustomKeymap, QWERTY_KEYS } from "../../data/keymap";
 import type { KeybindingConfig } from "../../types/keybinding";
 import { createDefaultConfig } from "../../utils/keybinding-defaults";
 import { KeymapEditor } from "./KeymapEditor";
@@ -45,40 +45,6 @@ const DUPLICATE_KEYMAP: Record<string, string> = {
   "/": "-",
 };
 
-/** テスト用の defaultCustomKeymap 相当のキーマップ */
-const DEFAULT_KEYMAP: Record<string, string> = {
-  q: "q",
-  w: "l",
-  e: "h",
-  r: "c",
-  t: "f",
-  y: "p",
-  u: "b",
-  i: "u",
-  o: ",",
-  p: ".",
-  a: "a",
-  s: "n",
-  d: "r",
-  f: "s",
-  g: "w",
-  h: "k",
-  j: "t",
-  k: "e",
-  l: "o",
-  ";": "i",
-  z: "-",
-  x: "z",
-  c: "y",
-  v: "m",
-  b: "v",
-  n: "g",
-  m: "d",
-  ",": "j",
-  ".": "x",
-  "/": ";",
-};
-
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -109,7 +75,7 @@ describe("KeymapEditor", () => {
 
   describe("customKeymap の値表示", () => {
     test("customKeymap の出力文字が正しく表示される", () => {
-      renderWithContext(DEFAULT_KEYMAP);
+      renderWithContext(defaultCustomKeymap);
 
       const cellQ = screen.getByTestId("output-cell-q");
       expect(cellQ).toHaveTextContent("q");
@@ -263,7 +229,7 @@ describe("KeymapEditor", () => {
     });
 
     test("重複がないキーには data-error 属性が付かない", () => {
-      renderWithContext(DEFAULT_KEYMAP);
+      renderWithContext(defaultCustomKeymap);
 
       for (const key of QWERTY_KEYS) {
         expect(screen.getByTestId(`output-cell-${key}`)).not.toHaveAttribute(

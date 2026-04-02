@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { QWERTY_KEYS } from "../data/keymap";
+import { defaultCustomKeymap, QWERTY_KEYS } from "../data/keymap";
 import type { KeymapValidationError } from "./keymap-validator";
 import { validateKeymap } from "./keymap-validator";
 
@@ -18,40 +18,7 @@ describe("validateKeymap", () => {
     });
 
     it("30キー全てが有効なキーマップでは空配列を返す", () => {
-      const keymap: Record<string, string> = {
-        q: "q",
-        w: "l",
-        e: "h",
-        r: "c",
-        t: "f",
-        y: "p",
-        u: "b",
-        i: "u",
-        o: ",",
-        p: ".",
-        a: "a",
-        s: "n",
-        d: "r",
-        f: "s",
-        g: "w",
-        h: "k",
-        j: "t",
-        k: "e",
-        l: "o",
-        ";": "i",
-        z: "-",
-        x: "z",
-        c: "y",
-        v: "m",
-        b: "v",
-        n: "g",
-        m: "d",
-        ",": "j",
-        ".": "x",
-        "/": ";",
-      };
-
-      const result = validateKeymap(keymap);
+      const result = validateKeymap(defaultCustomKeymap);
 
       expect(result).toEqual([]);
     });
