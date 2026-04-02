@@ -54,11 +54,11 @@ BRANCH=$(echo "$PR_INFO" | jq -r '.headRefName')
 ```bash
 # ブランチの全ワークフロー実行を取得（--limit 1 だと一部のワークフローを見落とす）
 gh run list --branch "$BRANCH" --json databaseId,name,status,conclusion \
-  --jq '[.[] | select(.status != "completed")]'
+  --jq '[.[] | select(.status == "completed" | not)]'
 
 # 全ワークフローの完了を待機（それぞれ --exit-status で成否を確認）
 for RUN_ID in $(gh run list --branch "$BRANCH" --json databaseId,status \
-  --jq '[.[] | select(.status != "completed")] | .[].databaseId'); do
+  --jq '[.[] | select(.status == "completed" | not)] | .[].databaseId'); do
   gh run watch "$RUN_ID" --exit-status
 done
 ```
@@ -67,8 +67,8 @@ done
 
 **CI 失敗時**:
 ```bash
-# 失敗ログを取得・分析（サンドボックス環境では GH_CACHE_DIR を $TMPDIR に変更）
-GH_CACHE_DIR=$TMPDIR gh run view "$RUN_ID" --log-failed
+# 失敗ログを取得・分析（サンドボックス環境では XDG_CACHE_HOME を $TMPDIR に変更）
+XDG_CACHE_HOME=$TMPDIR gh run view "$RUN_ID" --log-failed
 ```
 
 1. エラーログを分析
@@ -86,9 +86,9 @@ GH_CACHE_DIR=$TMPDIR gh run view "$RUN_ID" --log-failed
 
 ```bash
 gh api graphql -f query='
-  query($owner: String!, $repo: String!, $number: Int!) {
-    repository(owner: $owner, name: $repo) {
-      pullRequest(number: $number) {
+  query {
+    repository(owner: "shiroinock", name: "nv-atlas") {
+      pullRequest(number: '"$PR_NUMBER"') {
         reviewThreads(first: 100) {
           nodes {
             id
@@ -108,7 +108,7 @@ gh api graphql -f query='
         }
       }
     }
-  }' -f owner="shiroinock" -f repo="nv-atlas" -F number="$PR_NUMBER" \
+  }' \
   --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isOutdated == false and .isResolved == false)'
 ```
 

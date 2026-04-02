@@ -50,14 +50,14 @@ gh pr checks {番号} --watch --fail-fast
 
 #### CI 失敗時のログ取得
 
-サンドボックス環境では `gh` のキャッシュディレクトリ（`~/.cache/gh/`）への書き込みが制限される。`GH_CACHE_DIR` を `$TMPDIR`（サンドボックス許可ディレクトリ）に変更して回避する:
+サンドボックス環境では `gh` のキャッシュディレクトリ（`~/.cache/gh/`）への書き込みが制限される。`XDG_CACHE_HOME` を `$TMPDIR`（サンドボックス許可ディレクトリ）に変更して回避する:
 
 ```bash
 # Run ID を取得
 RUN_ID=$(gh run list --branch {ブランチ名} --limit 1 --json databaseId,status -q '.[0].databaseId')
 
-# 失敗ログを取得（キャッシュ先をサンドボックス許可ディレクトリに変更）
-GH_CACHE_DIR=$TMPDIR gh run view "$RUN_ID" --log-failed
+# 失敗ログを取得（XDG_CACHE_HOME でキャッシュ先をサンドボックス許可ディレクトリに変更）
+XDG_CACHE_HOME=$TMPDIR gh run view "$RUN_ID" --log-failed
 ```
 
 #### アンチパターン: `gh api .../logs` を使わない
