@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { VialDevice } from "../types/vial";
 import {
+  COMMAND_TIMEOUT_MS,
   connectVialDevice,
   disconnectVialDevice,
   getKeyboardDefinition,
@@ -652,5 +653,68 @@ describe("getKeymapData", () => {
         expect(typeof key).toBe("string");
       }
     }
+  });
+});
+
+// ============================================================
+// sendCommand タイムアウト（getKeymapData 経由）
+// ============================================================
+
+describe("sendCommand タイムアウト", () => {
+  it("デバイスが応答しない場合、COMMAND_TIMEOUT_MS 経過後に reject される", async () => {
+    vi.useFakeTimers();
+
+    const mockDevice = createMockHIDDevice();
+
+    // sendReport は成功するが inputreport イベントを発火しない（デバイスが無応答）
+    mockDevice.sendReport.mockResolvedValue(undefined);
+
+    const vialDevice: VialDevice = {
+      hid: mockDevice as unknown as HIDDevice,
+      productName: "Test Vial Keyboard",
+    };
+
+    const promise = getKeymapData(vialDevice, 1, 4);
+    // advanceTimersByTimeAsync 中に reject が発生するため、先にハンドラを登録して unhandled rejection を防ぐ
+    const assertion = expect(promise).rejects.toThrow();
+
+    // COMMAND_TIMEOUT_MS（5000ms）を超える時間を経過させる
+    await vi.advanceTimersByTimeAsync(COMMAND_TIMEOUT_MS + 1);
+
+    await assertion;
+
+    vi.useRealTimers();
+  });
+
+  it("タイムアウト時に removeEventListener が呼ばれてリスナーがクリーンアップされる", async () => {
+    vi.useFakeTimers();
+
+    const mockDevice = createMockHIDDevice();
+
+    // sendReport は成功するが inputreport イベントを発火しない（デバイスが無応答）
+    mockDevice.sendReport.mockResolvedValue(undefined);
+
+    const vialDevice: VialDevice = {
+      hid: mockDevice as unknown as HIDDevice,
+      productName: "Test Vial Keyboard",
+    };
+
+    const promise = getKeymapData(vialDevice, 1, 4);
+    // advanceTimersByTimeAsync 中に reject が発生するため、先にハンドラを登録して unhandled rejection を防ぐ
+    const assertion = expect(promise).rejects.toThrow();
+
+    // タイムアウトを超える時間を経過させる
+    await vi.advanceTimersByTimeAsync(COMMAND_TIMEOUT_MS + 1);
+
+    // reject されることを確認（クリーンアップ後の状態検証のため先に待つ）
+    await assertion;
+
+    // タイムアウト時に addEventListener で登録したハンドラが removeEventListener で解除されること
+    expect(mockDevice.removeEventListener).toHaveBeenCalledWith(
+      "inputreport",
+      expect.any(Function),
+    );
+
+    vi.useRealTimers();
   });
 });

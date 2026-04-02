@@ -17,6 +17,8 @@ const DYNAMIC_KEYMAP_GET_BUFFER = 0x12;
 const HID_REPORT_SIZE = 32;
 // ヘッダバイト数（コマンド2バイト + offset 2バイト or offset 2 + size 1）
 const CHUNK_SIZE = 28;
+// inputreport 応答待ちのタイムアウト時間（ミリ秒）
+export const COMMAND_TIMEOUT_MS = 5000;
 
 // USB HID Usage Table に準拠した QMK キーコード → キーコード文字列マッピング
 const QMK_KEYCODE_MAP: Record<number, string> = {
@@ -103,19 +105,36 @@ export function isWebHIDSupported(): boolean {
 /**
  * HID コマンドを送信して inputreport イベントで応答を待つ
  * sendReport が reject した場合はエラーを伝播させる
+ * COMMAND_TIMEOUT_MS 以内に inputreport が発火しない場合は reject する
  */
-async function sendCommand(
-  device: VialDevice,
-  data: Uint8Array,
-): Promise<DataView> {
-  return new Promise((resolve, reject) => {
+function sendCommand(device: VialDevice, data: Uint8Array): Promise<DataView> {
+  return new Promise<DataView>((resolve, reject) => {
+    let settled = false;
+
+    // タイムアウト ID を保持して応答受信時にキャンセルできるようにする
+    const timeoutId = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      // タイムアウト時はリスナーをクリーンアップしてから reject
+      device.hid.removeEventListener("inputreport", handler);
+      reject(new Error(`HID command timed out after ${COMMAND_TIMEOUT_MS}ms`));
+    }, COMMAND_TIMEOUT_MS);
+
     const handler = (event: HIDInputReportEvent) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
       device.hid.removeEventListener("inputreport", handler);
       resolve(event.data);
     };
+
     device.hid.addEventListener("inputreport", handler);
+
     // sendReport の失敗を Promise の reject に伝播させる
     Promise.resolve(device.hid.sendReport(0x00, data)).catch((err: unknown) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
       device.hid.removeEventListener("inputreport", handler);
       reject(err);
     });
