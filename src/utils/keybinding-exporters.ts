@@ -1,7 +1,6 @@
 import { invertKeymap } from "../data/keymap";
-import type { KeybindingConfig, VimMode } from "../types/keybinding";
-
-const VIM_MODES: VimMode[] = ["n", "v", "x", "o", "i", "s", "c", "t"];
+import type { KeybindingConfig } from "../types/keybinding";
+import { VIM_MODES } from "../types/keybinding";
 
 /**
  * Lua 文字列リテラル用エスケープ。

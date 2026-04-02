@@ -15,6 +15,23 @@ export const VIM_MODES = [
   "t",
 ] as const satisfies VimMode[];
 
+/** VimMode ごとのメタ情報（label: 表示名、short: 省略表記） */
+export const VIM_MODE_META = {
+  n: { label: "Normal", short: "N" },
+  v: { label: "Visual", short: "V" },
+  x: { label: "Visual Block", short: "X" },
+  o: { label: "Op-pending", short: "O" },
+  i: { label: "Insert", short: "I" },
+  s: { label: "Select", short: "S" },
+  c: { label: "Command-line", short: "C" },
+  t: { label: "Terminal", short: "T" },
+} as const satisfies Record<VimMode, { label: string; short: string }>;
+
+/** ModeSelector の UI 選択肢（x は Visual-exclusive で UI 選択不要のため除外） */
+export const SELECTABLE_VIM_MODES = VIM_MODES.filter(
+  (m): m is Exclude<VimMode, "x"> => m !== "x",
+);
+
 /** アプリモード */
 export type AppMode =
   | "visualize"

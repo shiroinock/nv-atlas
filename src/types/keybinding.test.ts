@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import type { AppMode, KeybindingSource } from "./keybinding";
+import type { AppMode, KeybindingSource, VimMode } from "./keybinding";
 import {
   APP_MODE_LABELS,
   APP_MODES,
@@ -9,6 +9,9 @@ import {
   KEYBOARD_PLAIN_MODES,
   LEGEND_HIDDEN_MODES,
   MODE_SELECTOR_VISIBLE_MODES,
+  SELECTABLE_VIM_MODES,
+  VIM_MODE_META,
+  VIM_MODES,
 } from "./keybinding";
 
 describe("APP_MODES", () => {
@@ -214,5 +217,63 @@ describe("HIGHLIGHT_MODES", () => {
     test.each(excluded)('"%s" を含まない', (mode) => {
       expect(HIGHLIGHT_MODES.has(mode)).toBe(false);
     });
+  });
+});
+
+describe("VIM_MODE_META", () => {
+  test("全 8 VimMode のキーを持つ", () => {
+    for (const mode of VIM_MODES) {
+      expect(VIM_MODE_META).toHaveProperty(mode);
+    }
+  });
+
+  describe("各エントリが label と short を持つ", () => {
+    test.each(
+      [...VIM_MODES],
+    )('"%s" エントリに label が存在する', (mode) => {
+      expect(typeof VIM_MODE_META[mode].label).toBe("string");
+    });
+
+    test.each(
+      [...VIM_MODES],
+    )('"%s" エントリに short が存在する', (mode) => {
+      expect(typeof VIM_MODE_META[mode].short).toBe("string");
+    });
+  });
+
+  describe("期待される label/short のマッピング", () => {
+    const cases: [VimMode, { label: string; short: string }][] = [
+      ["n", { label: "Normal", short: "N" }],
+      ["v", { label: "Visual", short: "V" }],
+      ["x", { label: "Visual Block", short: "X" }],
+      ["o", { label: "Op-pending", short: "O" }],
+      ["i", { label: "Insert", short: "I" }],
+      ["c", { label: "Command-line", short: "C" }],
+      ["s", { label: "Select", short: "S" }],
+      ["t", { label: "Terminal", short: "T" }],
+    ];
+
+    test.each(
+      cases,
+    )('"%s" の label は "%s.label", short は "%s.short"', (mode, expected) => {
+      expect(VIM_MODE_META[mode].label).toBe(expected.label);
+      expect(VIM_MODE_META[mode].short).toBe(expected.short);
+    });
+  });
+});
+
+describe("SELECTABLE_VIM_MODES", () => {
+  test("7 つの要素を持つ", () => {
+    expect(SELECTABLE_VIM_MODES).toHaveLength(7);
+  });
+
+  test('"x" を含まない', () => {
+    expect(SELECTABLE_VIM_MODES).not.toContain("x");
+  });
+
+  test("全要素が VIM_MODE_META のキーのサブセットである", () => {
+    for (const mode of SELECTABLE_VIM_MODES) {
+      expect(VIM_MODE_META).toHaveProperty(mode);
+    }
   });
 });

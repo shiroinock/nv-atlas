@@ -6,13 +6,13 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
 >
   <span
     class="_label_e815f2"
-    id="_r_k_"
+    id="_r_i_"
   >
     Vim mode
   </span>
   :
   <div
-    aria-labelledby="_r_k_"
+    aria-labelledby="_r_i_"
     class="_tabs_e815f2"
     role="tablist"
   >
@@ -57,25 +57,6 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     <button
       aria-selected="false"
       class="_tab_e815f2 "
-      id="tab-vim-x"
-      role="tab"
-      title="Visual Block"
-      type="button"
-    >
-      <span
-        class="_short_e815f2"
-      >
-        X
-      </span>
-      <span
-        class="_full_e815f2"
-      >
-        Visual Block
-      </span>
-    </button>
-    <button
-      aria-selected="false"
-      class="_tab_e815f2 "
       id="tab-vim-o"
       role="tab"
       title="Op-pending"
@@ -114,25 +95,6 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
     <button
       aria-selected="false"
       class="_tab_e815f2 "
-      id="tab-vim-c"
-      role="tab"
-      title="Command-line"
-      type="button"
-    >
-      <span
-        class="_short_e815f2"
-      >
-        C
-      </span>
-      <span
-        class="_full_e815f2"
-      >
-        Command-line
-      </span>
-    </button>
-    <button
-      aria-selected="false"
-      class="_tab_e815f2 "
       id="tab-vim-s"
       role="tab"
       title="Select"
@@ -147,6 +109,25 @@ exports[`ModeSelector > スナップショット > activeMode='n' のデフォ�
         class="_full_e815f2"
       >
         Select
+      </span>
+    </button>
+    <button
+      aria-selected="false"
+      class="_tab_e815f2 "
+      id="tab-vim-c"
+      role="tab"
+      title="Command-line"
+      type="button"
+    >
+      <span
+        class="_short_e815f2"
+      >
+        C
+      </span>
+      <span
+        class="_full_e815f2"
+      >
+        Command-line
       </span>
     </button>
     <button

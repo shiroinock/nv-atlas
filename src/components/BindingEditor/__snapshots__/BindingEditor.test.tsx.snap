@@ -68,25 +68,6 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         <button
           aria-selected="false"
           class="_tab_e815f2 "
-          id="tab-vim-x"
-          role="tab"
-          title="Visual Block"
-          type="button"
-        >
-          <span
-            class="_short_e815f2"
-          >
-            X
-          </span>
-          <span
-            class="_full_e815f2"
-          >
-            Visual Block
-          </span>
-        </button>
-        <button
-          aria-selected="false"
-          class="_tab_e815f2 "
           id="tab-vim-o"
           role="tab"
           title="Op-pending"
@@ -125,25 +106,6 @@ exports[`BindingEditor > スナップショット > バインディングあり�
         <button
           aria-selected="false"
           class="_tab_e815f2 "
-          id="tab-vim-c"
-          role="tab"
-          title="Command-line"
-          type="button"
-        >
-          <span
-            class="_short_e815f2"
-          >
-            C
-          </span>
-          <span
-            class="_full_e815f2"
-          >
-            Command-line
-          </span>
-        </button>
-        <button
-          aria-selected="false"
-          class="_tab_e815f2 "
           id="tab-vim-s"
           role="tab"
           title="Select"
@@ -158,6 +120,25 @@ exports[`BindingEditor > スナップショット > バインディングあり�
             class="_full_e815f2"
           >
             Select
+          </span>
+        </button>
+        <button
+          aria-selected="false"
+          class="_tab_e815f2 "
+          id="tab-vim-c"
+          role="tab"
+          title="Command-line"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            C
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Command-line
           </span>
         </button>
         <button
@@ -416,25 +397,6 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         <button
           aria-selected="false"
           class="_tab_e815f2 "
-          id="tab-vim-x"
-          role="tab"
-          title="Visual Block"
-          type="button"
-        >
-          <span
-            class="_short_e815f2"
-          >
-            X
-          </span>
-          <span
-            class="_full_e815f2"
-          >
-            Visual Block
-          </span>
-        </button>
-        <button
-          aria-selected="false"
-          class="_tab_e815f2 "
           id="tab-vim-o"
           role="tab"
           title="Op-pending"
@@ -473,25 +435,6 @@ exports[`BindingEditor > スナップショット > バインディングなし�
         <button
           aria-selected="false"
           class="_tab_e815f2 "
-          id="tab-vim-c"
-          role="tab"
-          title="Command-line"
-          type="button"
-        >
-          <span
-            class="_short_e815f2"
-          >
-            C
-          </span>
-          <span
-            class="_full_e815f2"
-          >
-            Command-line
-          </span>
-        </button>
-        <button
-          aria-selected="false"
-          class="_tab_e815f2 "
           id="tab-vim-s"
           role="tab"
           title="Select"
@@ -506,6 +449,25 @@ exports[`BindingEditor > スナップショット > バインディングなし�
             class="_full_e815f2"
           >
             Select
+          </span>
+        </button>
+        <button
+          aria-selected="false"
+          class="_tab_e815f2 "
+          id="tab-vim-c"
+          role="tab"
+          title="Command-line"
+          type="button"
+        >
+          <span
+            class="_short_e815f2"
+          >
+            C
+          </span>
+          <span
+            class="_full_e815f2"
+          >
+            Command-line
           </span>
         </button>
         <button
