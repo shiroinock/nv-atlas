@@ -37,7 +37,7 @@ exports[`LayerSelector > スナップショット > layerCount=3, activeLayer=0 
     </button>
     <button
       aria-selected="false"
-      class="_tab_77270a "
+      class="_tab_77270a"
       id="tab-layer-1"
       role="tab"
       title="Layer 1"
@@ -56,7 +56,7 @@ exports[`LayerSelector > スナップショット > layerCount=3, activeLayer=0 
     </button>
     <button
       aria-selected="false"
-      class="_tab_77270a "
+      class="_tab_77270a"
       id="tab-layer-2"
       role="tab"
       title="Layer 2"

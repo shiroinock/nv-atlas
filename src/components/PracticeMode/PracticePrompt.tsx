@@ -1,5 +1,6 @@
 import { categoryColors, categoryLabels } from "../../data/vim-commands";
 import type { KeyInputSpec, PracticeScore, VimCommand } from "../../types/vim";
+import { cx } from "../../utils/cx";
 import styles from "./PracticePrompt.module.css";
 
 interface PracticePromptProps {
@@ -40,18 +41,18 @@ export function PracticePrompt({
   }
 
   const color = categoryColors[command.category];
-  const resultClass =
-    lastResult === "correct"
-      ? styles.correct
-      : lastResult === "incorrect"
-        ? styles.incorrect
-        : "";
 
   const showHint =
     inputSpec && (inputSpec.requiresShift || inputSpec.layerInfo);
 
   return (
-    <div className={`${styles.panel} ${resultClass}`}>
+    <div
+      className={cx(
+        styles.panel,
+        lastResult === "correct" && styles.correct,
+        lastResult === "incorrect" && styles.incorrect,
+      )}
+    >
       <div className={styles.prompt}>
         <span
           className={styles.badge}

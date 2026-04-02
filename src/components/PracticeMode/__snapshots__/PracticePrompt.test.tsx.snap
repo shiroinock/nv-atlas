@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PracticePrompt > スナップショット > コマンドあり・lastResult=null のデフォルト状態 1`] = `
+<div
+  class="_panel_c028ee"
+>
+  <div
+    class="_prompt_c028ee"
+  >
+    <span
+      class="_badge_c028ee"
+      style="background-color: rgba(79, 195, 247, 0.2); color: rgb(79, 195, 247);"
+    >
+      移動
+    </span>
+    <span
+      class="_commandName_c028ee"
+    >
+      「
+      ←
+      」
+    </span>
+    <span
+      class="_description_c028ee"
+    >
+      左に移動
+    </span>
+  </div>
+  <div
+    class="_hintRow_c028ee"
+  >
+    <span
+      class="_instruction_c028ee"
+    >
+      を押してください
+    </span>
+  </div>
+  <div
+    class="_score_c028ee"
+  >
+    <span>
+      正解: 
+      0
+      /
+      0
+    </span>
+  </div>
+</div>
+`;
