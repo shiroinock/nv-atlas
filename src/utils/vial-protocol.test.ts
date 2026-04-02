@@ -69,6 +69,14 @@ const createMockHIDDevice = (
   return device;
 };
 
+const createMockVialDevice = (
+  mockDevice: MockHIDDevice,
+  productName = "Test Vial Keyboard",
+): VialDevice => ({
+  hid: mockDevice as unknown as HIDDevice,
+  productName,
+});
+
 // ============================================================
 // navigator.hid モック
 // ============================================================
@@ -230,10 +238,7 @@ describe("disconnectVialDevice", () => {
   it("デバイスの close が呼ばれる", async () => {
     const mockDevice = createMockHIDDevice();
     mockDevice.opened = true;
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     await disconnectVialDevice(vialDevice);
 
@@ -243,10 +248,7 @@ describe("disconnectVialDevice", () => {
   it("既に close 済みのデバイスでは close を呼ばない", async () => {
     const mockDevice = createMockHIDDevice();
     mockDevice.opened = false;
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     await disconnectVialDevice(vialDevice);
 
@@ -310,10 +312,7 @@ describe("getKeyboardDefinition", () => {
     }
     vi.stubGlobal("DecompressionStream", DecompressionStreamMock);
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const result = await getKeyboardDefinition(vialDevice);
 
@@ -367,10 +366,7 @@ describe("getKeyboardDefinition", () => {
     }
     vi.stubGlobal("DecompressionStream", DecompressionStreamMock);
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const result = await getKeyboardDefinition(vialDevice);
 
@@ -385,10 +381,7 @@ describe("getKeyboardDefinition", () => {
       new Error("HID communication error"),
     );
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     await expect(getKeyboardDefinition(vialDevice)).rejects.toThrow();
   });
@@ -410,10 +403,7 @@ describe("getKeyboardDefinition", () => {
       },
     );
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     await expect(getKeyboardDefinition(vialDevice)).rejects.toThrow();
   });
@@ -423,10 +413,7 @@ describe("getKeyboardDefinition", () => {
     const invalidBytes = new TextEncoder().encode(JSON.stringify("hello"));
     setupDecompressionMocks(mockDevice, invalidBytes);
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     await expect(getKeyboardDefinition(vialDevice)).rejects.toThrow();
   });
@@ -438,10 +425,7 @@ describe("getKeyboardDefinition", () => {
     );
     setupDecompressionMocks(mockDevice, invalidBytes);
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     await expect(getKeyboardDefinition(vialDevice)).rejects.toThrow();
   });
@@ -482,10 +466,7 @@ describe("getKeymapData", () => {
       },
     );
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const result = await getKeymapData(vialDevice, 1, 4);
 
@@ -522,10 +503,7 @@ describe("getKeymapData", () => {
       },
     );
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const result = await getKeymapData(vialDevice, 1, 4);
 
@@ -565,10 +543,7 @@ describe("getKeymapData", () => {
       },
     );
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const result = await getKeymapData(vialDevice, 2, 2);
 
@@ -589,10 +564,7 @@ describe("getKeymapData", () => {
       new Error("HID communication error"),
     );
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     await expect(getKeymapData(vialDevice, 1, 4)).rejects.toThrow();
   });
@@ -600,10 +572,7 @@ describe("getKeymapData", () => {
   it("0 レイヤーを指定した場合に空の layers を返す", async () => {
     const mockDevice = createMockHIDDevice();
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const result = await getKeymapData(vialDevice, 0, 4);
 
@@ -637,10 +606,7 @@ describe("getKeymapData", () => {
       },
     );
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const result = await getKeymapData(vialDevice, 1, 3);
 
@@ -669,10 +635,7 @@ describe("sendCommand タイムアウト", () => {
     // sendReport は成功するが inputreport イベントを発火しない（デバイスが無応答）
     mockDevice.sendReport.mockResolvedValue(undefined);
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const promise = getKeymapData(vialDevice, 1, 4);
     // advanceTimersByTimeAsync 中に reject が発生するため、先にハンドラを登録して unhandled rejection を防ぐ
@@ -694,10 +657,7 @@ describe("sendCommand タイムアウト", () => {
     // sendReport は成功するが inputreport イベントを発火しない（デバイスが無応答）
     mockDevice.sendReport.mockResolvedValue(undefined);
 
-    const vialDevice: VialDevice = {
-      hid: mockDevice as unknown as HIDDevice,
-      productName: "Test Vial Keyboard",
-    };
+    const vialDevice = createMockVialDevice(mockDevice);
 
     const promise = getKeymapData(vialDevice, 1, 4);
     // advanceTimersByTimeAsync 中に reject が発生するため、先にハンドラを登録して unhandled rejection を防ぐ
