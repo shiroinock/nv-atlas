@@ -111,3 +111,4 @@ dispatch-queue.json 書き出し
 - ディスパッチ元の Claude セッション（このセッション）は引き続き利用可能
 - `dispatch-queue.json` はフック実行後に自動削除される
 - `dispatch-manifest.json` は全セット完了後に自動削除される
+- セッションが crash・hang した場合、`session-done.sh` が呼ばれずバリアチェックが停止する。手動で `.claude/scripts/session-done.sh <Issue番号>` を実行してリカバリする

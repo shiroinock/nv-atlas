@@ -10,10 +10,14 @@
     ]
   },
   "worktree": {
-    "symlinkDirectories": ["node_modules"]
+    "symlinkDirectories": [
+      "node_modules"
+    ]
   },
   "sandbox": {
-    "excludedCommands": ["pnpm"]
+    "excludedCommands": [
+      "pnpm"
+    ]
   },
   "hooks": {
     "PostToolUse": [
@@ -23,7 +27,7 @@
           {
             "type": "command",
             "command": ".claude/hooks/dispatch-on-write.sh",
-            "timeout": 30
+            "timeout": 60
           }
         ]
       }

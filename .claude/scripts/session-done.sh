@@ -19,8 +19,8 @@ cleanup_worktree() {
   if [[ -d "$wt" ]]; then
     local branch
     branch=$(git -C "$wt" branch --show-current 2>/dev/null || true)
-    git -C "$PROJECT_DIR" worktree remove "$wt" --force 2>/dev/null || true
-    [[ -n "$branch" ]] && git -C "$PROJECT_DIR" branch -D "$branch" 2>/dev/null || true
+    git -C "$PROJECT_DIR" worktree remove "$wt" --force 2>/dev/null || echo "worktree remove failed for $num" >&2
+    [[ -n "$branch" ]] && git -C "$PROJECT_DIR" branch -D "$branch" 2>/dev/null || echo "branch delete failed: $branch" >&2
   fi
 }
 
@@ -33,8 +33,8 @@ touch "$DONE_DIR/$ISSUE"
 exec 9>"$LOCK_FILE"
 flock -x 9
 
-# バリアチェック: 現在セットの全セッション完了を確認
-current_set=$(jq -r '.sets[] | select(.status == "dispatched") | .issues | map(tostring) | join(" ")' "$MANIFEST")
+# バリアチェック: 現在セットの全セッション完了を確認（先頭1件に絞る）
+current_set=$(jq -r '[.sets[] | select(.status == "dispatched")][0].issues | map(tostring) | join(" ")' "$MANIFEST")
 for num in $current_set; do
   [[ -f "$DONE_DIR/$num" ]] || { cleanup_worktree "$ISSUE"; exit 0; }
 done
@@ -55,8 +55,8 @@ if [[ -z "$next_issues" || "$next_issues" == "null" ]]; then
 fi
 
 # main を最新化してから次セットをディスパッチ
-git -C "$PROJECT_DIR" checkout main 2>/dev/null || true
-git -C "$PROJECT_DIR" pull --ff-only origin main 2>/dev/null || true
+git -C "$PROJECT_DIR" checkout main 2>&1 || echo "checkout main failed, continuing with current HEAD" >&2
+git -C "$PROJECT_DIR" pull --ff-only origin main 2>&1 || echo "pull --ff-only failed, continuing with local main" >&2
 
 # 次セットを dispatched に更新
 jq '
@@ -64,8 +64,9 @@ jq '
   .sets[$idx].status = "dispatched"
 ' "$MANIFEST" > "$MANIFEST.tmp" && mv "$MANIFEST.tmp" "$MANIFEST"
 
+mapfile -t issue_nums < <(echo "$next_issues" | jq -r '.[]')
 commands=()
-for num in $(echo "$next_issues" | jq -r '.[]'); do
+for num in "${issue_nums[@]}"; do
   commands+=("claude --worktree issue-${num} \"/tdd-next ${num}\" ; $SCRIPT_DIR/session-done.sh ${num} ; exit")
 done
 

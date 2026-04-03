@@ -47,7 +47,7 @@ esac
 
 for ((i = 0; i < n; i++)); do
   p=$((i + 1))
-  ((i > 0)) && as+="  delay 3
+  ((i > 0)) && as+="  delay ${GHOSTTY_PANE_DELAY:-3}
 "
   as+="  input text \"$(escape_as "${commands[$i]}")\" to pane${p}
   send key \"enter\" to pane${p}
