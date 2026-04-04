@@ -22,7 +22,7 @@ export function PracticePrompt({
 }: PracticePromptProps) {
   if (!started) {
     return (
-      <div className={styles.panel}>
+      <div className={styles.panel} data-testid="practice-prompt">
         <button type="button" className={styles.startButton} onClick={onStart}>
           練習を開始
         </button>
@@ -32,7 +32,7 @@ export function PracticePrompt({
 
   if (!command) {
     return (
-      <div className={styles.panel}>
+      <div className={styles.panel} data-testid="practice-prompt">
         <p className={styles.message}>
           選択したカテゴリに出題可能なコマンドがありません
         </p>
@@ -52,6 +52,8 @@ export function PracticePrompt({
         lastResult === "correct" && styles.correct,
         lastResult === "incorrect" && styles.incorrect,
       )}
+      data-testid="practice-prompt"
+      data-result={lastResult}
     >
       <div className={styles.prompt}>
         <span
@@ -64,7 +66,11 @@ export function PracticePrompt({
         <span className={styles.description}>{command.description}</span>
       </div>
       <div className={styles.hintRow}>
-        {showHint && <span className={styles.hint}>{inputSpec.hint}</span>}
+        {showHint && (
+          <span className={styles.hint} data-testid="hint">
+            {inputSpec.hint}
+          </span>
+        )}
         <span className={styles.instruction}>を押してください</span>
       </div>
       <div className={styles.score}>

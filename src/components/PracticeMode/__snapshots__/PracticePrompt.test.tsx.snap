@@ -3,6 +3,7 @@
 exports[`PracticePrompt > スナップショット > コマンドあり・lastResult=null のデフォルト状態 1`] = `
 <div
   class="_panel_c028ee"
+  data-testid="practice-prompt"
 >
   <div
     class="_prompt_c028ee"
