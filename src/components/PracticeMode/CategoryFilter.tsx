@@ -1,20 +1,10 @@
 import { categoryColors, categoryLabels } from "../../data/vim-commands";
 import {
-  DEFAULT_NVIM_MAP_CATEGORY,
+  VIM_PRACTICE_CATEGORIES,
   type VimCommandCategory,
 } from "../../types/vim";
 import { cx } from "../../utils/cx";
 import styles from "./CategoryFilter.module.css";
-
-const allCategories: VimCommandCategory[] = [
-  "motion",
-  "edit",
-  "search",
-  "insert",
-  "visual",
-  "operator",
-  DEFAULT_NVIM_MAP_CATEGORY,
-];
 
 interface CategoryFilterProps {
   selectedCategories: Set<VimCommandCategory>;
@@ -27,7 +17,7 @@ export function CategoryFilter({
 }: CategoryFilterProps) {
   return (
     <div className={styles.container}>
-      {allCategories.map((cat) => {
+      {VIM_PRACTICE_CATEGORIES.map((cat) => {
         const isSelected = selectedCategories.has(cat);
         const color = categoryColors[cat];
         return (

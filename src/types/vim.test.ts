@@ -4,6 +4,7 @@ import {
   expandNvimMapMode,
   matchesVimMode,
   VIM_COMMAND_CATEGORIES,
+  VIM_PRACTICE_CATEGORIES,
 } from "./vim";
 
 describe("expandNvimMapMode", () => {
@@ -171,5 +172,30 @@ describe("VIM_COMMAND_CATEGORIES", () => {
   test("重複がない", () => {
     const unique = new Set<string>(VIM_COMMAND_CATEGORIES);
     expect(unique.size).toBe(VIM_COMMAND_CATEGORIES.length);
+  });
+});
+
+describe("VIM_PRACTICE_CATEGORIES", () => {
+  test("textobj を除いた全カテゴリを持つ", () => {
+    expect(VIM_PRACTICE_CATEGORIES).toHaveLength(
+      VIM_COMMAND_CATEGORIES.length - 1,
+    );
+  });
+
+  test("textobj を含まない", () => {
+    expect(VIM_PRACTICE_CATEGORIES).not.toContain("textobj");
+  });
+
+  describe("全要素が VIM_COMMAND_CATEGORIES のサブセットである", () => {
+    test("各要素が VIM_COMMAND_CATEGORIES に含まれる", () => {
+      for (const category of VIM_PRACTICE_CATEGORIES) {
+        expect(VIM_COMMAND_CATEGORIES).toContain(category);
+      }
+    });
+  });
+
+  test("重複がない", () => {
+    const unique = new Set<string>(VIM_PRACTICE_CATEGORIES);
+    expect(unique.size).toBe(VIM_PRACTICE_CATEGORIES.length);
   });
 });

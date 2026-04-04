@@ -15,7 +15,7 @@ import type {
   VimCommandCategory,
   VimCommandSource,
 } from "../../types/vim";
-import { DEFAULT_NVIM_MAP_CATEGORY, matchesVimMode } from "../../types/vim";
+import { matchesVimMode, VIM_COMMAND_CATEGORIES } from "../../types/vim";
 import { cx } from "../../utils/cx";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
@@ -104,17 +104,6 @@ function vimKeyToHighlights(
   return entries;
 }
 
-const allCategories: VimCommandCategory[] = [
-  "motion",
-  "operator",
-  "edit",
-  "insert",
-  "search",
-  "visual",
-  "textobj",
-  DEFAULT_NVIM_MAP_CATEGORY,
-];
-
 const allSources: VimCommandSource[] = [
   "hardcoded",
   "nvim-default",
@@ -131,7 +120,7 @@ export function CommandReference({
 }: Props) {
   const [selectedCategories, setSelectedCategories] = useState<
     Set<VimCommandCategory>
-  >(new Set(allCategories));
+  >(new Set(VIM_COMMAND_CATEGORIES));
   const [selectedSources, setSelectedSources] = useState<Set<VimCommandSource>>(
     new Set(allSources),
   );
@@ -223,7 +212,7 @@ export function CommandReference({
     <div className={styles.container}>
       <div className={styles.controls}>
         <div className={styles.categories}>
-          {allCategories.map((cat) => (
+          {VIM_COMMAND_CATEGORIES.map((cat) => (
             <button
               type="button"
               key={cat}
@@ -280,72 +269,70 @@ export function CommandReference({
       </div>
 
       <div className={styles.tableWrapper}>
-        {allCategories
-          .filter((cat) => grouped[cat])
-          .map((cat) => (
-            <div key={cat} className={styles.group}>
-              <h3
-                className={styles.groupTitle}
-                style={{ color: categoryColors[cat] }}
-              >
-                {categoryLabels[cat]}
-              </h3>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th className={styles.thKey}>Vim キー</th>
-                    <th className={styles.thKey}>あなたの配列</th>
-                    <th className={styles.thName}>名前</th>
-                    <th className={styles.thDesc}>説明</th>
-                    {hasSources && <th className={styles.thSource}>ソース</th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {(grouped[cat] ?? []).map((cmd) => {
-                    const translated = translateKey(
-                      cmd.key,
-                      customKeymap,
-                      viaKeymapFull,
-                    );
-                    const isDifferent = translated !== cmd.key;
-                    const source = (cmd as MergedVimCommand).source;
-                    return (
-                      <tr
-                        key={cmd.key}
-                        className={styles.row}
-                        onMouseEnter={() => handleRowEnter(cmd)}
-                        onMouseLeave={handleRowLeave}
-                      >
-                        <td className={styles.cellKey}>
-                          <code>{cmd.key}</code>
-                        </td>
-                        <td
-                          className={cx(
-                            styles.cellKey,
-                            isDifferent && styles.cellDiff,
-                          )}
-                        >
-                          <code>{translated}</code>
-                        </td>
-                        <td className={styles.cellName}>{cmd.name}</td>
-                        <td className={styles.cellDesc}>{cmd.description}</td>
-                        {hasSources && (
-                          <td className={styles.cellSource}>
-                            <span
-                              className={styles.sourceBadge}
-                              style={{ color: sourceColors[source] }}
-                            >
-                              {sourceLabels[source]}
-                            </span>
-                          </td>
+        {VIM_COMMAND_CATEGORIES.filter((cat) => grouped[cat]).map((cat) => (
+          <div key={cat} className={styles.group}>
+            <h3
+              className={styles.groupTitle}
+              style={{ color: categoryColors[cat] }}
+            >
+              {categoryLabels[cat]}
+            </h3>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th className={styles.thKey}>Vim キー</th>
+                  <th className={styles.thKey}>あなたの配列</th>
+                  <th className={styles.thName}>名前</th>
+                  <th className={styles.thDesc}>説明</th>
+                  {hasSources && <th className={styles.thSource}>ソース</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {(grouped[cat] ?? []).map((cmd) => {
+                  const translated = translateKey(
+                    cmd.key,
+                    customKeymap,
+                    viaKeymapFull,
+                  );
+                  const isDifferent = translated !== cmd.key;
+                  const source = (cmd as MergedVimCommand).source;
+                  return (
+                    <tr
+                      key={cmd.key}
+                      className={styles.row}
+                      onMouseEnter={() => handleRowEnter(cmd)}
+                      onMouseLeave={handleRowLeave}
+                    >
+                      <td className={styles.cellKey}>
+                        <code>{cmd.key}</code>
+                      </td>
+                      <td
+                        className={cx(
+                          styles.cellKey,
+                          isDifferent && styles.cellDiff,
                         )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ))}
+                      >
+                        <code>{translated}</code>
+                      </td>
+                      <td className={styles.cellName}>{cmd.name}</td>
+                      <td className={styles.cellDesc}>{cmd.description}</td>
+                      {hasSources && (
+                        <td className={styles.cellSource}>
+                          <span
+                            className={styles.sourceBadge}
+                            style={{ color: sourceColors[source] }}
+                          >
+                            {sourceLabels[source]}
+                          </span>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ))}
       </div>
 
       <p className={styles.count}>{filteredCommands.length} コマンド</p>

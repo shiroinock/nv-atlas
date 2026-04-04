@@ -2,12 +2,12 @@ import { useCallback, useMemo, useState } from "react";
 import { invertKeymap } from "../data/keymap";
 import { decomposeVimKey, vimCommands } from "../data/vim-commands";
 import {
-  DEFAULT_NVIM_MAP_CATEGORY,
   type KeyInputSpec,
   type LayerKeyInfo,
   type ModifierKeyInfo,
   type PracticeScore,
   type VIAKeymapFull,
+  VIM_PRACTICE_CATEGORIES,
   type VimCommand,
   type VimCommandCategory,
 } from "../types/vim";
@@ -167,18 +167,7 @@ export function usePractice(
 ) {
   const [selectedCategories, setSelectedCategories] = useState<
     Set<VimCommandCategory>
-  >(
-    () =>
-      new Set<VimCommandCategory>([
-        "motion",
-        "edit",
-        "search",
-        "insert",
-        "visual",
-        "operator",
-        DEFAULT_NVIM_MAP_CATEGORY,
-      ]),
-  );
+  >(() => new Set<VimCommandCategory>(VIM_PRACTICE_CATEGORIES));
   const [currentCommand, setCurrentCommand] = useState<VimCommand | null>(null);
   const [score, setScore] = useState<PracticeScore>({
     correct: 0,
