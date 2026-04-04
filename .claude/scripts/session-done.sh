@@ -55,9 +55,8 @@ if [[ -z "$next_issues" || "$next_issues" == "null" ]]; then
   exit 0
 fi
 
-# main を最新化してから次セットをディスパッチ
-git -C "$PROJECT_DIR" checkout main 2>&1 || echo "checkout main failed, continuing with current HEAD" >&2
-git -C "$PROJECT_DIR" pull --ff-only origin main 2>&1 || echo "pull --ff-only failed, continuing with local main" >&2
+# main を最新化（HEAD を変更しないよう fetch のみ）
+git -C "$PROJECT_DIR" fetch origin main 2>&1 || echo "fetch origin main failed, continuing with local state" >&2
 
 # 次セットを dispatched に更新
 jq '
