@@ -31,17 +31,14 @@ VIA キーマップ読み込み時:
 2. 出力文字 → `invertKeymap()` で QWERTY 位置に逆引き（= langmap と同等の変換）
 3. QWERTY 位置 → Vim コマンドを引き当て
 
-## Worktree 環境での pnpm
+## サンドボックス環境での pnpm
 
-Worktree エージェント（sandbox 内）では `pnpm` シェル関数（safe-chain ラッパー）がプロキシサーバーの listen で EPERM になる。スキル・エージェントでは以下のワンライナーで worktree を検出し、直接バイナリにフォールバックする:
+Claude Code はすべてのコマンドをサンドボックス内で実行する。`pnpm` シェル関数（safe-chain ラッパー）はプロキシサーバーを listen しようとするため、サンドボックスのネットワーク制限で EPERM になる。スキル・エージェント・hook では常に Nix の pnpm バイナリを直接使用する:
 
 ```bash
-PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm )
+PNPM=/etc/profiles/per-user/shiroino/bin/pnpm
 $PNPM lint
 ```
-
-- メインセッション（`.git` がディレクトリ）: `pnpm`（safe-chain 経由）
-- Worktree（`.git` がファイル）: Nix の pnpm バイナリを直接使用
 
 ## ロードマップ
 

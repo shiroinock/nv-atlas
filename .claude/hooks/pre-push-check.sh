@@ -14,7 +14,7 @@ if [[ -z "$NON_CLAUDE_FILES" ]]; then
   exit 0
 fi
 
-PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm )
+PNPM=/etc/profiles/per-user/shiroino/bin/pnpm
 
 TMPDIR_HOOK=$(mktemp -d "${TMPDIR:-/tmp}/pre-push-check.XXXXXX")
 trap 'rm -rf "$TMPDIR_HOOK"' EXIT
