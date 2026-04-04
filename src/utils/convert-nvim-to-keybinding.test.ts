@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { VimMode } from "../types/keybinding";
 import { KEYBINDING_SOURCE_NVIM_IMPORT } from "../types/keybinding";
 import type { NvimMapping, VimCommand } from "../types/vim";
+import { DEFAULT_NVIM_MAP_CATEGORY } from "../types/vim";
 import { convertNvimMapsToKeybindings } from "./convert-nvim-to-keybinding";
 
 const baseVimCommands: VimCommand[] = [
@@ -100,11 +101,11 @@ describe("convertNvimMapsToKeybindings", () => {
       expect(result.n[0].name).toBe("gd");
     });
 
-    it("VimCommand にマッチしないマップは category が 'misc' になる", () => {
+    it("VimCommand にマッチしないマップは category が DEFAULT_NVIM_MAP_CATEGORY になる", () => {
       const maps = [makeNvimMap({ lhs: "gd", mode: "n" })];
       const result = convertNvimMapsToKeybindings(maps, baseVimCommands);
 
-      expect(result.n[0].category).toBe("misc");
+      expect(result.n[0].category).toBe(DEFAULT_NVIM_MAP_CATEGORY);
     });
 
     it("VimCommand にマッチしないマップは commandId が設定されない", () => {

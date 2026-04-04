@@ -4,7 +4,7 @@ import {
   KEYBINDING_SOURCE_NVIM_IMPORT,
 } from "../types/keybinding";
 import type { NvimMapping, VimCommand } from "../types/vim";
-import { expandNvimMapMode } from "../types/vim";
+import { DEFAULT_NVIM_MAP_CATEGORY, expandNvimMapMode } from "../types/vim";
 import { isPlugMapping } from "./plug-mapping";
 
 export function convertNvimMapsToKeybindings(
@@ -34,7 +34,7 @@ export function convertNvimMapsToKeybindings(
           rhs: map.rhs,
           name: map.lhs,
           description: map.description,
-          category: "misc",
+          category: DEFAULT_NVIM_MAP_CATEGORY,
           source: KEYBINDING_SOURCE_NVIM_IMPORT,
           noremap: map.noremap,
         };
