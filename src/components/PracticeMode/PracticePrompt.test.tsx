@@ -178,56 +178,26 @@ describe("PracticePrompt", () => {
     });
   });
 
-  describe("lastResult による className 変化", () => {
-    test("lastResult=null のとき correct/incorrect クラスが付かない", () => {
-      const { container } = render(
-        <PracticePrompt {...defaultProps} lastResult={null} />,
-      );
+  describe("lastResult による data-result 属性", () => {
+    test("lastResult=null のとき data-result 属性がない", () => {
+      render(<PracticePrompt {...defaultProps} lastResult={null} />);
 
-      const panel = container.firstChild as HTMLElement;
-      expect(panel).not.toBeNull();
-      expect(panel.className).not.toMatch(/_correct_/);
-      expect(panel.className).not.toMatch(/_incorrect_/);
+      const panel = screen.getByTestId("practice-prompt");
+      expect(panel).not.toHaveAttribute("data-result");
     });
 
-    test("lastResult='correct' のとき correct クラスが付く", () => {
-      const { container } = render(
-        <PracticePrompt {...defaultProps} lastResult="correct" />,
-      );
+    test("lastResult='correct' のとき data-result='correct'", () => {
+      render(<PracticePrompt {...defaultProps} lastResult="correct" />);
 
-      const panel = container.firstChild as HTMLElement;
-      expect(panel).not.toBeNull();
-      expect(panel.className).toMatch(/_correct_/);
+      const panel = screen.getByTestId("practice-prompt");
+      expect(panel).toHaveAttribute("data-result", "correct");
     });
 
-    test("lastResult='incorrect' のとき incorrect クラスが付く", () => {
-      const { container } = render(
-        <PracticePrompt {...defaultProps} lastResult="incorrect" />,
-      );
+    test("lastResult='incorrect' のとき data-result='incorrect'", () => {
+      render(<PracticePrompt {...defaultProps} lastResult="incorrect" />);
 
-      const panel = container.firstChild as HTMLElement;
-      expect(panel).not.toBeNull();
-      expect(panel.className).toMatch(/_incorrect_/);
-    });
-
-    test("lastResult='correct' のとき incorrect クラスが付かない", () => {
-      const { container } = render(
-        <PracticePrompt {...defaultProps} lastResult="correct" />,
-      );
-
-      const panel = container.firstChild as HTMLElement;
-      expect(panel).not.toBeNull();
-      expect(panel.className).not.toMatch(/_incorrect_/);
-    });
-
-    test("lastResult='incorrect' のとき correct クラスが付かない", () => {
-      const { container } = render(
-        <PracticePrompt {...defaultProps} lastResult="incorrect" />,
-      );
-
-      const panel = container.firstChild as HTMLElement;
-      expect(panel).not.toBeNull();
-      expect(panel.className).not.toMatch(/_correct_/);
+      const panel = screen.getByTestId("practice-prompt");
+      expect(panel).toHaveAttribute("data-result", "incorrect");
     });
   });
 
@@ -295,9 +265,9 @@ describe("PracticePrompt", () => {
 
   describe("スナップショット", () => {
     test("コマンドあり・lastResult=null のデフォルト状態", () => {
-      const { container } = render(<PracticePrompt {...defaultProps} />);
+      render(<PracticePrompt {...defaultProps} />);
 
-      expect(container.firstChild).toMatchSnapshot();
+      expect(screen.getByTestId("practice-prompt")).toMatchSnapshot();
     });
   });
 });
