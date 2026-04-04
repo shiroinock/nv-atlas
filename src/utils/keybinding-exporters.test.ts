@@ -123,7 +123,7 @@ describe("keybindingToLua", () => {
   });
 
   describe("noremap オプション", () => {
-    it('noremap: true の場合は { noremap = true, desc = "..." } オプションを付与する', () => {
+    it('noremap: true の場合は noremap を省略し { desc = "..." } のみ出力する', () => {
       const config = makeConfig({
         bindings: {
           ...emptyBindings(),
@@ -133,10 +133,11 @@ describe("keybindingToLua", () => {
 
       const result = keybindingToLua(config);
 
-      expect(result).toContain('{ noremap = true, desc = "テストコマンド" }');
+      expect(result).toContain('{ desc = "テストコマンド" }');
+      expect(result).not.toContain("noremap");
     });
 
-    it('noremap: false の場合は noremap を省略し { desc = "..." } のみ出力する', () => {
+    it('noremap: false の場合は { noremap = false, desc = "..." } オプションを付与する', () => {
       const config = makeConfig({
         bindings: {
           ...emptyBindings(),
@@ -146,8 +147,7 @@ describe("keybindingToLua", () => {
 
       const result = keybindingToLua(config);
 
-      expect(result).toContain('{ desc = "テストコマンド" }');
-      expect(result).not.toContain("noremap");
+      expect(result).toContain('{ noremap = false, desc = "テストコマンド" }');
     });
   });
 

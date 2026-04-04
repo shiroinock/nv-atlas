@@ -24,8 +24,8 @@ export function keybindingToLua(config: KeybindingConfig): string {
       const lhsEscaped = escapeLua(binding.lhs);
       const rhsEscaped = escapeLua(rhs);
       const opts: string[] = [];
-      if (binding.noremap) {
-        opts.push("noremap = true");
+      if (!binding.noremap) {
+        opts.push("noremap = false");
       }
       opts.push(`desc = "${escapeLua(binding.name)}"`);
       lines.push(
