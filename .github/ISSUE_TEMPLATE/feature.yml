@@ -15,7 +15,7 @@ body:
     id: tasks
     attributes:
       label: やること
-      description: 具体的なタスクがあれば箇条書きで（なければ issue-enrichment で補完します）
+      description: 具体的なタスクがあれば箇条書きで（なければ enrich-issue で補完します）
       placeholder: |
         - タスク1
         - タスク2

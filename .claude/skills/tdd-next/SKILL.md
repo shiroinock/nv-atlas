@@ -105,7 +105,7 @@ gh api graphql -f query='
 - ラベルがない場合は番号が小さい（古い）ものを優先
 - 選定結果はレポートに記載し、確認なしでそのまま着手する
 
-> **Note**: 対象の Issue がない場合は、先に `issue-enrichment` スキルで Issue を詳細化するよう提案してください。
+> **Note**: 対象の Issue がない場合は、先に `enrich-issue` スキルで Issue を詳細化するよう提案してください。
 
 ### 1.5. 排他制御（Project Status の更新）
 

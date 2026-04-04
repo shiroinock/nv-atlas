@@ -1,5 +1,5 @@
 ---
-name: issue-enrichment
+name: enrich-issue
 description: Issue を詳細化して実装可能にする。コードベースを探索して実装方針・対象ファイル・受け入れ条件を書き込み、スコープが大きければ分割する。「Issue 整理」「Issue 詰めよう」「実装計画を立てよう」といった場面で使用。
 user-invocable: true
 ---

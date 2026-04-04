@@ -7,7 +7,7 @@ user-invocable: true
 # Issue 作成スキル
 
 ユーザーの要望を聞き取り、GitHub Issue を作成します。
-作成した Issue は `issue-enrichment` → `tdd-next` パイプラインの起点になります。
+作成した Issue は `enrich-issue` → `tdd-next` パイプラインの起点になります。
 
 ## 実行フロー
 
@@ -32,7 +32,7 @@ user-invocable: true
 ## やること
 - {タスク1}
 - {タスク2}
-（具体的なタスクが不明な場合は省略 — issue-enrichment で補完される）
+（具体的なタスクが不明な場合は省略 — enrich-issue で補完される）
 
 ## 関連
 {関連する既存コード・Issue 等があれば}
@@ -66,12 +66,12 @@ gh issue create \
 ### 4. 報告と次のアクション提案
 
 作成した Issue の URL を報告し、以下を提案:
-- 「続けて `/issue-enrichment` で詳細化しますか？」
+- 「続けて `/enrich-issue` で詳細化しますか？」
 - 複数 Issue を作成する場合は繰り返し実行
 
 ## 注意事項
 
-- `draft` ラベルは必ず付与する（`issue-enrichment` の対象選定に使用）
+- `draft` ラベルは必ず付与する（`enrich-issue` の対象選定に使用）
 - タイトルは簡潔に（30文字程度を目安）
-- 概要は `issue-enrichment` が拡充するので、最小限でよい
+- 概要は `enrich-issue` が拡充するので、最小限でよい
 - 既存 Issue と重複しないか `gh issue list` で事前確認する
