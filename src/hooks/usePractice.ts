@@ -1,14 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 import { invertKeymap } from "../data/keymap";
 import { decomposeVimKey, vimCommands } from "../data/vim-commands";
-import type {
-  KeyInputSpec,
-  LayerKeyInfo,
-  ModifierKeyInfo,
-  PracticeScore,
-  VIAKeymapFull,
-  VimCommand,
-  VimCommandCategory,
+import {
+  DEFAULT_NVIM_MAP_CATEGORY,
+  type KeyInputSpec,
+  type LayerKeyInfo,
+  type ModifierKeyInfo,
+  type PracticeScore,
+  type VIAKeymapFull,
+  type VimCommand,
+  type VimCommandCategory,
 } from "../types/vim";
 import { shiftMap } from "../utils/via-keymap-parser";
 
@@ -175,7 +176,7 @@ export function usePractice(
         "insert",
         "visual",
         "operator",
-        "misc",
+        DEFAULT_NVIM_MAP_CATEGORY,
       ]),
   );
   const [currentCommand, setCurrentCommand] = useState<VimCommand | null>(null);

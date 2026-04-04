@@ -1,5 +1,8 @@
 import { categoryColors, categoryLabels } from "../../data/vim-commands";
-import type { VimCommandCategory } from "../../types/vim";
+import {
+  DEFAULT_NVIM_MAP_CATEGORY,
+  type VimCommandCategory,
+} from "../../types/vim";
 import { cx } from "../../utils/cx";
 import styles from "./CategoryFilter.module.css";
 
@@ -10,7 +13,7 @@ const allCategories: VimCommandCategory[] = [
   "insert",
   "visual",
   "operator",
-  "misc",
+  DEFAULT_NVIM_MAP_CATEGORY,
 ];
 
 interface CategoryFilterProps {

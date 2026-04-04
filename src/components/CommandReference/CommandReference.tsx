@@ -15,7 +15,7 @@ import type {
   VimCommandCategory,
   VimCommandSource,
 } from "../../types/vim";
-import { matchesVimMode } from "../../types/vim";
+import { DEFAULT_NVIM_MAP_CATEGORY, matchesVimMode } from "../../types/vim";
 import { cx } from "../../utils/cx";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
@@ -112,7 +112,7 @@ const allCategories: VimCommandCategory[] = [
   "search",
   "visual",
   "textobj",
-  "misc",
+  DEFAULT_NVIM_MAP_CATEGORY,
 ];
 
 const allSources: VimCommandSource[] = [
