@@ -89,10 +89,10 @@ describe('targetFunction', () => {
 
 ## フォーマット自動修正
 
-テストファイルの作成が完了したら、lint:fix を実行してください。worktree 環境では safe-chain ラッパーが sandbox で動作しないため、pnpm パスを自動解決する:
+テストファイルの作成が完了したら、lint:fix を実行してください。sandbox 環境では safe-chain ラッパーが動作しないため、Nix の pnpm バイナリを直接使用する:
 
 ```bash
-PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm )
+PNPM=/etc/profiles/per-user/shiroino/bin/pnpm
 $PNPM lint:fix
 ```
 

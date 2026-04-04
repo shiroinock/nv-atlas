@@ -17,9 +17,9 @@ TDD のテスト実行と**状態判定**を担当するエージェントです
 
 ## テスト実行コマンド
 
-worktree 環境では safe-chain ラッパーが sandbox で動作しないため、pnpm パスを自動解決する。**全コマンドの先頭に以下を付与すること**:
+sandbox 環境では safe-chain ラッパーが動作しないため、Nix の pnpm バイナリを直接使用する。**全コマンドの先頭に以下を付与すること**:
 ```bash
-PNPM=$( [ "$(git rev-parse --git-common-dir 2>/dev/null)" != ".git" ] && echo /etc/profiles/per-user/shiroino/bin/pnpm || echo pnpm )
+PNPM=/etc/profiles/per-user/shiroino/bin/pnpm
 ```
 
 ### 全テスト実行
