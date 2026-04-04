@@ -157,16 +157,17 @@ gh project item-edit --id "{item_id}" \
 # Issue 本文を更新
 gh issue edit {番号} --body "{作成した本文}"
 
-# draft ラベルを剥がす
+# draft ラベルを剥がし、直後に必ず Project に追加する（セットで実行すること）
 gh issue edit {番号} --remove-label "draft"
-
-# Issue を Project に追加
 gh project item-add 6 --owner shiroinock --url {IssueのURL}
 ```
 
 - `draft` ラベルは対象 Issue（親含む）全てから剥がす
+- **`gh project item-add` は必須**。`draft` ラベル削除と Project 登録は必ずセットで実行する
 - 親 Issue は Project に追加し、Status を **In Progress** にする（epic として進行中）
 - 子 Issue は Project に追加し、Status を **Todo** にする
+
+> **補足**: PostToolUse(Bash) hook が `--remove-label draft` を検出し、Project 未登録の場合は警告と登録コマンドを表示する。スキップした場合も hook が検出するが、**最初から省略しないこと**。
 
 ### 6. ユーザーへの報告
 
