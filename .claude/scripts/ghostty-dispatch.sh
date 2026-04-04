@@ -15,9 +15,9 @@ shift $((OPTIND - 1))
 
 commands=("$@")
 n=${#commands[@]}
-if ((n > 4)); then
-  echo "警告: ${n} 件中先頭 4 件のみディスパッチします" >&2
-  n=4
+if ((n > 8)); then
+  echo "警告: ${n} 件中先頭 8 件のみディスパッチします" >&2
+  n=8
 fi
 
 escape_as() {
@@ -36,21 +36,67 @@ as="tell application \"Ghostty\"
   set pane1 to terminal 1 of selected tab of win
 "
 
-# n=1: ペイン分割なし（pane1 のみ使用）
+# ペイン分割 + 視覚順序マッピング
+# pane_order: コマンドindex → ペイン番号（左→右、上→下の視覚順）
+pane_order=(1)
 case $n in
   2) as+='  set pane2 to split pane1 direction right with configuration cfg
-' ;;
+'
+    pane_order=(1 2)
+    ;;
   3) as+='  set pane2 to split pane1 direction right with configuration cfg
   set pane3 to split pane2 direction down with configuration cfg
-' ;;
+'
+    pane_order=(1 2 3)
+    ;;
   4) as+='  set pane2 to split pane1 direction right with configuration cfg
   set pane3 to split pane1 direction down with configuration cfg
   set pane4 to split pane2 direction down with configuration cfg
-' ;;
+'
+    pane_order=(1 2 3 4)
+    ;;
+  5) # 3列: [1(50%)|2(25%)|3(25%)] / [4|5]
+    as+='  set pane2 to split pane1 direction right with configuration cfg
+  set pane3 to split pane2 direction right with configuration cfg
+  set pane4 to split pane1 direction down with configuration cfg
+  set pane5 to split pane2 direction down with configuration cfg
+'
+    pane_order=(1 2 3 4 5)
+    ;;
+  6) # 2×3: [1(50%)|2(25%)|3(25%)] / [4|5|6]
+    as+='  set pane2 to split pane1 direction right with configuration cfg
+  set pane3 to split pane2 direction right with configuration cfg
+  set pane4 to split pane1 direction down with configuration cfg
+  set pane5 to split pane2 direction down with configuration cfg
+  set pane6 to split pane3 direction down with configuration cfg
+'
+    pane_order=(1 2 3 4 5 6)
+    ;;
+  7) # 4列均等: [1|3|2|4] / [5|6|7]
+    as+='  set pane2 to split pane1 direction right with configuration cfg
+  set pane3 to split pane1 direction right with configuration cfg
+  set pane4 to split pane2 direction right with configuration cfg
+  set pane5 to split pane1 direction down with configuration cfg
+  set pane6 to split pane3 direction down with configuration cfg
+  set pane7 to split pane2 direction down with configuration cfg
+'
+    pane_order=(1 3 2 4 5 6 7)
+    ;;
+  8) # 2×4均等: [1|3|2|4] / [5|6|7|8]
+    as+='  set pane2 to split pane1 direction right with configuration cfg
+  set pane3 to split pane1 direction right with configuration cfg
+  set pane4 to split pane2 direction right with configuration cfg
+  set pane5 to split pane1 direction down with configuration cfg
+  set pane6 to split pane3 direction down with configuration cfg
+  set pane7 to split pane2 direction down with configuration cfg
+  set pane8 to split pane4 direction down with configuration cfg
+'
+    pane_order=(1 3 2 4 5 6 7 8)
+    ;;
 esac
 
 for ((i = 0; i < n; i++)); do
-  p=$((i + 1))
+  p=${pane_order[$i]}
   ((i > 0)) && as+="  delay ${GHOSTTY_PANE_DELAY:-3}
 "
   as+="  input text \"$(escape_as "${commands[$i]}")\" to pane${p}

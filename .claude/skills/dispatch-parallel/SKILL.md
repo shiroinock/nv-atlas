@@ -105,7 +105,7 @@ dispatch-queue.json 書き出し
 
 ## 注意事項
 
-- 最大 4 ペイン（4 Issue）まで同時ディスパッチ可能
+- 最大 8 ペイン（8 Issue）まで同時ディスパッチ可能（2行×4列）
 - 各 worktree セッションは独立した Claude Code インスタンスとして `/tdd-next` を自律実行する
 - In Progress の Issue は分析時に自動除外される
 - ディスパッチ元の Claude セッション（このセッション）は引き続き利用可能
