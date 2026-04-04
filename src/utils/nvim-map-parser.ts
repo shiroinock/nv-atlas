@@ -1,4 +1,5 @@
 import type { NvimMapMode, NvimMapping, NvimMapSource } from "../types/vim";
+import { isPlugMapping } from "./plug-mapping";
 
 /**
  * `nvim --headless` の `verbose map` 出力をパースする
@@ -31,7 +32,7 @@ export function parseNvimMapOutput(raw: string): NvimMapping[] {
     const rhs = mapMatch[4].trimEnd();
 
     // <Plug> マッピングはスキップ
-    if (lhs.startsWith("<Plug>")) {
+    if (isPlugMapping(lhs)) {
       i++;
       // 後続の description/source 行をスキップ
       while (

@@ -5,6 +5,7 @@ import {
 } from "../types/keybinding";
 import type { NvimMapping, VimCommand } from "../types/vim";
 import { expandNvimMapMode } from "../types/vim";
+import { isPlugMapping } from "./plug-mapping";
 
 export function convertNvimMapsToKeybindings(
   maps: NvimMapping[],
@@ -14,7 +15,7 @@ export function convertNvimMapsToKeybindings(
   const cmdByKey = new Map(vimCommands.map((c) => [c.key, c]));
 
   for (const map of maps) {
-    if (map.lhs.startsWith("<Plug>")) continue;
+    if (isPlugMapping(map.lhs)) continue;
 
     const matched = cmdByKey.get(map.lhs);
 
