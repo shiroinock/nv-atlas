@@ -1,6 +1,7 @@
 import type { VimMode } from "../types/keybinding";
 import type { MergedVimCommand, NvimMapping, VimCommand } from "../types/vim";
 import { DEFAULT_NVIM_MAP_CATEGORY, expandNvimMapMode } from "../types/vim";
+import { isPlugMapping } from "./plug-mapping";
 
 /**
  * ハードコードの Vim コマンドと nvim の実マッピングをマージする
@@ -22,7 +23,7 @@ export function mergeWithNvimMaps(
   const addedNewEntryKeys = new Set<string>();
 
   // <Plug> で始まるマップは全モードでスキップ
-  const validMaps = nvimMaps.filter((m) => !m.lhs.startsWith("<Plug>"));
+  const validMaps = nvimMaps.filter((m) => !isPlugMapping(m.lhs));
 
   for (const nvMap of validMaps) {
     const key = normalizeNvimKey(nvMap.lhs);
