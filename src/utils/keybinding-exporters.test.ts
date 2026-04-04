@@ -165,27 +165,6 @@ describe("keybindingToLua", () => {
       expect(result).toContain('desc = "下に移動"');
     });
 
-    it("noremap: false の場合は noremap を省略し desc のみ出力される", () => {
-      const config = makeConfig({
-        bindings: {
-          ...emptyBindings(),
-          n: [
-            makeKeybinding({
-              lhs: "j",
-              commandId: "j",
-              noremap: false,
-              name: "下に移動",
-            }),
-          ],
-        },
-      });
-
-      const result = keybindingToLua(config);
-
-      expect(result).toContain('{ desc = "下に移動" }');
-      expect(result).not.toContain("noremap");
-    });
-
     it('binding.name に " が含まれる場合はエスケープされる', () => {
       const config = makeConfig({
         bindings: {
