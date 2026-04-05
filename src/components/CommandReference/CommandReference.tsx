@@ -181,7 +181,7 @@ export function CommandReference({
     return groups;
   }, [filteredCommands]);
 
-  const toggleCategory = (cat: VimCommandCategory) => {
+  const toggleCategory = useCallback((cat: VimCommandCategory) => {
     setSelectedCategories((prev) => {
       const next = new Set(prev);
       if (next.has(cat)) {
@@ -191,9 +191,9 @@ export function CommandReference({
       }
       return next;
     });
-  };
+  }, []);
 
-  const toggleSource = (src: VimCommandSource) => {
+  const toggleSource = useCallback((src: VimCommandSource) => {
     setSelectedSources((prev) => {
       const next = new Set(prev);
       if (next.has(src)) {
@@ -203,7 +203,7 @@ export function CommandReference({
       }
       return next;
     });
-  };
+  }, []);
 
   return (
     <div className={styles.container}>
