@@ -102,15 +102,6 @@ export const VIM_COMMAND_SOURCES = [
   "user",
 ] as const satisfies VimCommandSource[];
 
-export interface MergedVimCommand extends VimCommand {
-  source: VimCommandSource;
-  nvimOverride?: boolean;
-}
-
-export function isMergedVimCommand(cmd: VimCommand): cmd is MergedVimCommand {
-  return "source" in cmd;
-}
-
 export interface VimCommand {
   /** Vim のキー (QWERTY基準) */
   key: string;
@@ -122,6 +113,15 @@ export interface VimCommand {
   category: VimCommandCategory;
   /** 適用モード（省略時は ["n"]） */
   modes?: VimMode[];
+}
+
+export interface MergedVimCommand extends VimCommand {
+  source: VimCommandSource;
+  nvimOverride?: boolean;
+}
+
+export function isMergedVimCommand(cmd: VimCommand): cmd is MergedVimCommand {
+  return "source" in cmd;
 }
 
 /** QWERTY キー → カスタム配列キー のマッピング */
