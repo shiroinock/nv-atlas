@@ -107,6 +107,10 @@ export interface MergedVimCommand extends VimCommand {
   nvimOverride?: boolean;
 }
 
+export function isMergedVimCommand(cmd: VimCommand): cmd is MergedVimCommand {
+  return "source" in cmd;
+}
+
 export interface VimCommand {
   /** Vim のキー (QWERTY基準) */
   key: string;

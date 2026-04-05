@@ -1,12 +1,15 @@
 import { describe, expect, it, test } from "vitest";
 import type {
+  MergedVimCommand,
   NvimMapMode,
+  VimCommand,
   VimCommandCategory,
   VimCommandSource,
   VimMode,
 } from "./vim";
 import {
   expandNvimMapMode,
+  isMergedVimCommand,
   matchesVimMode,
   VIM_COMMAND_CATEGORIES,
   VIM_COMMAND_SOURCES,
@@ -226,5 +229,71 @@ describe("VIM_COMMAND_SOURCES", () => {
   test("重複がない", () => {
     const unique = new Set<string>(VIM_COMMAND_SOURCES);
     expect(unique.size).toBe(VIM_COMMAND_SOURCES.length);
+  });
+});
+
+describe("isMergedVimCommand", () => {
+  const baseVimCommand: VimCommand = {
+    key: "h",
+    name: "左に移動",
+    description: "カーソルを左に1文字移動する",
+    category: "motion",
+  };
+
+  describe("正常系", () => {
+    it("source プロパティを持つ MergedVimCommand に対して true を返す", () => {
+      const mergedCmd: MergedVimCommand = {
+        ...baseVimCommand,
+        source: "hardcoded",
+      };
+      expect(isMergedVimCommand(mergedCmd)).toBe(true);
+    });
+
+    it("source が nvim-default の MergedVimCommand に対して true を返す", () => {
+      const mergedCmd: MergedVimCommand = {
+        ...baseVimCommand,
+        source: "nvim-default",
+      };
+      expect(isMergedVimCommand(mergedCmd)).toBe(true);
+    });
+
+    it("source が plugin の MergedVimCommand に対して true を返す", () => {
+      const mergedCmd: MergedVimCommand = {
+        ...baseVimCommand,
+        source: "plugin",
+      };
+      expect(isMergedVimCommand(mergedCmd)).toBe(true);
+    });
+
+    it("source が user の MergedVimCommand に対して true を返す", () => {
+      const mergedCmd: MergedVimCommand = {
+        ...baseVimCommand,
+        source: "user",
+      };
+      expect(isMergedVimCommand(mergedCmd)).toBe(true);
+    });
+
+    it("nvimOverride を持つ MergedVimCommand に対して true を返す", () => {
+      const mergedCmd: MergedVimCommand = {
+        ...baseVimCommand,
+        source: "nvim-default",
+        nvimOverride: true,
+      };
+      expect(isMergedVimCommand(mergedCmd)).toBe(true);
+    });
+  });
+
+  describe("source プロパティを持たない VimCommand", () => {
+    it("source プロパティを持たない VimCommand に対して false を返す", () => {
+      expect(isMergedVimCommand(baseVimCommand)).toBe(false);
+    });
+
+    it("modes を持つ VimCommand でも source がなければ false を返す", () => {
+      const cmdWithModes: VimCommand = {
+        ...baseVimCommand,
+        modes: ["n", "v"],
+      };
+      expect(isMergedVimCommand(cmdWithModes)).toBe(false);
+    });
   });
 });
