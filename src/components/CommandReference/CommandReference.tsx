@@ -16,6 +16,7 @@ import type {
   VimCommandSource,
 } from "../../types/vim";
 import {
+  isMergedVimCommand,
   matchesVimMode,
   VIM_COMMAND_CATEGORIES,
   VIM_COMMAND_SOURCES,
@@ -144,11 +145,10 @@ export function CommandReference({
       const modes = cmd.modes ?? ["n"];
       if (!matchesVimMode(modes, activeVimMode)) return false;
       if (!selectedCategories.has(cmd.category)) return false;
-      if (
-        hasSources &&
-        !selectedSources.has((cmd as MergedVimCommand).source ?? "hardcoded")
-      )
-        return false;
+      if (hasSources) {
+        const source = isMergedVimCommand(cmd) ? cmd.source : "hardcoded";
+        if (!selectedSources.has(source)) return false;
+      }
       if (searchText === "") return true;
       return (
         cmd.key.toLowerCase().includes(lowerSearch) ||
@@ -292,7 +292,9 @@ export function CommandReference({
                     viaKeymapFull,
                   );
                   const isDifferent = translated !== cmd.key;
-                  const source = (cmd as MergedVimCommand).source;
+                  const source = isMergedVimCommand(cmd)
+                    ? cmd.source
+                    : "hardcoded";
                   return (
                     <tr
                       key={cmd.key}
