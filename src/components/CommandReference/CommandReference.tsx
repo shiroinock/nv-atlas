@@ -15,7 +15,11 @@ import type {
   VimCommandCategory,
   VimCommandSource,
 } from "../../types/vim";
-import { matchesVimMode, VIM_COMMAND_CATEGORIES } from "../../types/vim";
+import {
+  matchesVimMode,
+  VIM_COMMAND_CATEGORIES,
+  VIM_COMMAND_SOURCES,
+} from "../../types/vim";
 import { cx } from "../../utils/cx";
 import { resolveVimKey } from "../../utils/vim-key-resolver";
 import styles from "./CommandReference.module.css";
@@ -104,13 +108,6 @@ function vimKeyToHighlights(
   return entries;
 }
 
-const allSources: VimCommandSource[] = [
-  "hardcoded",
-  "nvim-default",
-  "plugin",
-  "user",
-];
-
 export function CommandReference({
   customKeymap,
   viaKeymapFull,
@@ -122,7 +119,7 @@ export function CommandReference({
     Set<VimCommandCategory>
   >(new Set(VIM_COMMAND_CATEGORIES));
   const [selectedSources, setSelectedSources] = useState<Set<VimCommandSource>>(
-    new Set(allSources),
+    new Set(VIM_COMMAND_SOURCES),
   );
   const [searchText, setSearchText] = useState("");
 
@@ -236,7 +233,7 @@ export function CommandReference({
         </div>
         {hasSources && (
           <div className={styles.sources}>
-            {allSources.map((src) => (
+            {VIM_COMMAND_SOURCES.map((src) => (
               <button
                 type="button"
                 key={src}

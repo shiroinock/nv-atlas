@@ -94,6 +94,14 @@ export function matchesVimMode(
 
 export type VimCommandSource = "hardcoded" | NvimMapSource;
 
+/** VimCommandSource の全値リスト */
+export const VIM_COMMAND_SOURCES = [
+  "hardcoded",
+  "nvim-default",
+  "plugin",
+  "user",
+] as const satisfies VimCommandSource[];
+
 export interface MergedVimCommand extends VimCommand {
   source: VimCommandSource;
   nvimOverride?: boolean;
