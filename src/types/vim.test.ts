@@ -1,9 +1,15 @@
 import { describe, expect, it, test } from "vitest";
-import type { NvimMapMode, VimCommandCategory, VimMode } from "./vim";
+import type {
+  NvimMapMode,
+  VimCommandCategory,
+  VimCommandSource,
+  VimMode,
+} from "./vim";
 import {
   expandNvimMapMode,
   matchesVimMode,
   VIM_COMMAND_CATEGORIES,
+  VIM_COMMAND_SOURCES,
   VIM_PRACTICE_CATEGORIES,
 } from "./vim";
 
@@ -197,5 +203,28 @@ describe("VIM_PRACTICE_CATEGORIES", () => {
   test("重複がない", () => {
     const unique = new Set<string>(VIM_PRACTICE_CATEGORIES);
     expect(unique.size).toBe(VIM_PRACTICE_CATEGORIES.length);
+  });
+});
+
+describe("VIM_COMMAND_SOURCES", () => {
+  test("4つの要素を持つ", () => {
+    expect(VIM_COMMAND_SOURCES).toHaveLength(4);
+  });
+
+  describe("全ての VimCommandSource 値を含む", () => {
+    const cases: VimCommandSource[] = [
+      "hardcoded",
+      "nvim-default",
+      "plugin",
+      "user",
+    ];
+    test.each(cases)('"%s" を含む', (source) => {
+      expect(VIM_COMMAND_SOURCES).toContain(source);
+    });
+  });
+
+  test("重複がない", () => {
+    const unique = new Set<string>(VIM_COMMAND_SOURCES);
+    expect(unique.size).toBe(VIM_COMMAND_SOURCES.length);
   });
 });
