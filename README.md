@@ -1,5 +1,7 @@
 # nv-atlas
 
+[![dept](https://raw.githubusercontent.com/shiroinock/nv-atlas/dept-badge/dept.svg)](https://github.com/shiroinock/nv-atlas/blob/dept-badge/dept.md)
+
 カスタムキーボード配列で Neovim キーバインドを可視化する Web アプリ。
 
 Colemak や Dvorak などの非 QWERTY 配列を使っていると、Vim のキーバインドガイドがそのまま当てはまりません。nv-atlas は VIA のキーマップ JSON を読み込み、自分の配列上でどのキーがどの Vim 操作に対応するかをキーボード上に表示します。
