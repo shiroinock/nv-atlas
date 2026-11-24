@@ -1,0 +1,203 @@
+{
+  "lockfile": "./pnpm-lock.yaml",
+  "format": "pnpm-lock.yaml",
+  "weights": {
+    "major": 30,
+    "minor": 3,
+    "patch": 1
+  },
+  "total": 187,
+  "lag": {
+    "major": 2,
+    "minor": 12,
+    "patch": 91
+  },
+  "packages": 13,
+  "outdated": 11,
+  "errors": 0,
+  "libyear": 7.419505760894365,
+  "rows": [
+    {
+      "name": "vitest",
+      "package": "vitest",
+      "kind": "dev",
+      "current": "4.1.11",
+      "latest": "5.1.1",
+      "lag": {
+        "major": 1,
+        "minor": 1,
+        "patch": 7
+      },
+      "score": 40,
+      "libyear": 0.25109948158288337
+    },
+    {
+      "name": "@biomejs/biome",
+      "package": "@biomejs/biome",
+      "kind": "dev",
+      "current": "2.4.9",
+      "latest": "2.6.9",
+      "lag": {
+        "major": 0,
+        "minor": 2,
+        "patch": 31
+      },
+      "score": 37,
+      "libyear": 0.668332889700104
+    },
+    {
+      "name": "@testing-library/jest-dom",
+      "package": "@testing-library/jest-dom",
+      "kind": "dev",
+      "current": "7.0.1",
+      "latest": "8.0.0",
+      "lag": {
+        "major": 1,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 30,
+      "libyear": 0.2769126929804548
+    },
+    {
+      "name": "vite",
+      "package": "vite",
+      "kind": "dev",
+      "current": "8.1.6",
+      "latest": "8.3.8",
+      "lag": {
+        "major": 0,
+        "minor": 2,
+        "patch": 13
+      },
+      "score": 19,
+      "libyear": 0.09833048140543006
+    },
+    {
+      "name": "@vitejs/plugin-react",
+      "package": "@vitejs/plugin-react",
+      "kind": "dev",
+      "current": "6.0.1",
+      "latest": "6.3.0",
+      "lag": {
+        "major": 0,
+        "minor": 3,
+        "patch": 7
+      },
+      "score": 16,
+      "libyear": 0.6593071399599463
+    },
+    {
+      "name": "@testing-library/user-event",
+      "package": "@testing-library/user-event",
+      "kind": "dev",
+      "current": "14.6.1",
+      "latest": "14.6.13",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 11
+      },
+      "score": 11,
+      "libyear": 1.824138686085127
+    },
+    {
+      "name": "react",
+      "package": "react",
+      "kind": "prod",
+      "current": "19.2.4",
+      "latest": "19.3.1",
+      "lag": {
+        "major": 0,
+        "minor": 1,
+        "patch": 6
+      },
+      "score": 9,
+      "libyear": 0.7143966904961088
+    },
+    {
+      "name": "react-dom",
+      "package": "react-dom",
+      "kind": "prod",
+      "current": "19.2.4",
+      "latest": "19.3.1",
+      "lag": {
+        "major": 0,
+        "minor": 1,
+        "patch": 6
+      },
+      "score": 9,
+      "libyear": 0.7144000494334171
+    },
+    {
+      "name": "@types/react",
+      "package": "@types/react",
+      "kind": "dev",
+      "current": "19.2.14",
+      "latest": "19.3.1",
+      "lag": {
+        "major": 0,
+        "minor": 1,
+        "patch": 5
+      },
+      "score": 8,
+      "libyear": 0.7838623342713008
+    },
+    {
+      "name": "@types/react-dom",
+      "package": "@types/react-dom",
+      "kind": "dev",
+      "current": "19.2.3",
+      "latest": "19.3.0",
+      "lag": {
+        "major": 0,
+        "minor": 1,
+        "patch": 4
+      },
+      "score": 7,
+      "libyear": 0.8256335082515781
+    },
+    {
+      "name": "@testing-library/react",
+      "package": "@testing-library/react",
+      "kind": "dev",
+      "current": "16.3.2",
+      "latest": "16.3.3",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 1
+      },
+      "score": 1,
+      "libyear": 0.6030918067280148
+    },
+    {
+      "name": "jsdom",
+      "package": "jsdom",
+      "kind": "dev",
+      "current": "31.0.1",
+      "latest": "31.0.1",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    },
+    {
+      "name": "typescript",
+      "package": "typescript",
+      "kind": "dev",
+      "current": "7.0.2",
+      "latest": "7.0.2",
+      "lag": {
+        "major": 0,
+        "minor": 0,
+        "patch": 0
+      },
+      "score": 0,
+      "libyear": 0.0
+    }
+  ]
+}
